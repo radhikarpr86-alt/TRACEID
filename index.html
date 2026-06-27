@@ -1064,7 +1064,7 @@
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 8 (R4) – JS CORE 1 (VERSI AMAN)
+     BLOK 8 (R5) – JS CORE 1 (VERSI PALING AMAN)
      ============================================================ -->
 </body>
 <script>
@@ -1197,7 +1197,7 @@ function openApplication() {
   if (!s) return showLoginModal();
   document.getElementById('landingPage').classList.add('hidden');
   document.getElementById('applicationPage').classList.remove('hidden');
-  refreshAppUI(); updateStats(); updateHeaderUser(); checkAllExpiredActivations();
+  refreshAppUI(); updateStats(); updateHeaderUser();
 }
 function goToLandingPage() {
   document.getElementById('applicationPage').classList.add('hidden');
@@ -1209,18 +1209,17 @@ function showRegisterModal() { openModal('registerModal'); }
 function showProfileModal() { openModal('profileModal'); loadProfileData(); }
 function showActivationModal() { if(!getSession()) return showLoginModal(); openModal('activationModal'); }
 
-// ---------- AUTH (AMAN) ----------
+// ---------- AUTH ----------
 function handleLogin() {
   var u = document.getElementById('loginUsername');
   var p = document.getElementById('loginPassword');
   var err = document.getElementById('loginError');
-  if (!u || !p) return showToast('Form login tidak ditemukan.','error');
+  if (!u || !p) return;
   var username = u.value.trim();
   var password = p.value;
   err.classList.remove('show');
   if(!username||!password){ err.textContent='Isi semua field!'; err.classList.add('show'); return; }
 
-  // Super admin login
   if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
     saveSession(SUPER_ADMIN_DATA);
     closeModal('loginModal'); showToast('Login Super Admin berhasil!','success');
