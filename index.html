@@ -1308,95 +1308,10 @@ function activatePremium(code, errId, sucId) {
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 9 R11 – JS CORE 2 (LENGKAP FINAL)
-     Revisi 11: Semua fungsi tanpa duplikat + Link Tracker + Upload Gambar + IP API
+     BLOK 9 R12 – JS CORE 2 (BERSIH TANPA DUPLIKAT)
+     Revisi 12: Fungsi lacak + Link Tracker + Upload Gambar + Koordinat
      ============================================================ -->
 <script>
-// ========== PROFILE ==========
-function loadProfileData() {
-  var s = getSession(); if(!s) return;
-  document.getElementById('profileAvatar').textContent = s.nama.charAt(0).toUpperCase();
-  document.getElementById('profileName').textContent = s.nama;
-  document.getElementById('profileRole').textContent = s.role==='superadmin'?'Super Admin':(s.premium?'User Premium':'User Biasa');
-  document.getElementById('editProfileNama').value = s.nama||'';
-  document.getElementById('editProfileEmail').value = s.email||'';
-  document.getElementById('editProfileHp').value = s.hp||'';
-  var delBtn = document.getElementById('deleteAccountButton');
-  if (delBtn) { delBtn.style.display = (s.role === 'superadmin') ? 'none' : 'block'; }
-}
-function saveProfile() {
-  var s = getSession(); if(!s) return;
-  var n = document.getElementById('editProfileNama').value.trim();
-  var e = document.getElementById('editProfileEmail').value.trim();
-  var hp = document.getElementById('editProfileHp').value.trim();
-  var err = document.getElementById('profileError'); var suc = document.getElementById('profileSuccess');
-  err.classList.remove('show'); suc.classList.remove('show');
-  if(!n||!e||!hp){ err.textContent='Semua field wajib!'; err.classList.add('show'); return; }
-  s.nama=n; s.email=e; s.hp=hp; saveSession(s);
-  var users = getAllUsers(); var idx = users.findIndex(function(x){return x.id===s.id;});
-  if(idx!==-1){ users[idx].nama=n; users[idx].email=e; users[idx].hp=hp; saveAllUsers(users); }
-  suc.textContent='Profil tersimpan!'; suc.classList.add('show');
-  updateHeaderUser(); setTimeout(function(){ closeModal('profileModal'); },1500);
-}
-function deleteAccount() {
-  var s = getSession();
-  if (!s || s.role === 'superadmin') return;
-  showConfirm('Hapus Akun?','Semua data Anda akan hilang permanen.',function(){
-    var users = getAllUsers().filter(function(x){return x.id!==s.id;}); saveAllUsers(users);
-    var lacak = getAllLacakData(); delete lacak[s.id]; saveAllLacakData(lacak);
-    localStorage.removeItem('tr_userdata_' + s.username);
-    sessionStorage.removeItem('tr_autosave_' + s.id);
-    clearSession(); closeModal('profileModal'); goToLandingPage(); updateHeaderUser(); showToast('Akun dihapus.','warning');
-  });
-}
-
-// ========== HEADER UPDATE ==========
-function updateHeaderUser() {
-  var s = getSession();
-  var badge = document.getElementById('userBadge'), prof = document.getElementById('profileButton');
-  var adm = document.getElementById('adminButton'), logout = document.getElementById('logoutButton');
-  var act = document.getElementById('activationToolbarButton');
-  var chatAdminBtn = document.getElementById('chatButton');
-  var chatUserBtn = document.getElementById('chatUserButton');
-  if(s){
-    badge.style.display='flex'; document.getElementById('userAvatar').textContent=s.nama.charAt(0).toUpperCase();
-    document.getElementById('userNameDisplay').textContent=s.nama;
-    prof.classList.remove('hidden'); logout.classList.remove('hidden');
-    adm.classList.toggle('hidden', s.role!=='superadmin');
-    act.style.display = (s.role=='user'&&!s.premium) ? 'inline-flex' : 'none';
-    if (s.role === 'superadmin') {
-      if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
-      if (chatUserBtn) chatUserBtn.classList.add('hidden');
-    } else {
-      if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-      if (chatUserBtn) chatUserBtn.classList.remove('hidden');
-    }
-  }else{
-    badge.style.display='none'; prof.classList.add('hidden'); adm.classList.add('hidden');
-    logout.classList.add('hidden'); act.style.display='none';
-    if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-    if (chatUserBtn) chatUserBtn.classList.remove('hidden');
-  }
-}
-
-// ========== STATS ==========
-function updateStats() {
-  var s = getSession();
-  var data = s ? (getAllLacakData()[s.id]||[]) : [];
-  var totalIP = 0, totalEmail = 0, totalSosmed = 0;
-  data.forEach(function(d){
-    if (d.type === 'ip') totalIP++;
-    else if (d.type === 'email') totalEmail++;
-    else totalSosmed++;
-  });
-  document.getElementById('statTotalLacak').textContent = data.length;
-  document.getElementById('statLacakIP').textContent = totalIP;
-  document.getElementById('statLacakEmail').textContent = totalEmail;
-  document.getElementById('statLacakSosmed').textContent = totalSosmed;
-  var status = document.getElementById('statPremiumStatus');
-  status.textContent = (s&&(s.premium||s.role=='superadmin'))?'Premium':'Free';
-}
-
 // ========== MODAL LACAK ==========
 function showLacakModal(type) {
   var s = getSession(); if(!s) return showToast('Login dulu!','error');
@@ -1404,9 +1319,9 @@ function showLacakModal(type) {
   var title = '', label = '', placeholder = '', hint = '';
   switch(type) {
     case 'ip': title='🌐 Lacak via IP Address'; label='Masukkan IP Address target'; placeholder='Contoh: 8.8.8.8'; hint='Dapatkan koordinat & lokasi dari IP.'; break;
-    case 'email': title='📧 Lacak via Email'; label='Masukkan Email target'; placeholder='Contoh: target@gmail.com'; hint='Cari akun terdaftar dengan email ini.'; break;
+    case 'email': title='📧 Lacak via Email'; label='Masukkan Email target'; placeholder='Contoh: target@gmail.com'; hint='Cari akun terdaftar.'; break;
     case 'tiktok': title='🎵 Lacak via TikTok'; label='Masukkan Username TikTok'; placeholder='Contoh: username'; hint='Username tanpa @.'; break;
-    case 'instagram': title='📷 Lacak via Instagram'; label='Masukkan Username Instagram'; placeholder='Contoh: username'; hint='Username Instagram target.'; break;
+    case 'instagram': title='📷 Lacak via Instagram'; label='Masukkan Username Instagram'; placeholder='Contoh: username'; hint='Username IG target.'; break;
     case 'facebook': title='📘 Lacak via Facebook'; label='Masukkan URL/ID Facebook'; placeholder='Contoh: facebook.com/username'; hint='URL profil Facebook.'; break;
     case 'whatsapp': title='📱 Lacak via WhatsApp'; label='Masukkan Nomor HP'; placeholder='Contoh: 081234567890'; hint='Nomor WhatsApp target.'; break;
   }
@@ -1594,7 +1509,7 @@ function checkAllExpiredActivations() {
   }
 }
 
-// ========== BACKUP/RESTORE ==========
+// ========== BACKUP/RESTORE USER ==========
 function backupUserData() {
   var s = getSession(); if (!s) return showToast('Login dulu!','error');
   var data = getAllLacakData()[s.id] || [];
@@ -1631,25 +1546,18 @@ function performSearch() {
 }
 function clearSearch() { document.getElementById('searchInput').value=''; performSearch(); }
 
-// ========== LINK TRACKER + UPLOAD GAMBAR ==========
+// ========== LINK TRACKER + UPLOAD GAMBAR + KOORDINAT ==========
 var trackerImageData = null;
 
 function showLinkTrackerModal() {
   var s = getSession(); if (!s) return showToast('Login dulu!','error');
-  var titleEl = document.getElementById('trackerTitle');
-  var msgEl = document.getElementById('trackerMessage');
-  var urlEl = document.getElementById('trackerImageUrl');
-  var fileEl = document.getElementById('trackerImageFile');
-  var previewEl = document.getElementById('trackerImagePreview');
-  var resultEl = document.getElementById('trackerResult');
-  var errEl = document.getElementById('trackerError');
-  if (titleEl) titleEl.value = '';
-  if (msgEl) msgEl.value = '';
-  if (urlEl) urlEl.value = '';
-  if (fileEl) fileEl.value = '';
-  if (previewEl) previewEl.style.display = 'none';
-  if (resultEl) resultEl.classList.add('hidden');
-  if (errEl) errEl.classList.remove('show');
+  document.getElementById('trackerTitle').value = '';
+  document.getElementById('trackerMessage').value = '';
+  document.getElementById('trackerImageUrl').value = '';
+  document.getElementById('trackerImageFile').value = '';
+  document.getElementById('trackerImagePreview').style.display = 'none';
+  document.getElementById('trackerResult').classList.add('hidden');
+  document.getElementById('trackerError').classList.remove('show');
   trackerImageData = null;
   openModal('linkTrackerModal');
 }
@@ -1663,86 +1571,94 @@ function previewTrackerImage() {
   var reader = new FileReader();
   reader.onload = function(e) {
     trackerImageData = e.target.result;
-    var previewImg = document.getElementById('trackerImagePreviewImg');
-    var previewDiv = document.getElementById('trackerImagePreview');
-    if (previewImg) previewImg.src = trackerImageData;
-    if (previewDiv) previewDiv.style.display = 'block';
+    document.getElementById('trackerImagePreviewImg').src = trackerImageData;
+    document.getElementById('trackerImagePreview').style.display = 'block';
   };
   reader.readAsDataURL(file);
 }
 
 function removeTrackerImage() {
   trackerImageData = null;
-  var fileInput = document.getElementById('trackerImageFile');
-  var previewDiv = document.getElementById('trackerImagePreview');
-  if (fileInput) fileInput.value = '';
-  if (previewDiv) previewDiv.style.display = 'none';
+  document.getElementById('trackerImageFile').value = '';
+  document.getElementById('trackerImagePreview').style.display = 'none';
 }
 
 function generateTrackerLink() {
-  var titleEl = document.getElementById('trackerTitle');
-  var msgEl = document.getElementById('trackerMessage');
-  var urlEl = document.getElementById('trackerImageUrl');
+  var title = document.getElementById('trackerTitle').value.trim();
+  var message = document.getElementById('trackerMessage').value.trim();
+  var imageUrl = document.getElementById('trackerImageUrl').value.trim();
   var errEl = document.getElementById('trackerError');
-  
-  if (!titleEl || !msgEl || !errEl) {
-    showToast('❌ Form tidak ditemukan. Refresh halaman.', 'error');
-    return;
-  }
-  
-  var title = titleEl.value.trim();
-  var message = msgEl.value.trim();
-  var imageUrl = urlEl ? urlEl.value.trim() : '';
   errEl.classList.remove('show');
   
   if (!title) { errEl.textContent = 'Isi judul dulu!'; errEl.classList.add('show'); return; }
   if (!message) { errEl.textContent = 'Isi pesan dulu!'; errEl.classList.add('show'); return; }
   
   var finalImage = trackerImageData || imageUrl || '';
-  var s = getSession();
-  var hasil = {
-    judul: title,
-    pesan: message,
-    gambar: finalImage ? '📷 Ada' : '(tidak ada)',
-    gambarData: finalImage,
-    status: 'Siap Dikirim',
-    waktu: new Date().toLocaleString()
-  };
   
-  simpanDanTampilkan('tracker', title, hasil);
-  
-  var previewHTML = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
-  if (finalImage) {
-    previewHTML += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
-  }
-  
-  var previewFinal = document.getElementById('trackerPreviewFinal');
-  var resultDiv = document.getElementById('trackerResult');
-  
-  if (previewFinal) previewFinal.innerHTML = previewHTML;
-  if (resultDiv) {
-    resultDiv.classList.remove('hidden');
-    resultDiv.setAttribute('data-title', title);
-    resultDiv.setAttribute('data-message', message);
-    resultDiv.setAttribute('data-image', finalImage);
-  }
-  
-  showToast('✅ Pesan & gambar siap dikirim!', 'success');
+  // AMBIL KOORDINAT PENGGUNA SAAT INI
+  fetch('https://ipapi.co/json/')
+    .then(function(res) { return res.json(); })
+    .then(function(ipData) {
+      var hasil = {
+        judul: title,
+        pesan: message,
+        gambar: finalImage ? '📷 Ada' : '(tidak ada)',
+        gambarData: finalImage,
+        status: 'Siap Dikirim',
+        waktu: new Date().toLocaleString(),
+        lat: ipData.latitude || 0,
+        lng: ipData.longitude || 0,
+        ip: ipData.ip || '-',
+        kota: ipData.city || '-',
+        maps: 'https://www.google.com/maps?q=' + (ipData.latitude || 0) + ',' + (ipData.longitude || 0)
+      };
+      
+      simpanDanTampilkan('tracker', title, hasil);
+      
+      var previewHTML = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
+      if (finalImage) previewHTML += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
+      previewHTML += '<p style="margin-top:8px;color:#10b981;font-weight:700;">📍 Lokasi Anda: ' + hasil.lat + ', ' + hasil.lng + '</p>';
+      
+      document.getElementById('trackerPreviewFinal').innerHTML = previewHTML;
+      var resultDiv = document.getElementById('trackerResult');
+      resultDiv.classList.remove('hidden');
+      resultDiv.setAttribute('data-title', title);
+      resultDiv.setAttribute('data-message', message);
+      resultDiv.setAttribute('data-image', finalImage);
+      
+      showToast('✅ Pesan & koordinat siap!', 'success');
+    })
+    .catch(function() {
+      var hasil = {
+        judul: title, pesan: message,
+        gambar: finalImage ? '📷 Ada' : '(tidak ada)',
+        gambarData: finalImage, status: 'Siap Dikirim',
+        waktu: new Date().toLocaleString()
+      };
+      simpanDanTampilkan('tracker', title, hasil);
+      
+      var previewHTML = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
+      if (finalImage) previewHTML += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
+      
+      document.getElementById('trackerPreviewFinal').innerHTML = previewHTML;
+      document.getElementById('trackerResult').classList.remove('hidden');
+      document.getElementById('trackerResult').setAttribute('data-title', title);
+      document.getElementById('trackerResult').setAttribute('data-message', message);
+      document.getElementById('trackerResult').setAttribute('data-image', finalImage);
+      
+      showToast('✅ Pesan siap (tanpa koordinat)', 'warning');
+    });
 }
 
 function copyTrackerMessage() {
-  var resultDiv = document.getElementById('trackerResult');
-  if (!resultDiv) return;
-  var message = resultDiv.getAttribute('data-message') || '';
+  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
   navigator.clipboard.writeText(message).then(function() { showToast('✅ Pesan disalin!', 'success'); });
 }
 
 function shareTrackerWA() {
-  var resultDiv = document.getElementById('trackerResult');
-  if (!resultDiv) return;
-  var title = resultDiv.getAttribute('data-title') || '';
-  var message = resultDiv.getAttribute('data-message') || '';
-  var image = resultDiv.getAttribute('data-image') || '';
+  var title = document.getElementById('trackerResult').getAttribute('data-title') || '';
+  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
+  var image = document.getElementById('trackerResult').getAttribute('data-image') || '';
   var text = '📌 ' + title + '\n\n' + message;
   if (image && image.startsWith('http')) text += '\n\n📷 Gambar: ' + image;
   else if (image) text += '\n\n📷 (Gambar terlampir)';
@@ -1750,18 +1666,14 @@ function shareTrackerWA() {
 }
 
 function shareTrackerEmail() {
-  var resultDiv = document.getElementById('trackerResult');
-  if (!resultDiv) return;
-  var title = resultDiv.getAttribute('data-title') || '';
-  var message = resultDiv.getAttribute('data-message') || '';
+  var title = document.getElementById('trackerResult').getAttribute('data-title') || '';
+  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
   window.open('mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(message), '_blank');
 }
 
 function shareTrackerSMS() {
-  var resultDiv = document.getElementById('trackerResult');
-  if (!resultDiv) return;
-  var title = resultDiv.getAttribute('data-title') || '';
-  var message = resultDiv.getAttribute('data-message') || '';
+  var title = document.getElementById('trackerResult').getAttribute('data-title') || '';
+  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
   window.open('sms:?body=' + encodeURIComponent(title + ': ' + message), '_blank');
 }
 
@@ -1771,16 +1683,20 @@ function showTrackerClicks() {
   var trackers = data.filter(function(d) { return d.type === 'tracker'; });
   var html = '';
   if (trackers.length === 0) {
-    html = '<p style="text-align:center;color:var(--text-secondary);padding:20px;">Belum ada pesan tracker.</p>';
+    html = '<p style="text-align:center;padding:20px;">Belum ada pesan tracker.</p>';
   } else {
     html = '<p style="margin-bottom:12px;"><strong>Total:</strong> ' + trackers.length + ' pesan</p>';
     trackers.reverse().forEach(function(t) {
+      var hasil = t.result;
       html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
-      html += '<strong>📌 ' + (t.result.judul || t.input) + '</strong><br>';
+      html += '<strong>📌 ' + (hasil.judul || t.input) + '</strong><br>';
       html += '<span style="font-size:0.8rem;">🕐 ' + new Date(t.time).toLocaleString() + '</span><br>';
-      html += '<span>Status: ' + (t.result.status || 'Terkirim') + '</span><br>';
-      if (t.result.gambarData && t.result.gambarData.startsWith('data:image')) {
-        html += '<img src="' + t.result.gambarData + '" style="max-width:100%;max-height:150px;border-radius:8px;margin-top:8px;"><br>';
+      if (hasil.lat && hasil.lng) {
+        html += '<span style="color:#10b981;font-weight:700;">📍 ' + hasil.lat + ', ' + hasil.lng + '</span> ';
+        html += '<a href="' + (hasil.maps || 'https://www.google.com/maps?q=' + hasil.lat + ',' + hasil.lng) + '" target="_blank" style="color:#3b82f6;">🗺 Buka Maps</a><br>';
+      }
+      if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) {
+        html += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:150px;border-radius:8px;margin-top:8px;"><br>';
       }
       html += '</div>';
     });
@@ -1829,10 +1745,10 @@ setInterval(function() {
 window.addEventListener('beforeunload', autoSaveData);
 document.addEventListener('visibilitychange', function() { if (document.hidden) autoSaveData(); });
 
-console.log('✅ TraceID Blok 9 R11 terpasang lengkap.');
+console.log('✅ TraceID Blok 9 R12 terpasang.');
 </script>
 <!-- ============================================================
-     AKHIR BLOK 9 R11
+     AKHIR BLOK 9 R12
      ============================================================ -->
 
 <!-- ============================================================
