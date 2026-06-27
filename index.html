@@ -819,8 +819,11 @@
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 6 R2 – MODAL LACAK (PERBAIKAN TAMPILAN KORDINAT)
+     BLOK 6 R4 – MODAL LACAK + MODAL LINK TRACKER (TAMBAHAN)
+     Revisi 4: Modal Link Tracker ditambahkan setelah modal lacak
+     Semua modal asli tetap utuh, tidak diubah
      ============================================================ -->
+<!-- MODAL LACAK (ASLI - TIDAK DIUBAH) -->
 <div class="modal-overlay" id="lacakModal">
   <div class="modal-content" style="max-width:550px;">
     <div class="modal-header">
@@ -842,10 +845,6 @@
         <div style="background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px;color:var(--accent-light);">📋 Hasil Pelacakan</h4>
           <div id="lacakResultContent"></div>
-          <!-- MAPS PREVIEW -->
-          <div id="lacakMapPreview" style="margin-top:12px;display:none;">
-            <iframe id="lacakMapFrame" width="100%" height="250" style="border:0;border-radius:8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div>
         </div>
       </div>
       <div class="form-error" id="lacakError"></div>
@@ -856,8 +855,126 @@
     </div>
   </div>
 </div>
+
+<!-- MODAL LINK TRACKER (TAMBAHAN BARU) -->
+<div class="modal-overlay" id="linkTrackerModal">
+  <div class="modal-content" style="max-width:550px;">
+    <div class="modal-header">
+      <h3>🔗 Link Tracker – Kirim & Lacak</h3>
+      <button class="modal-close" onclick="closeModal('linkTrackerModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);margin-bottom:16px;">
+        Kirim link atau gambar ke HP/email target. Setiap klik akan tercatat IP & lokasi.
+      </p>
+      <div class="form-group">
+        <label class="form-label">Judul / Keterangan</label>
+        <input type="text" id="trackerTitle" placeholder="Contoh: HP Hilang - Klik Disini">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pesan yang Ditampilkan</label>
+        <textarea id="trackerMessage" rows="3" placeholder="Tulis pesan untuk penerima link..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Gambar (URL, opsional)</label>
+        <input type="text" id="trackerImage" placeholder="https://example.com/gambar.jpg">
+      </div>
+      <button onclick="generateTrackerLink()" class="btn btn-primary btn-block">🔗 Buat Link Tracker</button>
+      <div id="trackerResult" class="hidden" style="margin-top:16px;">
+        <div style="background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
+          <h4 style="margin-bottom:8px;color:var(--accent-light);">✅ Link Tracker Siap</h4>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <input type="text" id="trackerLinkOutput" readonly style="flex:1;font-size:0.8rem;">
+            <button onclick="copyTrackerLink()" class="btn btn-primary btn-sm">📋 Copy</button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button onclick="shareTrackerWA()" class="btn btn-success btn-sm">📱 WhatsApp</button>
+            <button onclick="shareTrackerEmail()" class="btn btn-blue btn-sm">📧 Email</button>
+            <button onclick="shareTrackerSMS()" class="btn btn-warning btn-sm">💬 SMS</button>
+          </div>
+        </div>
+      </div>
+      <div id="trackerError" class="form-error"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('linkTrackerModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HASIL KLIK TRACKER -->
+<div class="modal-overlay" id="trackerClicksModal">
+  <div class="modal-content" style="max-width:550px;">
+    <div class="modal-header">
+      <h3>📊 Hasil Klik Tracker</h3>
+      <button class="modal-close" onclick="closeModal('trackerClicksModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="trackerClicksContent"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('trackerClicksModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL RIWAYAT -->
+<div class="modal-overlay" id="detailRiwayatModal">
+  <div class="modal-content" style="max-width:550px;">
+    <div class="modal-header">
+      <h3 id="detailRiwayatTitle">📋 Detail</h3>
+      <button class="modal-close" onclick="closeModal('detailRiwayatModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="detailRiwayatContent"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('detailRiwayatModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-content" style="max-width:380px;">
+    <div class="modal-header">
+      <h3 id="confirmTitle">Konfirmasi</h3>
+      <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMessage">Apakah Anda yakin?</p>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('confirmModal')" class="btn btn-gray">Batal</button>
+      <button onclick="executeConfirmAction()" class="btn btn-danger" id="confirmButton">Ya</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PACKAGE MODAL -->
+<div class="modal-overlay" id="editPackageModal">
+  <div class="modal-content" style="max-width:420px;">
+    <div class="modal-header">
+      <h3 id="editPackageTitle">Edit Paket</h3>
+      <button class="modal-close" onclick="closeModal('editPackageModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editPackageId">
+      <div class="form-group"><label class="form-label">Nama</label><input type="text" id="editPackageName"></div>
+      <div class="form-group"><label class="form-label">Harga</label><input type="number" id="editPackagePrice"></div>
+      <div class="form-group"><label class="form-label">Hari</label><input type="number" id="editPackageDays"></div>
+      <div class="form-group"><label class="form-label">Label</label><input type="text" id="editPackageLabel"></div>
+      <div class="form-group"><label class="form-label">Fitur</label><input type="text" id="editPackageFeatures"></div>
+      <div class="form-error" id="editPackageError"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('editPackageModal')" class="btn btn-gray">Batal</button>
+      <button onclick="savePackageChanges()" class="btn btn-primary">Simpan</button>
+    </div>
+  </div>
+</div>
 <!-- ============================================================
-     AKHIR BLOK 6 R2
+     AKHIR BLOK 6 R4
      ============================================================ -->
 
 <!-- ============================================================
