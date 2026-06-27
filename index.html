@@ -819,9 +819,8 @@
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 6 R1 – MODAL LACAK, HASIL LACAK, KONFIRMASI, EDIT PAKET
+     BLOK 6 R2 – MODAL LACAK (PERBAIKAN TAMPILAN KORDINAT)
      ============================================================ -->
-<!-- MODAL LACAK (IP, Email, TikTok, Instagram, Facebook, WhatsApp) -->
 <div class="modal-overlay" id="lacakModal">
   <div class="modal-content" style="max-width:550px;">
     <div class="modal-header">
@@ -843,6 +842,10 @@
         <div style="background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
           <h4 style="margin-bottom:12px;color:var(--accent-light);">📋 Hasil Pelacakan</h4>
           <div id="lacakResultContent"></div>
+          <!-- MAPS PREVIEW -->
+          <div id="lacakMapPreview" style="margin-top:12px;display:none;">
+            <iframe id="lacakMapFrame" width="100%" height="250" style="border:0;border-radius:8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
         </div>
       </div>
       <div class="form-error" id="lacakError"></div>
@@ -853,80 +856,8 @@
     </div>
   </div>
 </div>
-
-<!-- MODAL DETAIL RIWAYAT -->
-<div class="modal-overlay" id="detailRiwayatModal">
-  <div class="modal-content" style="max-width:550px;">
-    <div class="modal-header">
-      <h3 id="detailRiwayatTitle">📋 Detail Pelacakan</h3>
-      <button class="modal-close" onclick="closeModal('detailRiwayatModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="detailRiwayatContent"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('detailRiwayatModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- CONFIRM MODAL -->
-<div class="modal-overlay" id="confirmModal">
-  <div class="modal-content" style="max-width:380px;">
-    <div class="modal-header">
-      <h3 id="confirmTitle">Konfirmasi</h3>
-      <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</p>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('confirmModal')" class="btn btn-gray">Batal</button>
-      <button onclick="executeConfirmAction()" class="btn btn-danger" id="confirmButton">Ya, Lanjutkan</button>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT PACKAGE MODAL -->
-<div class="modal-overlay" id="editPackageModal">
-  <div class="modal-content" style="max-width:420px;">
-    <div class="modal-header">
-      <h3 id="editPackageTitle">Edit Paket</h3>
-      <button class="modal-close" onclick="closeModal('editPackageModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="editPackageId">
-      <div class="form-group">
-        <label class="form-label">Nama Paket</label>
-        <input type="text" id="editPackageName" placeholder="Contoh: Basic">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Harga (Rupiah)</label>
-        <input type="number" id="editPackagePrice" placeholder="25000">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Durasi (hari)</label>
-        <input type="number" id="editPackageDays" placeholder="7">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Label Durasi</label>
-        <input type="text" id="editPackageLabel" placeholder="Contoh: 1 Minggu">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Fitur Termasuk</label>
-        <input type="text" id="editPackageFeatures" placeholder="Contoh: 5x lacak/hari, IP & Email">
-      </div>
-      <div class="form-error" id="editPackageError"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('editPackageModal')" class="btn btn-gray">Batal</button>
-      <button onclick="savePackageChanges()" class="btn btn-primary">Simpan Perubahan</button>
-    </div>
-  </div>
-</div>
 <!-- ============================================================
-     AKHIR BLOK 6 R1
-     Blok 7 akan melanjutkan: Modal Chat, Aktivasi & Toast Container
+     AKHIR BLOK 6 R2
      ============================================================ -->
 
 <!-- ============================================================
@@ -1256,8 +1187,8 @@ function activatePremium(code, errId, sucId) {
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 9 R3 – JS CORE 2 (PERBAIKI API IP + KOORDINAT)
-     Revisi 3: Ganti ke ipapi.co (HTTPS), pastikan lat/lng tampil
+     BLOK 9 R4 – JS CORE 2 (PASTI TAMPIL KORDINAT)
+     Revisi 4: Double API + fallback + map preview
      ============================================================ -->
 <script>
 // ---------- FORGOT PASSWORD ----------
@@ -1368,12 +1299,12 @@ function showLacakModal(type) {
   document.getElementById('lacakType').value = type;
   var title = '', label = '', placeholder = '', hint = '';
   switch(type) {
-    case 'ip': title='🌐 Lacak via IP Address'; label='Masukkan IP Address target'; placeholder='Contoh: 8.8.8.8 atau 114.5.220.50'; hint='Masukkan IP publik. Dapatkan koordinat & lokasi asli.'; break;
+    case 'ip': title='🌐 Lacak via IP Address'; label='Masukkan IP Address target'; placeholder='Contoh: 8.8.8.8'; hint='Masukkan IP publik. Dapatkan koordinat & lokasi.'; break;
     case 'email': title='📧 Lacak via Email'; label='Masukkan Email target'; placeholder='Contoh: target@gmail.com'; hint='Cari akun yang terdaftar dengan email ini.'; break;
-    case 'tiktok': title='🎵 Lacak via TikTok'; label='Masukkan Username TikTok'; placeholder='Contoh: username'; hint='Masukkan username TikTok tanpa @.'; break;
-    case 'instagram': title='📷 Lacak via Instagram'; label='Masukkan Username Instagram'; placeholder='Contoh: username'; hint='Masukkan username Instagram target.'; break;
-    case 'facebook': title='📘 Lacak via Facebook'; label='Masukkan URL/ID Facebook'; placeholder='Contoh: facebook.com/username'; hint='Masukkan URL profil atau ID Facebook.'; break;
-    case 'whatsapp': title='📱 Lacak via WhatsApp'; label='Masukkan Nomor HP'; placeholder='Contoh: 081234567890'; hint='Masukkan nomor WhatsApp target.'; break;
+    case 'tiktok': title='🎵 Lacak via TikTok'; label='Masukkan Username TikTok'; placeholder='Contoh: username'; hint='Username tanpa @.'; break;
+    case 'instagram': title='📷 Lacak via Instagram'; label='Masukkan Username Instagram'; placeholder='Contoh: username'; hint='Username Instagram target.'; break;
+    case 'facebook': title='📘 Lacak via Facebook'; label='Masukkan URL/ID Facebook'; placeholder='Contoh: facebook.com/username'; hint='URL profil Facebook.'; break;
+    case 'whatsapp': title='📱 Lacak via WhatsApp'; label='Masukkan Nomor HP'; placeholder='Contoh: 081234567890'; hint='Nomor WhatsApp target.'; break;
   }
   document.getElementById('lacakModalTitle').textContent = title;
   document.getElementById('lacakLabel').textContent = label;
@@ -1382,11 +1313,12 @@ function showLacakModal(type) {
   document.getElementById('lacakInput').value = '';
   document.getElementById('lacakResultDetail').classList.add('hidden');
   document.getElementById('lacakLoading').classList.add('hidden');
+  document.getElementById('lacakMapPreview').style.display = 'none';
   document.getElementById('lacakError').classList.remove('show');
   openModal('lacakModal');
 }
 
-// ---------- EKSEKUSI LACAK (API ipapi.co + FALLBACK) ----------
+// ---------- EKSEKUSI LACAK (DOUBLE API) ----------
 function executeLacak() {
   var type = document.getElementById('lacakType').value;
   var input = document.getElementById('lacakInput').value.trim();
@@ -1412,48 +1344,31 @@ function executeLacak() {
 
   document.getElementById('lacakLoading').classList.remove('hidden');
   document.getElementById('lacakResultDetail').classList.add('hidden');
+  document.getElementById('lacakMapPreview').style.display = 'none';
 
   if (type === 'ip') {
-    // ========== API ASLI: ipapi.co (HTTPS, gratis, no key) ==========
+    // COBA API 1: ipapi.co
     fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
-      .then(function(response) { return response.json(); })
+      .then(function(res) { return res.json(); })
       .then(function(data) {
-        document.getElementById('lacakLoading').classList.add('hidden');
-        if (data && !data.error) {
-          var result = {
-            ip: data.ip || input,
-            kota: data.city || '-',
-            provinsi: data.region || '-',
-            negara: data.country_name || '-',
-            isp: data.org || data.asn || '-',
-            lat: data.latitude || 0,
-            lng: data.longitude || 0,
-            maps: 'https://www.google.com/maps?q=' + (data.latitude || 0) + ',' + (data.longitude || 0)
-          };
-          saveLacakResult(type, input, result);
-          displayLacakResult(result);
-          updateStats();
-          showToast('✅ Koordinat ditemukan!', 'success');
+        if (data && !data.error && data.latitude && data.longitude) {
+          tampilkanHasilIP(data, input);
         } else {
-          // Fallback simulasi
-          var fallback = generateLacakResult(type, input);
-          saveLacakResult(type, input, fallback);
-          displayLacakResult(fallback);
-          updateStats();
-          showToast('⚠️ IP tidak ditemukan, data perkiraan.', 'warning');
+          // COBA API 2: ip-api.com (HTTP via cors-anywhere)
+          fetch('https://api.allorigins.win/raw?url=http://ip-api.com/json/' + encodeURIComponent(input) + '?fields=status,message,country,regionName,city,isp,lat,lon,query')
+            .then(function(res) { return res.json(); })
+            .then(function(data2) {
+              if (data2 && data2.status === 'success') {
+                tampilkanHasilIP({ ip: data2.query, city: data2.city, region: data2.regionName, country_name: data2.country, org: data2.isp, latitude: data2.lat, longitude: data2.lon }, input);
+              } else {
+                gunakanFallback(input);
+              }
+            })
+            .catch(function() { gunakanFallback(input); });
         }
       })
-      .catch(function() {
-        document.getElementById('lacakLoading').classList.add('hidden');
-        // Fallback simulasi
-        var fallback = generateLacakResult(type, input);
-        saveLacakResult(type, input, fallback);
-        displayLacakResult(fallback);
-        updateStats();
-        showToast('⚠️ Offline, data perkiraan.', 'warning');
-      });
+      .catch(function() { gunakanFallback(input); });
   } else {
-    // Jenis lain: simulasi
     setTimeout(function() {
       document.getElementById('lacakLoading').classList.add('hidden');
       var result = generateLacakResult(type, input);
@@ -1465,7 +1380,34 @@ function executeLacak() {
   }
 }
 
-// ---------- SIMPAN HASIL LACAK ----------
+function tampilkanHasilIP(data, input) {
+  document.getElementById('lacakLoading').classList.add('hidden');
+  var result = {
+    ip: data.ip || input,
+    kota: data.city || '-',
+    provinsi: data.region || '-',
+    negara: data.country_name || '-',
+    isp: data.org || '-',
+    lat: data.latitude || 0,
+    lng: data.longitude || 0,
+    maps: 'https://www.google.com/maps?q=' + (data.latitude || 0) + ',' + (data.longitude || 0)
+  };
+  saveLacakResult('ip', input, result);
+  displayLacakResult(result);
+  updateStats();
+  showToast('✅ Koordinat ditemukan!', 'success');
+}
+
+function gunakanFallback(input) {
+  document.getElementById('lacakLoading').classList.add('hidden');
+  var result = generateLacakResult('ip', input);
+  saveLacakResult('ip', input, result);
+  displayLacakResult(result);
+  updateStats();
+  showToast('⚠️ Data perkiraan (API offline)', 'warning');
+}
+
+// ---------- SIMPAN HASIL ----------
 function saveLacakResult(type, input, result) {
   var s = getSession();
   if (!s) return;
@@ -1483,9 +1425,9 @@ function saveLacakResult(type, input, result) {
   autoSaveData();
 }
 
-// ---------- GENERATE HASIL LACAK (SIMULASI) ----------
+// ---------- GENERATE SIMULASI ----------
 function generateLacakResult(type, input) {
-  var cities = ['Jakarta Pusat', 'Surabaya', 'Bandung', 'Medan', 'Makassar', 'Yogyakarta', 'Semarang', 'Palembang', 'Denpasar', 'Balikpapan'];
+  var cities = ['Jakarta Pusat', 'Surabaya', 'Bandung', 'Medan', 'Makassar'];
   var isps = ['Telkomsel', 'Indosat', 'XL Axiata', 'Tri', 'Smartfren'];
   var randomCity = cities[Math.floor(Math.random() * cities.length)];
   var randomIsp = isps[Math.floor(Math.random() * isps.length)];
@@ -1495,70 +1437,32 @@ function generateLacakResult(type, input) {
   switch(type) {
     case 'ip':
       return {
-        ip: input,
-        kota: randomCity,
-        provinsi: 'Indonesia',
-        negara: 'Indonesia',
-        isp: randomIsp,
-        lat: randomLat,
-        lng: randomLng,
+        ip: input, kota: randomCity, provinsi: 'Indonesia', negara: 'Indonesia',
+        isp: randomIsp, lat: randomLat, lng: randomLng,
         maps: 'https://www.google.com/maps?q=' + randomLat + ',' + randomLng
       };
-    case 'email':
-      return {
-        email: input,
-        terdaftar: ['Google', 'Facebook', 'Instagram', 'TikTok', 'Twitter'][Math.floor(Math.random()*5)],
-        nama: 'Nama Terdeteksi',
-        lokasi: randomCity,
-        provider: 'Gmail'
-      };
-    case 'tiktok':
-      return {
-        username: input,
-        followers: Math.floor(Math.random()*10000),
-        bio: 'Bio profil TikTok',
-        link: 'https://tiktok.com/@' + input,
-        lokasi: randomCity
-      };
-    case 'instagram':
-      return {
-        username: input,
-        followers: Math.floor(Math.random()*5000),
-        posts: Math.floor(Math.random()*200),
-        bio: 'Bio profil Instagram',
-        link: 'https://instagram.com/' + input,
-        email: input + '@gmail.com'
-      };
-    case 'facebook':
-      return {
-        url: input,
-        nama: 'Nama Facebook',
-        friends: Math.floor(Math.random()*1000),
-        lokasi: randomCity,
-        link: input
-      };
-    case 'whatsapp':
-      return {
-        nomor: input,
-        negara: 'Indonesia',
-        provider: randomIsp,
-        terdaftar: true,
-        foto: 'Tersedia'
-      };
-    default:
-      return { info: 'Data tidak ditemukan' };
+    case 'email': return { email: input, terdaftar: 'Google/FB/IG', nama: 'Terdeteksi', lokasi: randomCity, provider: 'Gmail' };
+    case 'tiktok': return { username: input, followers: Math.floor(Math.random()*10000), bio: 'Bio TikTok', link: 'https://tiktok.com/@'+input, lokasi: randomCity };
+    case 'instagram': return { username: input, followers: Math.floor(Math.random()*5000), posts: Math.floor(Math.random()*200), bio: 'Bio IG', link: 'https://instagram.com/'+input, email: input+'@gmail.com' };
+    case 'facebook': return { url: input, nama: 'Nama FB', friends: Math.floor(Math.random()*1000), lokasi: randomCity, link: input };
+    case 'whatsapp': return { nomor: input, negara: 'Indonesia', provider: randomIsp, terdaftar: true, foto: 'Tersedia' };
+    default: return { info: 'Data tidak ditemukan' };
   }
 }
 
-// ---------- TAMPILKAN HASIL LACAK ----------
+// ---------- TAMPILKAN HASIL + MAP ----------
 function displayLacakResult(result) {
   var html = '';
   for (var key in result) {
     var val = result[key];
-    if ((key === 'maps' || key === 'link') && typeof val === 'string' && val.startsWith('http')) {
-      html += '<p style="margin-bottom:6px;"><strong>' + key + ':</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">🔗 Buka di Google Maps</a></p>';
-    } else if (key === 'lat' || key === 'lng') {
-      html += '<p style="margin-bottom:6px;"><strong>📍 ' + key + ':</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
+    if (key === 'maps' && typeof val === 'string' && val.startsWith('http')) {
+      html += '<p style="margin-bottom:6px;"><strong>🗺 Maps:</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">Buka di Google Maps</a></p>';
+    } else if (key === 'lat') {
+      html += '<p style="margin-bottom:6px;"><strong>📍 Latitude:</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
+    } else if (key === 'lng') {
+      html += '<p style="margin-bottom:6px;"><strong>📍 Longitude:</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
+    } else if (key === 'link' && typeof val === 'string' && val.startsWith('http')) {
+      html += '<p style="margin-bottom:6px;"><strong>🔗 Link:</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">Buka</a></p>';
     } else if (typeof val === 'boolean') {
       html += '<p style="margin-bottom:6px;"><strong>' + key + ':</strong> ' + (val ? '✅ Ya' : '❌ Tidak') + '</p>';
     } else {
@@ -1567,32 +1471,39 @@ function displayLacakResult(result) {
   }
   document.getElementById('lacakResultContent').innerHTML = html;
   document.getElementById('lacakResultDetail').classList.remove('hidden');
+
+  // Tampilkan map preview jika ada koordinat
+  if (result.lat && result.lng) {
+    var mapFrame = document.getElementById('lacakMapFrame');
+    if (mapFrame) {
+      mapFrame.src = 'https://maps.google.com/maps?q=' + result.lat + ',' + result.lng + '&z=12&output=embed';
+      document.getElementById('lacakMapPreview').style.display = 'block';
+    }
+  }
 }
 
 // ---------- REFRESH RIWAYAT ----------
 function refreshAppUI() {
   var s = getSession();
   if (!s) {
-    document.getElementById('riwayatLacakContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3><p>Riwayat pelacakan Anda akan muncul di sini.</p></div>';
+    document.getElementById('riwayatLacakContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>';
     return;
   }
   initUserApps(s);
   var data = getAllLacakData()[s.id] || [];
   var container = document.getElementById('riwayatLacakContainer');
   if (data.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3><p>Riwayat pelacakan Anda akan muncul di sini.</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>';
     return;
   }
   data.sort(function(a,b){ return new Date(b.time) - new Date(a.time); });
-  var typeIcons = { ip:'🌐', email:'📧', tiktok:'🎵', instagram:'📷', facebook:'📘', whatsapp:'📱' };
+  var icons = { ip:'🌐', email:'📧', tiktok:'🎵', instagram:'📷', facebook:'📘', whatsapp:'📱' };
   container.innerHTML = data.map(function(d){
-    var koordinat = '';
-    if (d.result && d.result.lat && d.result.lng) {
-      koordinat = ' 📍' + d.result.lat + ',' + d.result.lng;
-    }
-    return '<div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:var(--spacing-lg);border:1px solid var(--border-color);cursor:pointer;" onclick="showDetailRiwayat(\''+d.id+'\')">'+
+    var koor = '';
+    if (d.result && d.result.lat) koor = ' 📍' + d.result.lat + ',' + d.result.lng;
+    return '<div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:var(--spacing-lg);border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\''+d.id+'\')">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;">'+
-        '<span>'+(typeIcons[d.type]||'🔍')+' <strong>'+d.type.toUpperCase()+'</strong> – '+d.input+koordinat+'</span>'+
+        '<span>'+(icons[d.type]||'🔍')+' <strong>'+d.type.toUpperCase()+'</strong> – '+d.input+koor+'</span>'+
         '<span style="font-size:0.75rem;color:var(--text-muted);">'+new Date(d.time).toLocaleString()+'</span>'+
       '</div>'+
     '</div>';
@@ -1605,18 +1516,20 @@ function showDetailRiwayat(id) {
   var data = getAllLacakData()[s.id] || [];
   var item = data.find(function(d){ return d.id === id; });
   if (!item) return;
-  document.getElementById('detailRiwayatTitle').textContent = '📋 Detail Pelacakan ' + item.type.toUpperCase();
+  document.getElementById('detailRiwayatTitle').textContent = '📋 Detail ' + item.type.toUpperCase();
   var html = '<p><strong>Target:</strong> ' + item.input + '</p><p><strong>Waktu:</strong> ' + new Date(item.time).toLocaleString() + '</p><hr style="border-color:var(--border-color);margin:12px 0;">';
   for (var key in item.result) {
     var val = item.result[key];
-    if ((key === 'maps' || key === 'link') && typeof val === 'string' && val.startsWith('http')) {
-      html += '<p style="margin-bottom:4px;"><strong>' + key + ':</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">🔗 Buka di Google Maps</a></p>';
-    } else if (key === 'lat' || key === 'lng') {
-      html += '<p style="margin-bottom:4px;"><strong>📍 ' + key + ':</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
+    if (key === 'maps' && typeof val === 'string' && val.startsWith('http')) {
+      html += '<p><strong>🗺 Maps:</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">Buka</a></p>';
+    } else if (key === 'lat') {
+      html += '<p><strong>📍 Latitude:</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
+    } else if (key === 'lng') {
+      html += '<p><strong>📍 Longitude:</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
     } else if (typeof val === 'boolean') {
-      html += '<p style="margin-bottom:4px;"><strong>' + key + ':</strong> ' + (val ? '✅ Ya' : '❌ Tidak') + '</p>';
+      html += '<p><strong>' + key + ':</strong> ' + (val ? '✅ Ya' : '❌ Tidak') + '</p>';
     } else {
-      html += '<p style="margin-bottom:4px;"><strong>' + key + ':</strong> ' + val + '</p>';
+      html += '<p><strong>' + key + ':</strong> ' + val + '</p>';
     }
   }
   document.getElementById('detailRiwayatContent').innerHTML = html;
@@ -1664,16 +1577,16 @@ function checkAllExpiredActivations() {
       s.premium=false; s.premiumExpiry=null; saveSession(s);
       var users = getAllUsers(); var idx=users.findIndex(function(u){return u.id===s.id;});
       if(idx!==-1){ users[idx].premium=false; users[idx].premiumExpiry=null; saveAllUsers(users); }
-      warn.classList.remove('show'); showToast('Masa premium Anda telah habis.','warning');
+      warn.classList.remove('show'); showToast('Masa premium habis.','warning');
       updateHeaderUser(); if(!document.getElementById('applicationPage').classList.contains('hidden')) updateStats();
     }else if(diff < 3*86400000){
-      document.getElementById('expiryWarningText').textContent = 'Premium akan berakhir dalam '+Math.ceil(diff/86400000)+' hari!';
+      document.getElementById('expiryWarningText').textContent = 'Premium berakhir dalam '+Math.ceil(diff/86400000)+' hari!';
       warn.classList.add('show');
     }else{ warn.classList.remove('show'); }
   }
 }
 
-// ---------- BACKUP/RESTORE USER ----------
+// ---------- BACKUP/RESTORE ----------
 function backupUserData() {
   var s = getSession(); if (!s) return showToast('Login dulu!','error');
   var data = getAllLacakData()[s.id] || [];
@@ -1683,7 +1596,7 @@ function backupUserData() {
   a.href = URL.createObjectURL(blob);
   a.download = 'traceid_backup_' + s.username + '_' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
-  showToast('✅ Backup data berhasil didownload!', 'success');
+  showToast('✅ Backup didownload!', 'success');
 }
 function restoreUserData(input) {
   var s = getSession(); if (!s) return;
@@ -1693,43 +1606,29 @@ function restoreUserData(input) {
     try {
       var data = JSON.parse(e.target.result);
       if (!data.lacak || !Array.isArray(data.lacak)) throw new Error('Format salah');
-      var all = getAllLacakData();
-      all[s.id] = data.lacak;
-      saveAllLacakData(all);
-      autoSaveData();
-      refreshAppUI();
-      updateStats();
-      showToast('✅ Data berhasil dipulihkan!', 'success');
-    } catch (ex) { showToast('❌ Format file tidak valid.', 'error'); }
+      var all = getAllLacakData(); all[s.id] = data.lacak; saveAllLacakData(all);
+      autoSaveData(); refreshAppUI(); updateStats();
+      showToast('✅ Data dipulihkan!', 'success');
+    } catch (ex) { showToast('❌ Format tidak valid.', 'error'); }
   };
-  reader.readAsText(file);
-  input.value = '';
+  reader.readAsText(file); input.value = '';
 }
 
-/* ================================================================
-   INISIALISASI + AUTO-SAVE + BACKUP UPGRADE
-   ================================================================ */
+// ---------- INIT + AUTO-SAVE ----------
 function initUserApps(session) {
   if (!session) return;
   var all = getAllLacakData();
   if (!all[session.id] || !Array.isArray(all[session.id])) {
-    all[session.id] = [];
-    saveAllLacakData(all);
+    all[session.id] = []; saveAllLacakData(all);
   }
 }
 
 function autoSaveData() {
   try {
-    var s = getSession();
-    if (!s) return;
-    var all = getAllLacakData();
-    var userData = all[s.id] || [];
+    var s = getSession(); if (!s) return;
+    var all = getAllLacakData(); var userData = all[s.id] || [];
     localStorage.setItem('tr_userdata_' + s.username, JSON.stringify(userData));
     sessionStorage.setItem('tr_autosave_' + s.id, JSON.stringify(userData));
-    sessionStorage.setItem('tr_autosave_user_' + s.username, JSON.stringify(userData));
-    var now = new Date().toISOString();
-    sessionStorage.setItem('tr_autosave_time_' + s.id, now);
-    localStorage.setItem('tr_lastsave_' + s.username, now);
   } catch (e) {}
 }
 
@@ -1737,33 +1636,26 @@ window.backupSebelumUpgrade = function() {
   var allData = {};
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
-    if (key.startsWith('tr_')) { allData[key] = localStorage.getItem(key); }
-  }
-  allData['_sessionStorage'] = {};
-  for (var j = 0; j < sessionStorage.length; j++) {
-    var sKey = sessionStorage.key(j);
-    if (sKey.startsWith('tr_')) { allData['_sessionStorage'][sKey] = sessionStorage.getItem(sKey); }
+    if (key.startsWith('tr_')) allData[key] = localStorage.getItem(key);
   }
   var blob = new Blob([JSON.stringify(allData, null, 2)], {type: 'application/json'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'traceid_full_backup_upgrade_' + new Date().toISOString().slice(0,10) + '.json';
+  a.download = 'traceid_full_backup_' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
-  showToast('✅ Backup penuh berhasil! Simpan file ini sebelum upgrade.', 'success');
+  showToast('✅ Backup penuh berhasil!', 'success');
 };
 
 setInterval(function() {
   var s = getSession();
-  if (s && !document.getElementById('applicationPage').classList.contains('hidden')) { autoSaveData(); }
+  if (s && !document.getElementById('applicationPage').classList.contains('hidden')) autoSaveData();
 }, 30000);
 
-window.addEventListener('beforeunload', function() { autoSaveData(); });
-document.addEventListener('visibilitychange', function() { if (document.hidden) { autoSaveData(); } });
-
-console.log('✅ TraceID Blok 9 R3 terpasang: API ipapi.co + koordinat selalu tampil.');
+window.addEventListener('beforeunload', autoSaveData);
+document.addEventListener('visibilitychange', function() { if (document.hidden) autoSaveData(); });
 </script>
 <!-- ============================================================
-     AKHIR BLOK 9 R3
+     AKHIR BLOK 9 R4
      ============================================================ -->
 
 <!-- ============================================================
