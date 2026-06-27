@@ -1244,11 +1244,11 @@ function activatePremium(code, errId, sucId) {
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 9 R9 – JS CORE 2 (LENGKAP FINAL)
-     Revisi 9: Semua fungsi + Upload Gambar + IP API + Link Tracker
+     BLOK 9 R10 – JS CORE 2 (PERBAIKAN TOMBOL SIAPKAN KIRIMAN)
+     Revisi 10: Fix generateTrackerLink + semua fungsi lengkap
      ============================================================ -->
 <script>
-// ---------- FORGOT PASSWORD ----------
+// ========== FUNGSI DASAR ==========
 function handleForgotPassword() {
   var n = document.getElementById('forgotNama').value.trim();
   var e = document.getElementById('forgotEmail').value.trim();
@@ -1263,7 +1263,6 @@ function handleForgotPassword() {
   setTimeout(function(){ openWhatsApp('Halo admin, saya ingin reset password. Nama: '+n); },2000);
 }
 
-// ---------- PROFILE ----------
 function loadProfileData() {
   var s = getSession(); if(!s) return;
   document.getElementById('profileAvatar').textContent = s.nama.charAt(0).toUpperCase();
@@ -1301,7 +1300,6 @@ function deleteAccount() {
   });
 }
 
-// ---------- HEADER UPDATE ----------
 function updateHeaderUser() {
   var s = getSession();
   var badge = document.getElementById('userBadge'), prof = document.getElementById('profileButton');
@@ -1309,14 +1307,12 @@ function updateHeaderUser() {
   var act = document.getElementById('activationToolbarButton');
   var chatAdminBtn = document.getElementById('chatButton');
   var chatUserBtn = document.getElementById('chatUserButton');
-
   if(s){
     badge.style.display='flex'; document.getElementById('userAvatar').textContent=s.nama.charAt(0).toUpperCase();
     document.getElementById('userNameDisplay').textContent=s.nama;
     prof.classList.remove('hidden'); logout.classList.remove('hidden');
     adm.classList.toggle('hidden', s.role!=='superadmin');
     act.style.display = (s.role=='user'&&!s.premium) ? 'inline-flex' : 'none';
-
     if (s.role === 'superadmin') {
       if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
       if (chatUserBtn) chatUserBtn.classList.add('hidden');
@@ -1332,7 +1328,6 @@ function updateHeaderUser() {
   }
 }
 
-// ---------- STATS ----------
 function updateStats() {
   var s = getSession();
   var data = s ? (getAllLacakData()[s.id]||[]) : [];
@@ -1350,7 +1345,7 @@ function updateStats() {
   status.textContent = (s&&(s.premium||s.role=='superadmin'))?'Premium':'Free';
 }
 
-// ---------- MODAL LACAK ----------
+// ========== MODAL LACAK ==========
 function showLacakModal(type) {
   var s = getSession(); if(!s) return showToast('Login dulu!','error');
   document.getElementById('lacakType').value = type;
@@ -1374,58 +1369,35 @@ function showLacakModal(type) {
   openModal('lacakModal');
 }
 
-// ---------- EKSEKUSI LACAK ----------
 function executeLacak() {
   var type = document.getElementById('lacakType').value;
   var input = document.getElementById('lacakInput').value.trim();
   var err = document.getElementById('lacakError');
   err.classList.remove('show');
   if (!input) { err.textContent = 'Masukkan data target!'; err.classList.add('show'); return; }
-
-  var s = getSession();
-  if (!s) return;
-
+  var s = getSession(); if (!s) return;
   document.getElementById('lacakLoading').classList.remove('hidden');
   document.getElementById('lacakResultDetail').classList.add('hidden');
-
   if (type === 'ip') {
     fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
       .then(function(res) { return res.json(); })
       .then(function(data) {
         document.getElementById('lacakLoading').classList.add('hidden');
         if (data && data.latitude && data.longitude) {
-          var hasil = {
-            ip: data.ip || input,
-            kota: data.city || '-',
-            provinsi: data.region || '-',
-            negara: data.country_name || '-',
-            lat: data.latitude,
-            lng: data.longitude,
-            maps: 'https://www.google.com/maps?q=' + data.latitude + ',' + data.longitude
-          };
+          var hasil = { ip: data.ip || input, kota: data.city || '-', provinsi: data.region || '-', negara: data.country_name || '-', lat: data.latitude, lng: data.longitude, maps: 'https://www.google.com/maps?q=' + data.latitude + ',' + data.longitude };
           simpanDanTampilkan('ip', input, hasil);
           showToast('✅ Koordinat ditemukan!', 'success');
         } else {
-          var lat = (Math.random() * 10 - 6).toFixed(4);
-          var lng = (Math.random() * 20 + 106).toFixed(4);
-          var fallback = {
-            ip: input, kota: 'Tidak diketahui', provinsi: 'Indonesia', negara: 'Indonesia',
-            lat: lat, lng: lng,
-            maps: 'https://www.google.com/maps?q=' + lat + ',' + lng
-          };
+          var lat = (Math.random() * 10 - 6).toFixed(4), lng = (Math.random() * 20 + 106).toFixed(4);
+          var fallback = { ip: input, kota: 'Tidak diketahui', provinsi: 'Indonesia', negara: 'Indonesia', lat: lat, lng: lng, maps: 'https://www.google.com/maps?q=' + lat + ',' + lng };
           simpanDanTampilkan('ip', input, fallback);
           showToast('⚠️ Data perkiraan', 'warning');
         }
       })
       .catch(function() {
         document.getElementById('lacakLoading').classList.add('hidden');
-        var lat = (Math.random() * 10 - 6).toFixed(4);
-        var lng = (Math.random() * 20 + 106).toFixed(4);
-        var fallback = {
-          ip: input, kota: 'Offline', provinsi: 'Indonesia', negara: 'Indonesia',
-          lat: lat, lng: lng,
-          maps: 'https://www.google.com/maps?q=' + lat + ',' + lng
-        };
+        var lat = (Math.random() * 10 - 6).toFixed(4), lng = (Math.random() * 20 + 106).toFixed(4);
+        var fallback = { ip: input, kota: 'Offline', provinsi: 'Indonesia', negara: 'Indonesia', lat: lat, lng: lng, maps: 'https://www.google.com/maps?q=' + lat + ',' + lng };
         simpanDanTampilkan('ip', input, fallback);
         showToast('⚠️ Offline, data perkiraan', 'warning');
       });
@@ -1459,9 +1431,7 @@ function tampilkanHasil(hasil) {
     html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
     html += '<div style="font-size:0.8rem;opacity:0.9;">📍 TITIK KOORDINAT</div>';
     html += '<div style="font-size:1.5rem;font-weight:800;">' + hasil.lat + ', ' + hasil.lng + '</div>';
-    if (hasil.maps) {
-      html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;font-size:0.85rem;">🗺 Buka di Google Maps</a>';
-    }
+    if (hasil.maps) html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;font-size:0.85rem;">🗺 Buka di Google Maps</a>';
     html += '</div>';
   }
   if (hasil.ip) html += '<p><strong>IP:</strong> ' + hasil.ip + '</p>';
@@ -1475,37 +1445,26 @@ function tampilkanHasil(hasil) {
   document.getElementById('lacakResultDetail').classList.remove('hidden');
 }
 
-// ---------- REFRESH RIWAYAT ----------
 function refreshAppUI() {
   var s = getSession();
-  if (!s) {
-    document.getElementById('riwayatLacakContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>';
-    return;
-  }
+  if (!s) { document.getElementById('riwayatLacakContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>'; return; }
   initUserApps(s);
   var data = getAllLacakData()[s.id] || [];
   var container = document.getElementById('riwayatLacakContainer');
-  if (data.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>';
-    return;
-  }
+  if (data.length === 0) { container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>'; return; }
   data.sort(function(a,b){ return new Date(b.time) - new Date(a.time); });
   var icons = { ip:'🌐', email:'📧', tiktok:'🎵', instagram:'📷', facebook:'📘', whatsapp:'📱', tracker:'🔗' };
   container.innerHTML = data.map(function(d){
     var koor = '';
-    if (d.result && d.result.lat) {
-      koor = ' <span style="color:#10b981;">📍' + d.result.lat + ',' + d.result.lng + '</span>';
-    }
-    return '<div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:var(--spacing-md);border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\''+d.id+'\')">'+
+    if (d.result && d.result.lat) koor = ' <span style="color:#10b981;">📍' + d.result.lat + ',' + d.result.lng + '</span>';
+    return '<div style="background:var(--bg-secondary);border-radius:8px;padding:12px;border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\''+d.id+'\')">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">'+
         '<span>'+(icons[d.type]||'🔍')+' <strong>'+d.type.toUpperCase()+'</strong> – '+d.input+koor+'</span>'+
         '<span style="font-size:0.75rem;color:var(--text-muted);">'+new Date(d.time).toLocaleString()+'</span>'+
-      '</div>'+
-    '</div>';
+      '</div></div>';
   }).join('');
 }
 
-// ---------- DETAIL RIWAYAT ----------
 function showDetailRiwayat(id) {
   var s = getSession(); if(!s) return;
   var data = getAllLacakData()[s.id] || [];
@@ -1518,14 +1477,10 @@ function showDetailRiwayat(id) {
     html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
     html += '<div style="font-size:0.8rem;">📍 TITIK KOORDINAT</div>';
     html += '<div style="font-size:1.3rem;font-weight:800;">' + hasil.lat + ', ' + hasil.lng + '</div>';
-    if (hasil.maps) {
-      html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;">🗺 Buka Google Maps</a>';
-    }
+    if (hasil.maps) html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;">🗺 Buka Google Maps</a>';
     html += '</div>';
   }
-  if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) {
-    html += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:250px;border-radius:8px;margin-bottom:8px;">';
-  }
+  if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) html += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:250px;border-radius:8px;margin-bottom:8px;">';
   for (var key in hasil) {
     if (key === 'lat' || key === 'lng' || key === 'maps' || key === 'gambarData') continue;
     html += '<p><strong>' + key + ':</strong> ' + hasil[key] + '</p>';
@@ -1534,7 +1489,6 @@ function showDetailRiwayat(id) {
   openModal('detailRiwayatModal');
 }
 
-// ---------- IMPORT/EXPORT ----------
 function exportAllData() {
   var s = getSession(); if(!s) return showToast('Login dulu!','error');
   var data = { lacak: getAllLacakData()[s.id]||[], exportedAt: new Date().toISOString() };
@@ -1556,7 +1510,6 @@ function importAllData(input) {
   reader.readAsText(file);
 }
 
-// ---------- CONFIRM ----------
 var confirmCb = null;
 function showConfirm(title,msg,cb){
   document.getElementById('confirmTitle').textContent=title;
@@ -1565,7 +1518,6 @@ function showConfirm(title,msg,cb){
 }
 function executeConfirmAction(){ if(confirmCb){confirmCb(); confirmCb=null;} closeModal('confirmModal'); }
 
-// ---------- EXPIRY CHECK ----------
 function checkAllExpiredActivations() {
   var s = getSession(); if(!s||!s.premiumExpiry) return;
   var now = new Date(); var exp = new Date(s.premiumExpiry); var diff = exp - now;
@@ -1584,7 +1536,6 @@ function checkAllExpiredActivations() {
   }
 }
 
-// ---------- BACKUP/RESTORE ----------
 function backupUserData() {
   var s = getSession(); if (!s) return showToast('Login dulu!','error');
   var data = getAllLacakData()[s.id] || [];
@@ -1612,39 +1563,42 @@ function restoreUserData(input) {
   reader.readAsText(file); input.value = '';
 }
 
-// ---------- VARIABEL GAMBAR ----------
+// ========== LINK TRACKER + UPLOAD GAMBAR ==========
 var trackerImageData = null;
 
-// ---------- LINK TRACKER DENGAN UPLOAD GAMBAR ----------
 function showLinkTrackerModal() {
   var s = getSession(); if (!s) return showToast('Login dulu!','error');
-  document.getElementById('trackerTitle').value = '';
-  document.getElementById('trackerMessage').value = '';
-  document.getElementById('trackerImageUrl').value = '';
-  var fileInput = document.getElementById('trackerImageFile');
-  if (fileInput) fileInput.value = '';
-  var preview = document.getElementById('trackerImagePreview');
-  if (preview) preview.style.display = 'none';
-  document.getElementById('trackerResult').classList.add('hidden');
-  document.getElementById('trackerError').classList.remove('show');
+  var titleEl = document.getElementById('trackerTitle');
+  var msgEl = document.getElementById('trackerMessage');
+  var urlEl = document.getElementById('trackerImageUrl');
+  var fileEl = document.getElementById('trackerImageFile');
+  var previewEl = document.getElementById('trackerImagePreview');
+  var resultEl = document.getElementById('trackerResult');
+  var errEl = document.getElementById('trackerError');
+  if (titleEl) titleEl.value = '';
+  if (msgEl) msgEl.value = '';
+  if (urlEl) urlEl.value = '';
+  if (fileEl) fileEl.value = '';
+  if (previewEl) previewEl.style.display = 'none';
+  if (resultEl) resultEl.classList.add('hidden');
+  if (errEl) errEl.classList.remove('show');
   trackerImageData = null;
   openModal('linkTrackerModal');
 }
 
 function previewTrackerImage() {
   var fileInput = document.getElementById('trackerImageFile');
-  if (!fileInput) return;
+  if (!fileInput || !fileInput.files || !fileInput.files[0]) return;
   var file = fileInput.files[0];
-  if (!file) return;
   if (!file.type.startsWith('image/')) { showToast('❌ Pilih file gambar!', 'error'); return; }
   if (file.size > 5 * 1024 * 1024) { showToast('❌ Gambar terlalu besar (max 5MB)!', 'error'); return; }
   var reader = new FileReader();
   reader.onload = function(e) {
     trackerImageData = e.target.result;
     var previewImg = document.getElementById('trackerImagePreviewImg');
+    var previewDiv = document.getElementById('trackerImagePreview');
     if (previewImg) previewImg.src = trackerImageData;
-    var preview = document.getElementById('trackerImagePreview');
-    if (preview) preview.style.display = 'block';
+    if (previewDiv) previewDiv.style.display = 'block';
   };
   reader.readAsDataURL(file);
 }
@@ -1652,19 +1606,29 @@ function previewTrackerImage() {
 function removeTrackerImage() {
   trackerImageData = null;
   var fileInput = document.getElementById('trackerImageFile');
+  var previewDiv = document.getElementById('trackerImagePreview');
   if (fileInput) fileInput.value = '';
-  var preview = document.getElementById('trackerImagePreview');
-  if (preview) preview.style.display = 'none';
+  if (previewDiv) previewDiv.style.display = 'none';
 }
 
 function generateTrackerLink() {
-  var title = document.getElementById('trackerTitle').value.trim();
-  var message = document.getElementById('trackerMessage').value.trim();
-  var imageUrl = document.getElementById('trackerImageUrl').value.trim();
-  var err = document.getElementById('trackerError');
-  err.classList.remove('show');
-  if (!title) { err.textContent = 'Isi judul!'; err.classList.add('show'); return; }
-  if (!message) { err.textContent = 'Isi pesan!'; err.classList.add('show'); return; }
+  var titleEl = document.getElementById('trackerTitle');
+  var msgEl = document.getElementById('trackerMessage');
+  var urlEl = document.getElementById('trackerImageUrl');
+  var errEl = document.getElementById('trackerError');
+  
+  if (!titleEl || !msgEl || !errEl) {
+    showToast('❌ Form tidak ditemukan. Refresh halaman.', 'error');
+    return;
+  }
+  
+  var title = titleEl.value.trim();
+  var message = msgEl.value.trim();
+  var imageUrl = urlEl ? urlEl.value.trim() : '';
+  errEl.classList.remove('show');
+  
+  if (!title) { errEl.textContent = 'Isi judul dulu!'; errEl.classList.add('show'); return; }
+  if (!message) { errEl.textContent = 'Isi pesan dulu!'; errEl.classList.add('show'); return; }
   
   var finalImage = trackerImageData || imageUrl || '';
   var s = getSession();
@@ -1676,47 +1640,60 @@ function generateTrackerLink() {
     status: 'Siap Dikirim',
     waktu: new Date().toLocaleString()
   };
+  
   simpanDanTampilkan('tracker', title, hasil);
   
   var previewHTML = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
   if (finalImage) {
     previewHTML += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
   }
-  var previewFinal = document.getElementById('trackerPreviewFinal');
-  if (previewFinal) previewFinal.innerHTML = previewHTML;
   
-  document.getElementById('trackerResult').classList.remove('hidden');
-  document.getElementById('trackerResult').setAttribute('data-title', title);
-  document.getElementById('trackerResult').setAttribute('data-message', message);
-  document.getElementById('trackerResult').setAttribute('data-image', finalImage);
+  var previewFinal = document.getElementById('trackerPreviewFinal');
+  var resultDiv = document.getElementById('trackerResult');
+  
+  if (previewFinal) previewFinal.innerHTML = previewHTML;
+  if (resultDiv) {
+    resultDiv.classList.remove('hidden');
+    resultDiv.setAttribute('data-title', title);
+    resultDiv.setAttribute('data-message', message);
+    resultDiv.setAttribute('data-image', finalImage);
+  }
   
   showToast('✅ Pesan & gambar siap dikirim!', 'success');
 }
 
 function copyTrackerMessage() {
-  var message = document.getElementById('trackerResult').getAttribute('data-message');
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var message = resultDiv.getAttribute('data-message') || '';
   navigator.clipboard.writeText(message).then(function() { showToast('✅ Pesan disalin!', 'success'); });
 }
 
 function shareTrackerWA() {
-  var title = document.getElementById('trackerResult').getAttribute('data-title');
-  var message = document.getElementById('trackerResult').getAttribute('data-message');
-  var image = document.getElementById('trackerResult').getAttribute('data-image');
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var title = resultDiv.getAttribute('data-title') || '';
+  var message = resultDiv.getAttribute('data-message') || '';
+  var image = resultDiv.getAttribute('data-image') || '';
   var text = '📌 ' + title + '\n\n' + message;
-  if (image && image.startsWith('http')) { text += '\n\n📷 Gambar: ' + image; }
-  else if (image) { text += '\n\n📷 (Gambar terlampir)'; }
+  if (image && image.startsWith('http')) text += '\n\n📷 Gambar: ' + image;
+  else if (image) text += '\n\n📷 (Gambar terlampir)';
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
 function shareTrackerEmail() {
-  var title = document.getElementById('trackerResult').getAttribute('data-title');
-  var message = document.getElementById('trackerResult').getAttribute('data-message');
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var title = resultDiv.getAttribute('data-title') || '';
+  var message = resultDiv.getAttribute('data-message') || '';
   window.open('mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(message), '_blank');
 }
 
 function shareTrackerSMS() {
-  var title = document.getElementById('trackerResult').getAttribute('data-title');
-  var message = document.getElementById('trackerResult').getAttribute('data-message');
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var title = resultDiv.getAttribute('data-title') || '';
+  var message = resultDiv.getAttribute('data-message') || '';
   window.open('sms:?body=' + encodeURIComponent(title + ': ' + message), '_blank');
 }
 
@@ -1744,7 +1721,7 @@ function showTrackerClicks() {
   openModal('trackerClicksModal');
 }
 
-// ---------- INIT + AUTO-SAVE ----------
+// ========== INIT + AUTO-SAVE ==========
 function initUserApps(session) {
   if (!session) return;
   var all = getAllLacakData();
@@ -1784,10 +1761,10 @@ setInterval(function() {
 window.addEventListener('beforeunload', autoSaveData);
 document.addEventListener('visibilitychange', function() { if (document.hidden) autoSaveData(); });
 
-console.log('✅ TraceID Blok 9 R9 terpasang lengkap.');
+console.log('✅ TraceID Blok 9 R10 terpasang.');
 </script>
 <!-- ============================================================
-     AKHIR BLOK 9 R9
+     AKHIR BLOK 9 R10
      ============================================================ -->
 
 <!-- ============================================================
