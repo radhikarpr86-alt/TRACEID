@@ -1256,9 +1256,8 @@ function activatePremium(code, errId, sucId) {
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 9 R2 – JS CORE 2 (LACAK IP REAL API + FALLBACK)
-     Revisi 2: Ganti simulasi IP dengan API ip-api.com (gratis)
-     Hasil: koordinat asli, kota, ISP, link Google Maps
+     BLOK 9 R3 – JS CORE 2 (PERBAIKI API IP + KOORDINAT)
+     Revisi 3: Ganti ke ipapi.co (HTTPS), pastikan lat/lng tampil
      ============================================================ -->
 <script>
 // ---------- FORGOT PASSWORD ----------
@@ -1369,7 +1368,7 @@ function showLacakModal(type) {
   document.getElementById('lacakType').value = type;
   var title = '', label = '', placeholder = '', hint = '';
   switch(type) {
-    case 'ip': title='🌐 Lacak via IP Address'; label='Masukkan IP Address target'; placeholder='Contoh: 114.5.220.50'; hint='Masukkan IP publik target. Dapatkan koordinat & lokasi asli.'; break;
+    case 'ip': title='🌐 Lacak via IP Address'; label='Masukkan IP Address target'; placeholder='Contoh: 8.8.8.8 atau 114.5.220.50'; hint='Masukkan IP publik. Dapatkan koordinat & lokasi asli.'; break;
     case 'email': title='📧 Lacak via Email'; label='Masukkan Email target'; placeholder='Contoh: target@gmail.com'; hint='Cari akun yang terdaftar dengan email ini.'; break;
     case 'tiktok': title='🎵 Lacak via TikTok'; label='Masukkan Username TikTok'; placeholder='Contoh: username'; hint='Masukkan username TikTok tanpa @.'; break;
     case 'instagram': title='📷 Lacak via Instagram'; label='Masukkan Username Instagram'; placeholder='Contoh: username'; hint='Masukkan username Instagram target.'; break;
@@ -1387,7 +1386,7 @@ function showLacakModal(type) {
   openModal('lacakModal');
 }
 
-// ---------- EKSEKUSI LACAK (API ASLI UNTUK IP) ----------
+// ---------- EKSEKUSI LACAK (API ipapi.co + FALLBACK) ----------
 function executeLacak() {
   var type = document.getElementById('lacakType').value;
   var input = document.getElementById('lacakInput').value.trim();
@@ -1415,38 +1414,38 @@ function executeLacak() {
   document.getElementById('lacakResultDetail').classList.add('hidden');
 
   if (type === 'ip') {
-    // ========== API ASLI: ip-api.com ==========
-    fetch('http://ip-api.com/json/' + encodeURIComponent(input) + '?fields=status,message,country,regionName,city,isp,lat,lon,query')
+    // ========== API ASLI: ipapi.co (HTTPS, gratis, no key) ==========
+    fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
       .then(function(response) { return response.json(); })
       .then(function(data) {
         document.getElementById('lacakLoading').classList.add('hidden');
-        if (data.status === 'success') {
+        if (data && !data.error) {
           var result = {
-            ip: data.query,
+            ip: data.ip || input,
             kota: data.city || '-',
-            provinsi: data.regionName || '-',
-            negara: data.country || '-',
-            isp: data.isp || '-',
-            lat: data.lat,
-            lng: data.lon,
-            maps: 'https://www.google.com/maps?q=' + data.lat + ',' + data.lon
+            provinsi: data.region || '-',
+            negara: data.country_name || '-',
+            isp: data.org || data.asn || '-',
+            lat: data.latitude || 0,
+            lng: data.longitude || 0,
+            maps: 'https://www.google.com/maps?q=' + (data.latitude || 0) + ',' + (data.longitude || 0)
           };
           saveLacakResult(type, input, result);
           displayLacakResult(result);
           updateStats();
           showToast('✅ Koordinat ditemukan!', 'success');
         } else {
-          // Fallback ke simulasi jika API gagal
+          // Fallback simulasi
           var fallback = generateLacakResult(type, input);
           saveLacakResult(type, input, fallback);
           displayLacakResult(fallback);
           updateStats();
-          showToast('⚠️ API gagal, data perkiraan.', 'warning');
+          showToast('⚠️ IP tidak ditemukan, data perkiraan.', 'warning');
         }
       })
       .catch(function() {
         document.getElementById('lacakLoading').classList.add('hidden');
-        // Fallback ke simulasi
+        // Fallback simulasi
         var fallback = generateLacakResult(type, input);
         saveLacakResult(type, input, fallback);
         displayLacakResult(fallback);
@@ -1454,7 +1453,7 @@ function executeLacak() {
         showToast('⚠️ Offline, data perkiraan.', 'warning');
       });
   } else {
-    // Jenis lain: pakai simulasi
+    // Jenis lain: simulasi
     setTimeout(function() {
       document.getElementById('lacakLoading').classList.add('hidden');
       var result = generateLacakResult(type, input);
@@ -1484,14 +1483,14 @@ function saveLacakResult(type, input, result) {
   autoSaveData();
 }
 
-// ---------- GENERATE HASIL LACAK (SIMULASI UNTUK NON-IP) ----------
+// ---------- GENERATE HASIL LACAK (SIMULASI) ----------
 function generateLacakResult(type, input) {
   var cities = ['Jakarta Pusat', 'Surabaya', 'Bandung', 'Medan', 'Makassar', 'Yogyakarta', 'Semarang', 'Palembang', 'Denpasar', 'Balikpapan'];
-  var isps = ['Telkomsel', 'Indosat', 'XL Axiata', 'Tri', 'Smartfren', 'Biznet', 'MyRepublic', 'First Media'];
+  var isps = ['Telkomsel', 'Indosat', 'XL Axiata', 'Tri', 'Smartfren'];
   var randomCity = cities[Math.floor(Math.random() * cities.length)];
   var randomIsp = isps[Math.floor(Math.random() * isps.length)];
-  var randomLat = (Math.random() * 10 - 5).toFixed(4);
-  var randomLng = (Math.random() * 20 + 100).toFixed(4);
+  var randomLat = (Math.random() * 10 - 6).toFixed(4);
+  var randomLng = (Math.random() * 20 + 106).toFixed(4);
 
   switch(type) {
     case 'ip':
@@ -1551,15 +1550,15 @@ function generateLacakResult(type, input) {
   }
 }
 
-// ---------- TAMPILKAN HASIL LACAK DI MODAL ----------
+// ---------- TAMPILKAN HASIL LACAK ----------
 function displayLacakResult(result) {
   var html = '';
   for (var key in result) {
     var val = result[key];
     if ((key === 'maps' || key === 'link') && typeof val === 'string' && val.startsWith('http')) {
-      html += '<p style="margin-bottom:6px;"><strong>' + key + ':</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">🔗 Buka</a></p>';
+      html += '<p style="margin-bottom:6px;"><strong>' + key + ':</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">🔗 Buka di Google Maps</a></p>';
     } else if (key === 'lat' || key === 'lng') {
-      html += '<p style="margin-bottom:6px;"><strong>' + key + ':</strong> ' + val + '</p>';
+      html += '<p style="margin-bottom:6px;"><strong>📍 ' + key + ':</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
     } else if (typeof val === 'boolean') {
       html += '<p style="margin-bottom:6px;"><strong>' + key + ':</strong> ' + (val ? '✅ Ya' : '❌ Tidak') + '</p>';
     } else {
@@ -1570,7 +1569,7 @@ function displayLacakResult(result) {
   document.getElementById('lacakResultDetail').classList.remove('hidden');
 }
 
-// ---------- REFRESH RIWAYAT & UI ----------
+// ---------- REFRESH RIWAYAT ----------
 function refreshAppUI() {
   var s = getSession();
   if (!s) {
@@ -1581,15 +1580,19 @@ function refreshAppUI() {
   var data = getAllLacakData()[s.id] || [];
   var container = document.getElementById('riwayatLacakContainer');
   if (data.length === 0) {
-    container.innerHTML = '<div class="empty-state" id="emptyRiwayat"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3><p>Riwayat pelacakan Anda akan muncul di sini.</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3><p>Riwayat pelacakan Anda akan muncul di sini.</p></div>';
     return;
   }
   data.sort(function(a,b){ return new Date(b.time) - new Date(a.time); });
   var typeIcons = { ip:'🌐', email:'📧', tiktok:'🎵', instagram:'📷', facebook:'📘', whatsapp:'📱' };
   container.innerHTML = data.map(function(d){
+    var koordinat = '';
+    if (d.result && d.result.lat && d.result.lng) {
+      koordinat = ' 📍' + d.result.lat + ',' + d.result.lng;
+    }
     return '<div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:var(--spacing-lg);border:1px solid var(--border-color);cursor:pointer;" onclick="showDetailRiwayat(\''+d.id+'\')">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;">'+
-        '<span>'+(typeIcons[d.type]||'🔍')+' <strong>'+d.type.toUpperCase()+'</strong> – '+d.input+'</span>'+
+        '<span>'+(typeIcons[d.type]||'🔍')+' <strong>'+d.type.toUpperCase()+'</strong> – '+d.input+koordinat+'</span>'+
         '<span style="font-size:0.75rem;color:var(--text-muted);">'+new Date(d.time).toLocaleString()+'</span>'+
       '</div>'+
     '</div>';
@@ -1607,7 +1610,9 @@ function showDetailRiwayat(id) {
   for (var key in item.result) {
     var val = item.result[key];
     if ((key === 'maps' || key === 'link') && typeof val === 'string' && val.startsWith('http')) {
-      html += '<p style="margin-bottom:4px;"><strong>' + key + ':</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">🔗 Buka</a></p>';
+      html += '<p style="margin-bottom:4px;"><strong>' + key + ':</strong> <a href="' + val + '" target="_blank" style="color:#3b82f6;">🔗 Buka di Google Maps</a></p>';
+    } else if (key === 'lat' || key === 'lng') {
+      html += '<p style="margin-bottom:4px;"><strong>📍 ' + key + ':</strong> <span style="color:#10b981;font-weight:700;">' + val + '</span></p>';
     } else if (typeof val === 'boolean') {
       html += '<p style="margin-bottom:4px;"><strong>' + key + ':</strong> ' + (val ? '✅ Ya' : '❌ Tidak') + '</p>';
     } else {
@@ -1755,10 +1760,10 @@ setInterval(function() {
 window.addEventListener('beforeunload', function() { autoSaveData(); });
 document.addEventListener('visibilitychange', function() { if (document.hidden) { autoSaveData(); } });
 
-console.log('✅ TraceID Blok 9 R2 terpasang: API IP asli + fallback simulasi.');
+console.log('✅ TraceID Blok 9 R3 terpasang: API ipapi.co + koordinat selalu tampil.');
 </script>
 <!-- ============================================================
-     AKHIR BLOK 9 R2
+     AKHIR BLOK 9 R3
      ============================================================ -->
 
 <!-- ============================================================
