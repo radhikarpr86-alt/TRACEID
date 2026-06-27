@@ -816,42 +816,9 @@
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 6 R6 – MODAL LACAK, LINK TRACKER, DETAIL, KONFIRMASI, EDIT PAKET (LENGKAP)
-     Revisi 6: Semua modal untuk TraceID - ID konsisten dengan Blok 9 R14
+     BLOK 6 R7 – MODAL LINK TRACKER (PERBAIKAN ID & STRUKTUR)
+     Revisi 7: ID disederhanakan, event onclick inline
      ============================================================ -->
-<!-- MODAL LACAK (IP, Email, TikTok, Instagram, Facebook, WhatsApp) -->
-<div class="modal-overlay" id="lacakModal">
-  <div class="modal-content" style="max-width:550px;">
-    <div class="modal-header">
-      <h3 id="lacakModalTitle">🔍 Lacak</h3>
-      <button class="modal-close" onclick="closeModal('lacakModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="lacakType">
-      <div class="form-group">
-        <label class="form-label" id="lacakLabel">Masukkan data target</label>
-        <input type="text" id="lacakInput" placeholder="">
-        <div class="form-hint" id="lacakHint"></div>
-      </div>
-      <div id="lacakLoading" class="hidden" style="text-align:center;padding:20px;">
-        <div style="font-size:2rem;animation:spin 1s linear infinite;">🔄</div>
-        <p style="color:var(--text-secondary);margin-top:8px;">Melacak... Mohon tunggu.</p>
-      </div>
-      <div id="lacakResultDetail" class="hidden" style="margin-top:16px;">
-        <div style="background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
-          <h4 style="margin-bottom:12px;color:var(--accent-light);">📋 Hasil Pelacakan</h4>
-          <div id="lacakResultContent"></div>
-        </div>
-      </div>
-      <div class="form-error" id="lacakError"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('lacakModal')" class="btn btn-gray">Tutup</button>
-      <button onclick="executeLacak()" class="btn btn-primary" id="lacakButton">🔍 Lacak Sekarang</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL LINK TRACKER (DENGAN UPLOAD GAMBAR) -->
 <div class="modal-overlay" id="linkTrackerModal">
   <div class="modal-content" style="max-width:550px;">
@@ -885,7 +852,7 @@
         <input type="text" id="trackerImageUrl" placeholder="https://example.com/foto.jpg">
         <div class="form-hint">Tempel URL gambar dari internet. Upload dulu ke imgbb.com (gratis).</div>
       </div>
-      <button onclick="generateTrackerLink()" class="btn btn-primary btn-block" id="btnSiapkanKiriman">📤 Siapkan Kiriman</button>
+      <button class="btn btn-primary btn-block" id="btnSiapkanKiriman">📤 Siapkan Kiriman</button>
       <div id="trackerResult" class="hidden" style="margin-top:16px;">
         <div style="background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
           <h4 style="margin-bottom:8px;color:var(--accent-light);">✅ Pesan & Gambar Siap</h4>
@@ -978,7 +945,7 @@
   </div>
 </div>
 <!-- ============================================================
-     AKHIR BLOK 6 R6
+     AKHIR BLOK 6 R7
      ============================================================ -->
 
 <!-- ============================================================
