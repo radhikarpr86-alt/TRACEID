@@ -1308,8 +1308,8 @@ function activatePremium(code, errId, sucId) {
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 9 R12 – JS CORE 2 (BERSIH TANPA DUPLIKAT)
-     Revisi 12: Fungsi lacak + Link Tracker + Upload Gambar + Koordinat
+     BLOK 9 R13 – JS CORE 2 (FIX TOMBOL SIAPKAN KIRIMAN)
+     Revisi 13: generateTrackerLink dengan validasi ketat + loading
      ============================================================ -->
 <script>
 // ========== MODAL LACAK ==========
@@ -1551,13 +1551,20 @@ var trackerImageData = null;
 
 function showLinkTrackerModal() {
   var s = getSession(); if (!s) return showToast('Login dulu!','error');
-  document.getElementById('trackerTitle').value = '';
-  document.getElementById('trackerMessage').value = '';
-  document.getElementById('trackerImageUrl').value = '';
-  document.getElementById('trackerImageFile').value = '';
-  document.getElementById('trackerImagePreview').style.display = 'none';
-  document.getElementById('trackerResult').classList.add('hidden');
-  document.getElementById('trackerError').classList.remove('show');
+  var titleEl = document.getElementById('trackerTitle');
+  var msgEl = document.getElementById('trackerMessage');
+  var urlEl = document.getElementById('trackerImageUrl');
+  var fileEl = document.getElementById('trackerImageFile');
+  var previewEl = document.getElementById('trackerImagePreview');
+  var resultEl = document.getElementById('trackerResult');
+  var errEl = document.getElementById('trackerError');
+  if (titleEl) titleEl.value = '';
+  if (msgEl) msgEl.value = '';
+  if (urlEl) urlEl.value = '';
+  if (fileEl) fileEl.value = '';
+  if (previewEl) previewEl.style.display = 'none';
+  if (resultEl) resultEl.classList.add('hidden');
+  if (errEl) errEl.classList.remove('show');
   trackerImageData = null;
   openModal('linkTrackerModal');
 }
@@ -1571,34 +1578,62 @@ function previewTrackerImage() {
   var reader = new FileReader();
   reader.onload = function(e) {
     trackerImageData = e.target.result;
-    document.getElementById('trackerImagePreviewImg').src = trackerImageData;
-    document.getElementById('trackerImagePreview').style.display = 'block';
+    var previewImg = document.getElementById('trackerImagePreviewImg');
+    var previewDiv = document.getElementById('trackerImagePreview');
+    if (previewImg) previewImg.src = trackerImageData;
+    if (previewDiv) previewDiv.style.display = 'block';
   };
   reader.readAsDataURL(file);
 }
 
 function removeTrackerImage() {
   trackerImageData = null;
-  document.getElementById('trackerImageFile').value = '';
-  document.getElementById('trackerImagePreview').style.display = 'none';
+  var fileInput = document.getElementById('trackerImageFile');
+  var previewDiv = document.getElementById('trackerImagePreview');
+  if (fileInput) fileInput.value = '';
+  if (previewDiv) previewDiv.style.display = 'none';
 }
 
 function generateTrackerLink() {
-  var title = document.getElementById('trackerTitle').value.trim();
-  var message = document.getElementById('trackerMessage').value.trim();
-  var imageUrl = document.getElementById('trackerImageUrl').value.trim();
+  var titleEl = document.getElementById('trackerTitle');
+  var msgEl = document.getElementById('trackerMessage');
+  var urlEl = document.getElementById('trackerImageUrl');
   var errEl = document.getElementById('trackerError');
-  errEl.classList.remove('show');
+  var resultDiv = document.getElementById('trackerResult');
   
-  if (!title) { errEl.textContent = 'Isi judul dulu!'; errEl.classList.add('show'); return; }
-  if (!message) { errEl.textContent = 'Isi pesan dulu!'; errEl.classList.add('show'); return; }
+  // Validasi element
+  if (!titleEl || !msgEl) {
+    showToast('❌ Form tidak lengkap. Refresh halaman.', 'error');
+    return;
+  }
+  
+  var title = titleEl.value.trim();
+  var message = msgEl.value.trim();
+  var imageUrl = urlEl ? urlEl.value.trim() : '';
+  
+  if (errEl) errEl.classList.remove('show');
+  
+  if (!title) {
+    if (errEl) { errEl.textContent = 'Isi judul dulu!'; errEl.classList.add('show'); }
+    return;
+  }
+  if (!message) {
+    if (errEl) { errEl.textContent = 'Isi pesan dulu!'; errEl.classList.add('show'); }
+    return;
+  }
   
   var finalImage = trackerImageData || imageUrl || '';
   
-  // AMBIL KOORDINAT PENGGUNA SAAT INI
+  // Tampilkan loading di tombol
+  var btn = document.querySelector('#linkTrackerModal .btn-primary');
+  if (btn) { btn.textContent = '⏳ Menyiapkan...'; btn.disabled = true; }
+  
+  // Ambil koordinat
   fetch('https://ipapi.co/json/')
     .then(function(res) { return res.json(); })
     .then(function(ipData) {
+      if (btn) { btn.textContent = '📤 Siapkan Kiriman'; btn.disabled = false; }
+      
       var hasil = {
         judul: title,
         pesan: message,
@@ -1619,16 +1654,21 @@ function generateTrackerLink() {
       if (finalImage) previewHTML += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
       previewHTML += '<p style="margin-top:8px;color:#10b981;font-weight:700;">📍 Lokasi Anda: ' + hasil.lat + ', ' + hasil.lng + '</p>';
       
-      document.getElementById('trackerPreviewFinal').innerHTML = previewHTML;
-      var resultDiv = document.getElementById('trackerResult');
-      resultDiv.classList.remove('hidden');
-      resultDiv.setAttribute('data-title', title);
-      resultDiv.setAttribute('data-message', message);
-      resultDiv.setAttribute('data-image', finalImage);
+      var previewFinal = document.getElementById('trackerPreviewFinal');
+      if (previewFinal) previewFinal.innerHTML = previewHTML;
+      
+      if (resultDiv) {
+        resultDiv.classList.remove('hidden');
+        resultDiv.setAttribute('data-title', title);
+        resultDiv.setAttribute('data-message', message);
+        resultDiv.setAttribute('data-image', finalImage);
+      }
       
       showToast('✅ Pesan & koordinat siap!', 'success');
     })
     .catch(function() {
+      if (btn) { btn.textContent = '📤 Siapkan Kiriman'; btn.disabled = false; }
+      
       var hasil = {
         judul: title, pesan: message,
         gambar: finalImage ? '📷 Ada' : '(tidak ada)',
@@ -1640,25 +1680,32 @@ function generateTrackerLink() {
       var previewHTML = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
       if (finalImage) previewHTML += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
       
-      document.getElementById('trackerPreviewFinal').innerHTML = previewHTML;
-      document.getElementById('trackerResult').classList.remove('hidden');
-      document.getElementById('trackerResult').setAttribute('data-title', title);
-      document.getElementById('trackerResult').setAttribute('data-message', message);
-      document.getElementById('trackerResult').setAttribute('data-image', finalImage);
+      var previewFinal = document.getElementById('trackerPreviewFinal');
+      if (previewFinal) previewFinal.innerHTML = previewHTML;
+      if (resultDiv) {
+        resultDiv.classList.remove('hidden');
+        resultDiv.setAttribute('data-title', title);
+        resultDiv.setAttribute('data-message', message);
+        resultDiv.setAttribute('data-image', finalImage);
+      }
       
-      showToast('✅ Pesan siap (tanpa koordinat)', 'warning');
+      showToast('✅ Pesan siap (koordinat offline)', 'warning');
     });
 }
 
 function copyTrackerMessage() {
-  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var message = resultDiv.getAttribute('data-message') || '';
   navigator.clipboard.writeText(message).then(function() { showToast('✅ Pesan disalin!', 'success'); });
 }
 
 function shareTrackerWA() {
-  var title = document.getElementById('trackerResult').getAttribute('data-title') || '';
-  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
-  var image = document.getElementById('trackerResult').getAttribute('data-image') || '';
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var title = resultDiv.getAttribute('data-title') || '';
+  var message = resultDiv.getAttribute('data-message') || '';
+  var image = resultDiv.getAttribute('data-image') || '';
   var text = '📌 ' + title + '\n\n' + message;
   if (image && image.startsWith('http')) text += '\n\n📷 Gambar: ' + image;
   else if (image) text += '\n\n📷 (Gambar terlampir)';
@@ -1666,14 +1713,18 @@ function shareTrackerWA() {
 }
 
 function shareTrackerEmail() {
-  var title = document.getElementById('trackerResult').getAttribute('data-title') || '';
-  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var title = resultDiv.getAttribute('data-title') || '';
+  var message = resultDiv.getAttribute('data-message') || '';
   window.open('mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(message), '_blank');
 }
 
 function shareTrackerSMS() {
-  var title = document.getElementById('trackerResult').getAttribute('data-title') || '';
-  var message = document.getElementById('trackerResult').getAttribute('data-message') || '';
+  var resultDiv = document.getElementById('trackerResult');
+  if (!resultDiv) return;
+  var title = resultDiv.getAttribute('data-title') || '';
+  var message = resultDiv.getAttribute('data-message') || '';
   window.open('sms:?body=' + encodeURIComponent(title + ': ' + message), '_blank');
 }
 
@@ -1745,10 +1796,10 @@ setInterval(function() {
 window.addEventListener('beforeunload', autoSaveData);
 document.addEventListener('visibilitychange', function() { if (document.hidden) autoSaveData(); });
 
-console.log('✅ TraceID Blok 9 R12 terpasang.');
+console.log('✅ TraceID Blok 9 R13 terpasang.');
 </script>
 <!-- ============================================================
-     AKHIR BLOK 9 R12
+     AKHIR BLOK 9 R13
      ============================================================ -->
 
 <!-- ============================================================
