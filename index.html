@@ -1064,7 +1064,8 @@
      ============================================================ -->
 
 <!-- ============================================================
-     BLOK 8 (R5) – JS CORE 1 (VERSI PALING AMAN)
+     BLOK 8 R2 – JS CORE 1 (TRACEID)
+     Revisi 2: Storage, Auth, PWA khusus TraceID
      ============================================================ -->
 </body>
 <script>
@@ -1073,7 +1074,8 @@ var deferredPrompt;
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault();
   deferredPrompt = e;
-  document.getElementById('installBanner').style.display = 'flex';
+  var banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'flex';
 });
 
 function installApplication() {
@@ -1081,10 +1083,11 @@ function installApplication() {
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(function(choiceResult) {
       if (choiceResult.outcome === 'accepted') {
-        showToast('Instalasi berhasil! Aplikasi bisa dibuka dari layar utama.', 'success');
+        showToast('Instalasi berhasil! TraceID bisa dibuka dari layar utama.', 'success');
       }
       deferredPrompt = null;
-      document.getElementById('installBanner').style.display = 'none';
+      var banner = document.getElementById('installBanner');
+      if (banner) banner.style.display = 'none';
     });
   } else if (window.matchMedia('(display-mode: standalone)').matches) {
     showToast('Aplikasi sudah terinstall!', 'warning');
@@ -1096,7 +1099,7 @@ function installApplication() {
 // ---------- SERVICE WORKER ----------
 if ('serviceWorker' in navigator) {
   var swCode = `
-    var CACHE_NAME = 'notepad-v33';
+    var CACHE_NAME = 'traceid-v1';
     self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
     self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
   `;
@@ -1112,25 +1115,25 @@ function decodePassword(hash) { return atob(hash); }
 // ---------- DATA DEFAULT ----------
 var SUPER_ADMIN_DATA = {
   username: 'superadmin', password: encodePassword('admin123'),
-  nama: 'Super Admin', email: 'admin@notepad.com', hp: '081220285226',
+  nama: 'Super Admin', email: 'admin@traceid.com', hp: '081220285226',
   role: 'superadmin', premium: true, premiumExpiry: null, locked: false
 };
 var DEFAULT_WHATSAPP = '081220285226';
 var DEFAULT_PACKAGES = [
-  { id: '1bulan', name: 'Basic', price: 25000, days: 30, label: '1 Bulan' },
-  { id: '3bulan', name: 'Premium', price: 50000, days: 90, label: '3 Bulan' },
-  { id: '6bulan', name: 'Enterprise', price: 75000, days: 180, label: '6 Bulan' }
+  { id: '1minggu', name: 'Starter', price: 25000, days: 7, label: '1 Minggu', features: '5x lacak/hari • IP & Email' },
+  { id: '1bulan', name: 'Professional', price: 50000, days: 30, label: '1 Bulan', features: '20x lacak/hari • Semua Fitur' },
+  { id: '3bulan', name: 'Enterprise', price: 100000, days: 90, label: '3 Bulan', features: 'Unlimited lacak • Prioritas Support' }
 ];
 
-// ---------- LOCAL STORAGE ----------
-function getStore(key, def) { try { var v = localStorage.getItem('np_' + key); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
-function setStore(key, val) { localStorage.setItem('np_' + key, JSON.stringify(val)); }
-function remStore(key) { localStorage.removeItem('np_' + key); }
+// ---------- LOCAL STORAGE (prefix tr_) ----------
+function getStore(key, def) { try { var v = localStorage.getItem('tr_' + key); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
+function setStore(key, val) { localStorage.setItem('tr_' + key, JSON.stringify(val)); }
+function remStore(key) { localStorage.removeItem('tr_' + key); }
 
 function getAllUsers() { return getStore('users', []); }
 function saveAllUsers(arr) { setStore('users', arr); }
-function getAllApps() { return getStore('apps', {}); }
-function saveAllApps(obj) { setStore('apps', obj); }
+function getAllLacakData() { return getStore('lacak', {}); }
+function saveAllLacakData(obj) { setStore('lacak', obj); }
 function getSession() { return getStore('session', null); }
 function saveSession(s) { setStore('session', s); }
 function clearSession() { remStore('session'); }
@@ -1187,9 +1190,9 @@ function toggleTheme() {
   var isLight = document.body.classList.contains('light-theme');
   var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
   document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ b.textContent = label; });
-  localStorage.setItem('np_theme', isLight ? 'light' : 'dark');
+  localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
 }
-(function(){ if(localStorage.getItem('np_theme')==='light'){ document.body.classList.add('light-theme'); document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ b.textContent='☀️ Light Mode'; }); } })();
+(function(){ if(localStorage.getItem('tr_theme')==='light'){ document.body.classList.add('light-theme'); document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ b.textContent='☀️ Light Mode'; }); } })();
 
 // ---------- NAVIGATION ----------
 function openApplication() {
@@ -1197,7 +1200,7 @@ function openApplication() {
   if (!s) return showLoginModal();
   document.getElementById('landingPage').classList.add('hidden');
   document.getElementById('applicationPage').classList.remove('hidden');
-  refreshAppUI(); updateStats(); updateHeaderUser();
+  refreshAppUI(); updateStats(); updateHeaderUser(); checkAllExpiredActivations();
 }
 function goToLandingPage() {
   document.getElementById('applicationPage').classList.add('hidden');
@@ -1214,7 +1217,7 @@ function handleLogin() {
   var u = document.getElementById('loginUsername');
   var p = document.getElementById('loginPassword');
   var err = document.getElementById('loginError');
-  if (!u || !p) return;
+  if (!u || !p) return showToast('Form login tidak ditemukan.','error');
   var username = u.value.trim();
   var password = p.value;
   err.classList.remove('show');
@@ -1222,6 +1225,7 @@ function handleLogin() {
 
   if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
     saveSession(SUPER_ADMIN_DATA);
+    addSecurityLog('Super Admin login.');
     closeModal('loginModal'); showToast('Login Super Admin berhasil!','success');
     openApplication(); return;
   }
@@ -1236,6 +1240,7 @@ function handleLogin() {
   if (!user) { err.textContent='Username/password salah!'; err.classList.add('show'); return; }
   if (user.locked) { err.textContent='Akun terkunci! Hubungi admin.'; err.classList.add('show'); return; }
   saveSession(user);
+  addSecurityLog('User ' + user.username + ' login.');
   closeModal('loginModal'); showToast('Login berhasil!','success');
   openApplication();
 }
@@ -1262,6 +1267,8 @@ function handleRegister() {
 }
 
 function handleLogout() {
+  var s = getSession();
+  if (s) { addSecurityLog('User ' + s.username + ' logout.'); }
   clearSession(); goToLandingPage(); updateHeaderUser(); showToast('Logout berhasil.','info');
 }
 
@@ -1296,382 +1303,253 @@ function activatePremium(code, errId, sucId) {
   setTimeout(function(){ if(document.getElementById('activationModal').classList.contains('show')) closeModal('activationModal'); },2000);
 }
 </script>
+<!-- ============================================================
+     AKHIR BLOK 8 R2
+     ============================================================ -->
 
 <!-- ============================================================
-     BLOK 9 (R5) – JS CORE 2 (PERBAIKAN SORTING + DOWNLOAD SEMUA)
+     BLOK 8 R2 – JS CORE 1 (TRACEID)
+     Revisi 2: Storage, Auth, PWA khusus TraceID
      ============================================================ -->
+</body>
 <script>
-// ---------- FORGOT PASSWORD ----------
-function handleForgotPassword() {
-  var n = document.getElementById('forgotNama').value.trim();
-  var e = document.getElementById('forgotEmail').value.trim();
-  var hp = document.getElementById('forgotHp').value.trim();
-  var err = document.getElementById('forgotError'); var suc = document.getElementById('forgotSuccess');
-  err.classList.remove('show'); suc.classList.remove('show');
-  if(!n||!e||!hp){ err.textContent='Lengkapi semua data!'; err.classList.add('show'); return; }
-  var users = getAllUsers();
-  var user = users.find(function(u){return u.nama===n && u.email===e && u.hp===hp;});
-  if(!user){ err.textContent='Data tidak cocok! Hubungi admin.'; err.classList.add('show'); return; }
-  suc.textContent='Link reset akan dikirim via WhatsApp Admin.'; suc.classList.add('show');
-  setTimeout(function(){ openWhatsApp('Halo admin, saya ingin reset password. Nama: '+n); },2000);
-}
+// ---------- PWA INSTALL PROMPT ----------
+var deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'flex';
+});
 
-// ---------- PROFILE ----------
-function loadProfileData() {
-  var s = getSession(); if(!s) return;
-  document.getElementById('profileAvatar').textContent = s.nama.charAt(0).toUpperCase();
-  document.getElementById('profileName').textContent = s.nama;
-  document.getElementById('profileRole').textContent = s.role==='superadmin'?'Super Admin':(s.premium?'User Premium':'User Biasa');
-  document.getElementById('editProfileNama').value = s.nama||'';
-  document.getElementById('editProfileEmail').value = s.email||'';
-  document.getElementById('editProfileHp').value = s.hp||'';
-  var delBtn = document.getElementById('deleteAccountButton');
-  if (delBtn) { delBtn.style.display = (s.role === 'superadmin') ? 'none' : 'block'; }
-}
-function saveProfile() {
-  var s = getSession(); if(!s) return;
-  var n = document.getElementById('editProfileNama').value.trim();
-  var e = document.getElementById('editProfileEmail').value.trim();
-  var hp = document.getElementById('editProfileHp').value.trim();
-  var err = document.getElementById('profileError'); var suc = document.getElementById('profileSuccess');
-  err.classList.remove('show'); suc.classList.remove('show');
-  if(!n||!e||!hp){ err.textContent='Semua field wajib!'; err.classList.add('show'); return; }
-  s.nama=n; s.email=e; s.hp=hp; saveSession(s);
-  var users = getAllUsers(); var idx = users.findIndex(function(x){return x.id===s.id;});
-  if(idx!==-1){ users[idx].nama=n; users[idx].email=e; users[idx].hp=hp; saveAllUsers(users); }
-  suc.textContent='Profil tersimpan!'; suc.classList.add('show');
-  updateHeaderUser(); setTimeout(function(){ closeModal('profileModal'); },1500);
-}
-function deleteAccount() {
-  var s = getSession();
-  if (!s || s.role === 'superadmin') return;
-  showConfirm('Hapus Akun?','Semua data Anda akan hilang permanen.',function(){
-    var users = getAllUsers().filter(function(x){return x.id!==s.id;}); saveAllUsers(users);
-    var apps = getAllApps(); delete apps[s.id]; saveAllApps(apps);
-    clearSession(); closeModal('profileModal'); goToLandingPage(); updateHeaderUser(); showToast('Akun dihapus.','warning');
-  });
-}
-
-// ---------- HEADER UPDATE ----------
-function updateHeaderUser() {
-  var s = getSession();
-  var badge = document.getElementById('userBadge'), prof = document.getElementById('profileButton');
-  var adm = document.getElementById('adminButton'), logout = document.getElementById('logoutButton');
-  var merge = document.getElementById('mergeButton'), act = document.getElementById('activationToolbarButton');
-  var chatAdminBtn = document.getElementById('chatButton');
-  var chatUserBtn = document.getElementById('chatUserButton');
-
-  if(s){
-    badge.style.display='flex'; document.getElementById('userAvatar').textContent=s.nama.charAt(0).toUpperCase();
-    document.getElementById('userNameDisplay').textContent=s.nama;
-    prof.classList.remove('hidden'); logout.classList.remove('hidden');
-    adm.classList.toggle('hidden', s.role!=='superadmin');
-    merge.classList.toggle('hidden', !(s.premium||s.role==='superadmin'));
-    act.style.display = (s.role=='user'&&!s.premium) ? 'inline-flex' : 'none';
-    if (s.role === 'superadmin') {
-      if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
-      if (chatUserBtn) chatUserBtn.classList.add('hidden');
-    } else {
-      if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-      if (chatUserBtn) chatUserBtn.classList.remove('hidden');
-    }
-  }else{
-    badge.style.display='none'; prof.classList.add('hidden'); adm.classList.add('hidden');
-    logout.classList.add('hidden'); merge.classList.add('hidden'); act.style.display='none';
-    if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-    if (chatUserBtn) chatUserBtn.classList.remove('hidden');
-  }
-}
-
-// ---------- STATS ----------
-function updateStats() {
-  var s = getSession();
-  var apps = s ? (getAllApps()[s.id]||[]) : [];
-  var totalCodes = 0, totalSize = 0;
-  apps.forEach(function(a){ totalCodes += a.codes.length; a.codes.forEach(function(c){ totalSize += new Blob([c.content]).size; }); });
-  document.getElementById('statTotalApps').textContent = apps.length;
-  document.getElementById('statTotalCodes').textContent = totalCodes;
-  document.getElementById('statStorage').textContent = (totalSize/1024).toFixed(1)+' KB';
-  document.getElementById('statTotalUsers').textContent = getAllUsers().length;
-  var status = document.getElementById('statPremiumStatus');
-  status.textContent = (s&&(s.premium||s.role=='superadmin'))?'Premium':'Free';
-}
-
-// ---------- APPLICATIONS CRUD ----------
-function showAddAppModal() {
-  document.getElementById('appModalTitle').textContent='Tambah Aplikasi';
-  document.getElementById('editAppId').value=''; document.getElementById('appNameInput').value='';
-  document.getElementById('appDescInput').value=''; document.getElementById('appError').classList.remove('show');
-  openModal('appModal');
-}
-function saveApplication() {
-  var s = getSession(); if(!s) return showToast('Login dulu!','error');
-  var editId = document.getElementById('editAppId').value;
-  var name = document.getElementById('appNameInput').value.trim();
-  var desc = document.getElementById('appDescInput').value.trim();
-  var err = document.getElementById('appError'); err.classList.remove('show');
-  if(!name){ err.textContent='Nama aplikasi wajib!'; err.classList.add('show'); return; }
-  var all = getAllApps(); var userApps = all[s.id]||[];
-  if(editId){
-    var idx = userApps.findIndex(function(a){return a.id===editId;});
-    if(idx!==-1){ userApps[idx].name=name; userApps[idx].desc=desc; }
-  }else{
-    userApps.push({ id:Date.now().toString(), name:name, desc:desc, codes:[], createdAt:new Date().toISOString() });
-  }
-  all[s.id]=userApps; saveAllApps(all);
-  closeModal('appModal'); refreshAppUI(); updateStats(); showToast('Aplikasi tersimpan!','success');
-}
-function editApp(id) {
-  var s = getSession(); var app = (getAllApps()[s.id]||[]).find(function(a){return a.id===id;}); if(!app) return;
-  document.getElementById('appModalTitle').textContent='Edit Aplikasi';
-  document.getElementById('editAppId').value=id; document.getElementById('appNameInput').value=app.name;
-  document.getElementById('appDescInput').value=app.desc||''; openModal('appModal');
-}
-function deleteApp(id) {
-  showConfirm('Hapus Aplikasi?','Semua kode di dalamnya ikut terhapus.',function(){
-    var s = getSession(); var all = getAllApps(); all[s.id]=(all[s.id]||[]).filter(function(a){return a.id!==id;});
-    saveAllApps(all); refreshAppUI(); updateStats(); showToast('Aplikasi dihapus.','warning');
-  });
-}
-function toggleAppCodes(id) { var el = document.getElementById('codes-'+id); if(el) el.classList.toggle('open'); }
-
-// ---------- CODE CRUD ----------
-function showAddCodeModal(appId) {
-  document.getElementById('codeModalTitle').textContent='Tambah Code';
-  document.getElementById('editCodeId').value=''; document.getElementById('codeAppId').value=appId;
-  document.getElementById('codeNameInput').value=''; document.getElementById('codeContentInput').value='';
-  openModal('codeModal');
-}
-function editCode(appId,codeId) {
-  var s = getSession(); var app = (getAllApps()[s.id]||[]).find(function(a){return a.id===appId;});
-  if(!app) return; var code = app.codes.find(function(c){return c.id===codeId;}); if(!code) return;
-  document.getElementById('codeModalTitle').textContent='Edit Code';
-  document.getElementById('editCodeId').value=codeId; document.getElementById('codeAppId').value=appId;
-  document.getElementById('codeNameInput').value=code.name; document.getElementById('codeContentInput').value=code.content;
-  openModal('codeModal');
-}
-function saveCode() {
-  var s = getSession(); var appId = document.getElementById('codeAppId').value;
-  var editId = document.getElementById('editCodeId').value;
-  var name = document.getElementById('codeNameInput').value.trim();
-  var content = document.getElementById('codeContentInput').value;
-  var err = document.getElementById('codeError'); err.classList.remove('show');
-  if(!name||!content){ err.textContent='Nama dan kode wajib!'; err.classList.add('show'); return; }
-  var all = getAllApps(); var apps = all[s.id]||[];
-  var app = apps.find(function(a){return a.id===appId;}); if(!app) return;
-  if(editId){
-    var code = app.codes.find(function(c){return c.id===editId;});
-    if(code){ code.name=name; code.content=content; }
-  }else{
-    app.codes.push({ id:Date.now().toString(), name:name, content:content, createdAt:new Date().toISOString() });
-  }
-  all[s.id]=apps; saveAllApps(all);
-  closeModal('codeModal'); refreshAppUI(); updateStats(); showToast('Kode tersimpan!','success');
-}
-function deleteCode(appId,codeId) {
-  showConfirm('Hapus Kode?','Kode akan dihapus permanen.',function(){
-    var s = getSession(); var all = getAllApps(); var apps = all[s.id]||[];
-    var app = apps.find(function(a){return a.id===appId;}); if(app) app.codes = app.codes.filter(function(c){return c.id!==codeId;});
-    all[s.id]=apps; saveAllApps(all); refreshAppUI(); updateStats(); showToast('Kode dihapus.','warning');
-  });
-}
-function toggleCodePreview(id) { var p = document.getElementById('preview-'+id); if(p) p.classList.toggle('show'); }
-function escapeHTML(str) {
-  return str.replace(/[&<>"']/g,function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
-}
-
-// ---------- DOWNLOAD SEMUA CODE DALAM SATU APLIKASI ----------
-function downloadAllCodes(appId) {
-  var s = getSession(); if (!s) return;
-  var apps = getAllApps()[s.id] || [];
-  var app = null;
-  for (var i = 0; i < apps.length; i++) {
-    if (apps[i].id === appId) { app = apps[i]; break; }
-  }
-  if (!app || !app.codes || app.codes.length === 0) {
-    showToast('Tidak ada kode untuk didownload.', 'warning');
-    return;
-  }
-
-  var codes = app.codes;
-  // Urutkan kode berdasarkan nama
-  codes.sort(function(a, b) {
-    var matchA = a.name.match(/(\d+)/);
-    var matchB = b.name.match(/(\d+)/);
-    var numA = matchA ? parseInt(matchA[1]) : NaN;
-    var numB = matchB ? parseInt(matchB[1]) : NaN;
-    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-    if (!isNaN(numA)) return -1;
-    if (!isNaN(numB)) return 1;
-    return a.name.localeCompare(b.name);
-  });
-
-  // Download satu per satu dengan jeda
-  function downloadNext(index) {
-    if (index >= codes.length) {
-      showToast('✅ Semua kode berhasil didownload!', 'success');
-      return;
-    }
-    var code = codes[index];
-    var blob = new Blob([code.content], { type: 'text/html' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = (code.name || 'code_' + (index + 1)) + '.html';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    setTimeout(function() {
-      downloadNext(index + 1);
-    }, 500);
-  }
-  downloadNext(0);
-}
-
-// ---------- RENDER APP LIST (DENGAN SORTING OTOMATIS DIMANA PUN ANGKA) ----------
-function refreshAppUI() {
-  var s = getSession();
-  var cont = document.getElementById('appListContainer');
-  var empty = document.getElementById('emptyState');
-  var apps = s ? (getAllApps()[s.id] || []) : [];
-  if (apps.length === 0) { cont.innerHTML = ''; empty.classList.remove('hidden'); return; }
-  empty.classList.add('hidden');
-
-  // Urutkan aplikasi berdasarkan nomor di mana pun dalam nama
-  apps.sort(function(a, b) {
-    var matchA = a.name.match(/(\d+)/);
-    var matchB = b.name.match(/(\d+)/);
-    var numA = matchA ? parseInt(matchA[1]) : NaN;
-    var numB = matchB ? parseInt(matchB[1]) : NaN;
-    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-    if (!isNaN(numA)) return -1;
-    if (!isNaN(numB)) return 1;
-    return a.name.localeCompare(b.name);
-  });
-
-  cont.innerHTML = apps.map(function(app) {
-    var codes = app.codes || [];
-    // Urutkan kode di dalam aplikasi berdasarkan nomor di mana pun
-    codes.sort(function(c, d) {
-      var matchC = c.name.match(/(\d+)/);
-      var matchD = d.name.match(/(\d+)/);
-      var numC = matchC ? parseInt(matchC[1]) : NaN;
-      var numD = matchD ? parseInt(matchD[1]) : NaN;
-      if (!isNaN(numC) && !isNaN(numD)) return numC - numD;
-      if (!isNaN(numC)) return -1;
-      if (!isNaN(numD)) return 1;
-      return c.name.localeCompare(d.name);
+function installApplication() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(choiceResult) {
+      if (choiceResult.outcome === 'accepted') {
+        showToast('Instalasi berhasil! TraceID bisa dibuka dari layar utama.', 'success');
+      }
+      deferredPrompt = null;
+      var banner = document.getElementById('installBanner');
+      if (banner) banner.style.display = 'none';
     });
-
-    return '<div class="app-item">'+
-      '<div class="app-header" onclick="toggleAppCodes(\''+app.id+'\')">'+
-        '<div class="app-name">📁 '+escapeHTML(app.name)+' <span class="app-code-count">'+codes.length+' kode</span></div>'+
-        '<div style="display:flex;gap:4px;">'+
-          '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); showAddCodeModal(\''+app.id+'\')">+ Code</button>'+
-          '<button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); editApp(\''+app.id+'\')">Edit</button>'+
-          '<button class="btn btn-success btn-sm" onclick="event.stopPropagation(); downloadAllCodes(\''+app.id+'\')">⬇ Download Semua</button>'+
-          '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteApp(\''+app.id+'\')">Hapus</button>'+
-        '</div>'+
-      '</div>'+
-      '<div class="app-codes-container" id="codes-'+app.id+'">'+
-        (codes.length===0?'<p style="color:var(--text-muted);padding:8px;">Belum ada kode.</p>':codes.map(function(code){
-          return '<div class="code-item">'+
-            '<div class="code-header">'+
-              '<span class="code-name">📄 '+escapeHTML(code.name)+'</span>'+
-              '<div style="display:flex;gap:4px;">'+
-                '<button class="btn btn-gray btn-sm" onclick="toggleCodePreview(\''+code.id+'\')">Preview</button>'+
-                '<button class="btn btn-warning btn-sm" onclick="editCode(\''+app.id+'\',\''+code.id+'\')">Edit</button>'+
-                '<button class="btn btn-danger btn-sm" onclick="deleteCode(\''+app.id+'\',\''+code.id+'\')">Hapus</button>'+
-              '</div>'+
-            '</div>'+
-            '<div class="code-content-preview" id="preview-'+code.id+'"><pre>'+escapeHTML(code.content)+'</pre></div>'+
-          '</div>';
-        }).join(''))+
-      '</div>'+
-    '</div>';
-  }).join('');
+  } else if (window.matchMedia('(display-mode: standalone)').matches) {
+    showToast('Aplikasi sudah terinstall!', 'warning');
+  } else {
+    alert('Buka menu browser lalu pilih "Tambahkan ke Layar Utama" atau "Install" untuk menginstal aplikasi ini.');
+  }
 }
 
-// ---------- SEARCH ----------
-function toggleSearch() { document.getElementById('searchBar').classList.toggle('hidden'); }
-function performSearch() {
-  var q = document.getElementById('searchInput').value.toLowerCase();
-  document.querySelectorAll('.app-item').forEach(function(it){ it.style.display = it.textContent.toLowerCase().includes(q)?'':'none'; });
+// ---------- SERVICE WORKER ----------
+if ('serviceWorker' in navigator) {
+  var swCode = `
+    var CACHE_NAME = 'traceid-v1';
+    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
+    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+  `;
+  var swBlob = new Blob([swCode], {type: 'application/javascript'});
+  var swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(function(){});
 }
-function clearSearch() { document.getElementById('searchInput').value=''; performSearch(); }
 
-// ---------- MERGE ----------
-function showMergeModal() {
+// ---------- ENCRYPT ----------
+function encodePassword(pw) { return btoa(pw); }
+function decodePassword(hash) { return atob(hash); }
+
+// ---------- DATA DEFAULT ----------
+var SUPER_ADMIN_DATA = {
+  username: 'superadmin', password: encodePassword('admin123'),
+  nama: 'Super Admin', email: 'admin@traceid.com', hp: '081220285226',
+  role: 'superadmin', premium: true, premiumExpiry: null, locked: false
+};
+var DEFAULT_WHATSAPP = '081220285226';
+var DEFAULT_PACKAGES = [
+  { id: '1minggu', name: 'Starter', price: 25000, days: 7, label: '1 Minggu', features: '5x lacak/hari • IP & Email' },
+  { id: '1bulan', name: 'Professional', price: 50000, days: 30, label: '1 Bulan', features: '20x lacak/hari • Semua Fitur' },
+  { id: '3bulan', name: 'Enterprise', price: 100000, days: 90, label: '3 Bulan', features: 'Unlimited lacak • Prioritas Support' }
+];
+
+// ---------- LOCAL STORAGE (prefix tr_) ----------
+function getStore(key, def) { try { var v = localStorage.getItem('tr_' + key); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
+function setStore(key, val) { localStorage.setItem('tr_' + key, JSON.stringify(val)); }
+function remStore(key) { localStorage.removeItem('tr_' + key); }
+
+function getAllUsers() { return getStore('users', []); }
+function saveAllUsers(arr) { setStore('users', arr); }
+function getAllLacakData() { return getStore('lacak', {}); }
+function saveAllLacakData(obj) { setStore('lacak', obj); }
+function getSession() { return getStore('session', null); }
+function saveSession(s) { setStore('session', s); }
+function clearSession() { remStore('session'); }
+function getPackages() { return getStore('packages', DEFAULT_PACKAGES); }
+function savePackages(p) { setStore('packages', p); }
+function getWhatsapp() { return getStore('whatsapp', DEFAULT_WHATSAPP); }
+function saveWhatsapp(n) { setStore('whatsapp', n); }
+function getValidCodes() { return getStore('validCodes', {}); }
+function saveValidCodes(c) { setStore('validCodes', c); }
+function getSecurityLogs() { return getStore('securityLogs', []); }
+function saveSecurityLogs(l) { setStore('securityLogs', l); }
+function getChatMessages() { return getStore('chatMessages', []); }
+function saveChatMessages(m) { setStore('chatMessages', m); }
+
+// ---------- WHATSAPP ----------
+function formatWa(raw) {
+  var n = raw.replace(/[^0-9]/g,'');
+  if (n.startsWith('0')) n = '62' + n.substring(1);
+  if (!n.startsWith('62')) n = '62' + n;
+  return '+' + n;
+}
+function updateAllWaDisplays() {
+  var f = formatWa(getWhatsapp());
+  var ids = ['whatsappNumberLanding','whatsappNumberApp'];
+  ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.textContent = f; });
+}
+function openWhatsApp(msg) {
+  var link = getWhatsapp().replace(/[^0-9]/g,'');
+  var url = 'https://wa.me/' + link + (msg ? '?text=' + encodeURIComponent(msg) : '');
+  window.open(url,'_blank');
+}
+
+// ---------- TOAST ----------
+function showToast(msg, type) {
+  var c = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast toast-' + (type||'info');
+  t.textContent = msg;
+  c.appendChild(t);
+  requestAnimationFrame(function(){ t.classList.add('show'); });
+  setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); },300); },3000);
+}
+
+// ---------- MODAL ----------
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); clearModalErrors(); }
+function clearModalErrors() {
+  document.querySelectorAll('.form-error,.form-success').forEach(function(el){ el.textContent=''; el.classList.remove('show'); });
+}
+
+// ---------- THEME ----------
+function toggleTheme() {
+  document.body.classList.toggle('light-theme');
+  var isLight = document.body.classList.contains('light-theme');
+  var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+  document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ b.textContent = label; });
+  localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
+}
+(function(){ if(localStorage.getItem('tr_theme')==='light'){ document.body.classList.add('light-theme'); document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ b.textContent='☀️ Light Mode'; }); } })();
+
+// ---------- NAVIGATION ----------
+function openApplication() {
   var s = getSession();
-  if(!s||(!s.premium&&s.role!=='superadmin')){ showToast('Fitur khusus Premium!','error'); return; }
-  var apps = getAllApps()[s.id]||[];
-  document.getElementById('mergeAppList').innerHTML = apps.map(function(a){
-    return '<label style="display:flex;align-items:center;gap:4px;font-size:0.85rem;"><input type="checkbox" checked value="'+a.id+'"> '+a.name+'</label>';
-  }).join('');
-  document.getElementById('mergeResult').classList.add('hidden'); document.getElementById('mergeOutput').value='';
-  openModal('mergeModal');
+  if (!s) return showLoginModal();
+  document.getElementById('landingPage').classList.add('hidden');
+  document.getElementById('applicationPage').classList.remove('hidden');
+  refreshAppUI(); updateStats(); updateHeaderUser(); checkAllExpiredActivations();
 }
-function performMerge() {
-  var s = getSession(); var apps = getAllApps()[s.id]||[];
-  var checked = Array.from(document.querySelectorAll('#mergeAppList input:checked')).map(function(i){return i.value;});
-  var merged = apps.filter(function(a){return checked.includes(a.id);}).flatMap(function(a){return a.codes;}).map(function(c){return c.content;}).join('\n\n');
-  document.getElementById('mergeOutput').value = merged;
-  document.getElementById('mergeResult').classList.remove('hidden');
+function goToLandingPage() {
+  document.getElementById('applicationPage').classList.add('hidden');
+  document.getElementById('landingPage').classList.remove('hidden');
+  refreshPackageDisplay();
 }
-function copyMergeResult() {
-  var ta = document.getElementById('mergeOutput'); ta.select(); navigator.clipboard.writeText(ta.value).then(function(){ showToast('Disalin!','success'); });
-}
-function downloadMergeResult() {
-  var blob = new Blob([document.getElementById('mergeOutput').value], {type:'text/html'});
-  var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='index.html'; a.click();
+function showLoginModal() { openModal('loginModal'); }
+function showRegisterModal() { openModal('registerModal'); }
+function showProfileModal() { openModal('profileModal'); loadProfileData(); }
+function showActivationModal() { if(!getSession()) return showLoginModal(); openModal('activationModal'); }
+
+// ---------- AUTH ----------
+function handleLogin() {
+  var u = document.getElementById('loginUsername');
+  var p = document.getElementById('loginPassword');
+  var err = document.getElementById('loginError');
+  if (!u || !p) return showToast('Form login tidak ditemukan.','error');
+  var username = u.value.trim();
+  var password = p.value;
+  err.classList.remove('show');
+  if(!username||!password){ err.textContent='Isi semua field!'; err.classList.add('show'); return; }
+
+  if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
+    saveSession(SUPER_ADMIN_DATA);
+    addSecurityLog('Super Admin login.');
+    closeModal('loginModal'); showToast('Login Super Admin berhasil!','success');
+    openApplication(); return;
+  }
+
+  var users = getAllUsers();
+  var user = null;
+  for (var i = 0; i < users.length; i++) {
+    if ((users[i].username === username || users[i].email === username) && password === decodePassword(users[i].password)) {
+      user = users[i]; break;
+    }
+  }
+  if (!user) { err.textContent='Username/password salah!'; err.classList.add('show'); return; }
+  if (user.locked) { err.textContent='Akun terkunci! Hubungi admin.'; err.classList.add('show'); return; }
+  saveSession(user);
+  addSecurityLog('User ' + user.username + ' login.');
+  closeModal('loginModal'); showToast('Login berhasil!','success');
+  openApplication();
 }
 
-// ---------- IMPORT/EXPORT ----------
-function exportAllData() {
-  var s = getSession(); if(!s) return showToast('Login dulu!','error');
-  var data = { apps: getAllApps()[s.id]||[], exportedAt: new Date().toISOString() };
-  var blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-  var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='notepad_backup.json'; a.click();
-  showToast('Data diekspor!','success');
-}
-function importAllData(input) {
-  var s = getSession(); if(!s) return; var file = input.files[0]; if(!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e){
-    try{
-      var data = JSON.parse(e.target.result);
-      if(!data.apps||!Array.isArray(data.apps)) throw new Error('Format salah');
-      var all = getAllApps(); all[s.id]=data.apps; saveAllApps(all);
-      refreshAppUI(); updateStats(); showToast('Data diimpor!','success');
-    }catch(ex){ showToast('Format file tidak valid.','error'); }
-  };
-  reader.readAsText(file);
+function handleRegister() {
+  var n = document.getElementById('registerNama').value.trim();
+  var e = document.getElementById('registerEmail').value.trim();
+  var hp = document.getElementById('registerHp').value.trim();
+  var un = document.getElementById('registerUsername').value.trim();
+  var pw = document.getElementById('registerPassword').value;
+  var cp = document.getElementById('registerPasswordConfirm').value;
+  var err = document.getElementById('registerError'); var suc = document.getElementById('registerSuccess');
+  err.classList.remove('show'); suc.classList.remove('show');
+  if(!n||!e||!hp||!un||!pw||!cp){ err.textContent='Semua field wajib!'; err.classList.add('show'); return; }
+  if(pw!==cp){ err.textContent='Password tidak cocok!'; err.classList.add('show'); return; }
+  if(pw.length<6){ err.textContent='Password minimal 6 karakter!'; err.classList.add('show'); return; }
+  var users = getAllUsers();
+  if(users.find(function(x){return x.username===un;})){ err.textContent='Username sudah dipakai!'; err.classList.add('show'); return; }
+  if(users.find(function(x){return x.email===e;})){ err.textContent='Email sudah dipakai!'; err.classList.add('show'); return; }
+  var newUser = { id: Date.now().toString(), nama:n, email:e, hp:hp, username:un, password:encodePassword(pw), role:'user', premium:false, premiumExpiry:null, locked:false, createdAt:new Date().toISOString() };
+  users.push(newUser); saveAllUsers(users);
+  suc.textContent='Pendaftaran berhasil! Silakan login.'; suc.classList.add('show');
+  setTimeout(function(){ closeModal('registerModal'); showLoginModal(); },2000);
 }
 
-// ---------- CONFIRM ----------
-var confirmCb = null;
-function showConfirm(title,msg,cb){
-  document.getElementById('confirmTitle').textContent=title;
-  document.getElementById('confirmMessage').textContent=msg;
-  confirmCb = cb; openModal('confirmModal');
+function handleLogout() {
+  var s = getSession();
+  if (s) { addSecurityLog('User ' + s.username + ' logout.'); }
+  clearSession(); goToLandingPage(); updateHeaderUser(); showToast('Logout berhasil.','info');
 }
-function executeConfirmAction(){ if(confirmCb){confirmCb(); confirmCb=null;} closeModal('confirmModal'); }
 
-// ---------- EXPIRY CHECK ----------
-function checkAllExpiredActivations() {
-  var s = getSession(); if(!s||!s.premiumExpiry) return;
-  var now = new Date(); var exp = new Date(s.premiumExpiry); var diff = exp - now;
-  var warn = document.getElementById('expiryWarning');
-  if(diff<0){
-    s.premium=false; s.premiumExpiry=null; saveSession(s);
-    var users = getAllUsers(); var idx=users.findIndex(function(u){return u.id===s.id;});
-    if(idx!==-1){ users[idx].premium=false; users[idx].premiumExpiry=null; saveAllUsers(users); }
-    warn.classList.remove('show'); showToast('Masa premium Anda telah habis.','warning');
-    updateHeaderUser(); if(!document.getElementById('applicationPage').classList.contains('hidden')) updateStats();
-  }else if(diff < 3*86400000){
-    document.getElementById('expiryWarningText').textContent = 'Premium akan berakhir dalam '+Math.ceil(diff/86400000)+' hari!';
-    warn.classList.add('show');
-  }else{ warn.classList.remove('show'); }
+// ---------- PREMIUM ACTIVATION ----------
+function activatePremiumFromModal() {
+  var code = document.getElementById('activationCodeInputMain').value.trim();
+  activatePremium(code, 'activationModalError','activationModalSuccess');
+}
+function activatePremium(code, errId, sucId) {
+  var err = document.getElementById(errId); var suc = document.getElementById(sucId);
+  err.classList.remove('show'); suc.classList.remove('show');
+  if(!code){ err.textContent='Masukkan kode aktivasi!'; err.classList.add('show'); return; }
+  var session = getSession();
+  if(!session){ err.textContent='Anda harus login!'; err.classList.add('show'); return; }
+  var valid = getValidCodes();
+  var cd = valid[code];
+  if(!cd||cd.used){ err.textContent='Kode tidak valid/sudah dipakai!'; err.classList.add('show'); return; }
+  var users = getAllUsers();
+  var idx = users.findIndex(function(x){return x.id===session.id;});
+  if(idx===-1){ err.textContent='User tidak ditemukan!'; err.classList.add('show'); return; }
+  var pkgs = getPackages();
+  var pkg = pkgs.find(function(p){return p.id===cd.packageId;});
+  if(!pkg){ err.textContent='Paket tidak valid!'; err.classList.add('show'); return; }
+  var now = new Date();
+  var exp = new Date(now.getTime() + pkg.days*86400000);
+  users[idx].premium = true; users[idx].premiumExpiry = exp.toISOString(); saveAllUsers(users);
+  cd.used = true; cd.usedBy = session.username; cd.usedAt = now.toISOString(); valid[code] = cd; saveValidCodes(valid);
+  var newSess = Object.assign({}, users[idx]); saveSession(newSess);
+  suc.textContent = 'Aktivasi sukses! Premium hingga ' + exp.toLocaleDateString(); suc.classList.add('show');
+  updateHeaderUser();
+  if (!document.getElementById('applicationPage').classList.contains('hidden')) { refreshAppUI(); updateStats(); }
+  setTimeout(function(){ if(document.getElementById('activationModal').classList.contains('show')) closeModal('activationModal'); },2000);
 }
 </script>
+<!-- ============================================================
+     AKHIR BLOK 8 R2
+     ============================================================ -->
 
 <!-- ============================================================
      BLOK 10 R1 – JS ADMIN PANEL TraceID
