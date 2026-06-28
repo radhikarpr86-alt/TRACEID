@@ -616,4 +616,610 @@
      AKHIR BLOK 2 R1
      Blok 3 akan melanjutkan: Modal Auth (Login, Register, Forgot Password)
      ============================================================ -->
+  <!-- ============================================================
+     BLOK 3 R1 – MODAL AUTH TraceID (LENGKAP)
+     (Login, Register, Forgot Password)
+     ============================================================
+     PENJELASAN:
+     - Berisi 3 modal: Login, Register, Forgot Password
+     - Identik dengan struktur Notepad+ v3.3
+     - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
+     ============================================================ -->
+
+<!-- ============================================================
+     LOGIN MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-content" style="max-width:420px;">
+    <div class="modal-header">
+      <h3>🔐 Login TraceID</h3>
+      <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <input type="text" id="loginUsername" placeholder="Username atau Email" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+      </div>
+      <button onclick="handleLogin()" class="btn btn-primary btn-block">Masuk</button>
+      <div class="form-error" id="loginError"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:16px;font-size:0.8rem;">
+        <span class="link-text" onclick="closeModal('loginModal');showRegisterModal()">Daftar Akun Baru</span>
+        <span class="link-text" onclick="closeModal('loginModal');openModal('forgotPasswordModal')">Lupa Password?</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('loginModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     REGISTER MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal-content" style="max-width:420px;">
+    <div class="modal-header">
+      <h3>📝 Daftar Akun TraceID</h3>
+      <button class="modal-close" onclick="closeModal('registerModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <input type="text" id="registerNama" placeholder="Nama Lengkap *">
+      </div>
+      <div class="form-group">
+        <input type="email" id="registerEmail" placeholder="Email *">
+      </div>
+      <div class="form-group">
+        <input type="text" id="registerHp" placeholder="Nomor HP * (contoh: 081234567890)">
+      </div>
+      <div class="form-group">
+        <input type="text" id="registerUsername" placeholder="Username *">
+      </div>
+      <div class="form-group">
+        <input type="password" id="registerPassword" placeholder="Password * (minimal 6 karakter)">
+      </div>
+      <div class="form-group">
+        <input type="password" id="registerPasswordConfirm" placeholder="Konfirmasi Password *">
+      </div>
+      <button onclick="handleRegister()" class="btn btn-primary btn-block">Daftar Sekarang</button>
+      <div class="form-error" id="registerError"></div>
+      <div class="form-success" id="registerSuccess"></div>
+      <p style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--text-secondary);">
+        Sudah punya akun?
+        <span class="link-text" onclick="closeModal('registerModal');showLoginModal()">Login disini</span>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('registerModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FORGOT PASSWORD MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="forgotPasswordModal">
+  <div class="modal-content" style="max-width:420px;">
+    <div class="modal-header">
+      <h3>🔑 Lupa Password</h3>
+      <button class="modal-close" onclick="closeModal('forgotPasswordModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
+        Masukkan data Anda untuk mereset password.
+      </p>
+      <div class="form-group">
+        <input type="text" id="forgotNama" placeholder="Nama Lengkap *">
+      </div>
+      <div class="form-group">
+        <input type="email" id="forgotEmail" placeholder="Email *">
+      </div>
+      <div class="form-group">
+        <input type="text" id="forgotHp" placeholder="Nomor HP *">
+      </div>
+      <button onclick="handleForgotPassword()" class="btn btn-warning btn-block">Kirim Link Reset Password</button>
+      <div class="form-error" id="forgotError"></div>
+      <div class="form-success" id="forgotSuccess"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('forgotPasswordModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AKHIR BLOK 3 R1
+     Blok 4 akan melanjutkan: Modal Profil & Super Admin Panel
+     ============================================================ -->
      
+<!-- ============================================================
+     BLOK 4 R1 – MODAL PROFIL & SUPER ADMIN PANEL TraceID (LENGKAP)
+     (Profil, Super Admin Panel dengan semua tab)
+     ============================================================
+     PENJELASAN:
+     - Berisi 2 modal: Profil dan Super Admin Panel
+     - Super Admin Panel memiliki 8 tab: Kode Aktivasi, Daftar User,
+       Paket & Harga, Log Keamanan, Pengaturan, Iklan, Chat User, Backup
+     - Identik dengan struktur Notepad+ v3.3
+     ============================================================ -->
+
+<!-- ============================================================
+     PROFILE MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-content" style="max-width:450px;">
+    <div class="modal-header">
+      <h3>👤 Profil Saya</h3>
+      <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Avatar & Info -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div id="profileAvatar" style="width:60px;height:60px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;">U</div>
+        <div>
+          <h4 id="profileName" style="margin:0;">User</h4>
+          <p id="profileRole" style="margin:0;font-size:0.8rem;color:var(--text-secondary);">User Biasa</p>
+        </div>
+      </div>
+
+      <!-- Form Edit Profil -->
+      <div class="form-group">
+        <label class="form-label">Nama Lengkap</label>
+        <input type="text" id="editProfileNama">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="editProfileEmail">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nomor HP</label>
+        <input type="text" id="editProfileHp">
+      </div>
+      <button onclick="saveProfile()" class="btn btn-primary btn-block">Simpan Profil</button>
+      <div class="form-error" id="profileError"></div>
+      <div class="form-success" id="profileSuccess"></div>
+
+      <hr style="border-color:var(--border-color);margin:20px 0;">
+
+      <!-- Hapus Akun -->
+      <button onclick="deleteAccount()" id="deleteAccountButton" class="btn btn-danger btn-block">🗑 Hapus Akun Saya</button>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('profileModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SUPER ADMIN PANEL MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="superAdminModal">
+  <div class="modal-content" style="max-width:750px;">
+    <div class="modal-header">
+      <h3>🛡 Panel Super Admin TraceID</h3>
+      <button class="modal-close" onclick="closeModal('superAdminModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      
+      <!-- ========== ADMIN TABS ========== -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('codes')" id="tabCodes">Kode Aktivasi</button>
+        <button class="admin-tab" onclick="switchAdminTab('users')" id="tabUsers">Daftar User</button>
+        <button class="admin-tab" onclick="switchAdminTab('packages')" id="tabPackages">Paket &amp; Harga</button>
+        <button class="admin-tab" onclick="switchAdminTab('security')" id="tabSecurity">Log Keamanan</button>
+        <button class="admin-tab" onclick="switchAdminTab('settings')" id="tabSettings">Pengaturan</button>
+        <button class="admin-tab" onclick="switchAdminTab('iklan')" id="tabIklan">📢 Iklan</button>
+        <button class="admin-tab" onclick="switchAdminTab('chat')" id="tabChat">💬 Chat User</button>
+        <button class="admin-tab" onclick="switchAdminTab('backup')" id="tabBackup">💾 Backup</button>
+      </div>
+
+      <!-- ========== TAB 1: KODE AKTIVASI ========== -->
+      <div class="admin-tab-content" id="adminTabCodes">
+        <h4 style="margin-bottom:12px;">Buat Kode Aktivasi Baru</h4>
+        <div class="form-group">
+          <label class="form-label">Pilih User</label>
+          <select id="adminActivationUserSelect" style="width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
+            <option value="">-- Pilih User --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pilih Paket</label>
+          <select id="adminActivationPackage">
+            <option value="">-- Pilih Paket --</option>
+          </select>
+        </div>
+        <button onclick="adminCreateActivationCode()" class="btn btn-primary btn-block">Buat Kode Aktivasi</button>
+        <div id="adminCodeResult" style="margin-top:12px;"></div>
+        
+        <h4 style="margin-top:24px;margin-bottom:8px;">Kode Aktivasi Aktif</h4>
+        <div id="activeCodesList" style="max-height:200px;overflow-y:auto;font-size:0.8rem;">
+          <p style="color:var(--text-muted);">Belum ada kode.</p>
+        </div>
+      </div>
+
+      <!-- ========== TAB 2: DAFTAR USER ========== -->
+      <div class="admin-tab-content hidden" id="adminTabUsers">
+        <h4 style="margin-bottom:12px;">Daftar Semua User</h4>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+          <button onclick="renderAdminUserList()" class="btn btn-sm btn-primary">🔄 Refresh</button>
+          <button onclick="lockAllUsers()" class="btn btn-sm btn-warning">🔒 Kunci Semua</button>
+          <button onclick="unlockAllUsers()" class="btn btn-sm btn-success">🔓 Buka Semua</button>
+        </div>
+        <div id="adminUserList" style="max-height:400px;overflow-y:auto;">
+          <p style="color:var(--text-muted);">Memuat data user...</p>
+        </div>
+      </div>
+
+      <!-- ========== TAB 3: PAKET & HARGA ========== -->
+      <div class="admin-tab-content hidden" id="adminTabPackages">
+        <h4 style="margin-bottom:12px;">Edit Paket dan Harga</h4>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">Ubah nama, harga, dan durasi paket premium.</p>
+        <div id="packageEditList">
+          <p style="color:var(--text-muted);">Memuat paket...</p>
+        </div>
+      </div>
+
+      <!-- ========== TAB 4: LOG KEAMANAN ========== -->
+      <div class="admin-tab-content hidden" id="adminTabSecurity">
+        <h4 style="margin-bottom:12px;">Log Keamanan</h4>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+          <button onclick="renderSecurityLogs()" class="btn btn-sm btn-primary">🔄 Refresh</button>
+          <button onclick="clearAllSecurityLogs()" class="btn btn-sm btn-danger">🗑 Bersihkan Log</button>
+        </div>
+        <div id="securityLogList" style="max-height:250px;overflow-y:auto;font-size:0.8rem;">
+          <p style="color:var(--text-muted);">Tidak ada log.</p>
+        </div>
+      </div>
+
+      <!-- ========== TAB 5: PENGATURAN ========== -->
+      <div class="admin-tab-content hidden" id="adminTabSettings">
+        <h4 style="margin-bottom:12px;">Pengaturan Super Admin</h4>
+        
+        <div class="form-group">
+          <label class="form-label">Nomor WhatsApp Admin</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="adminWhatsappInput" placeholder="081220285226">
+            <button onclick="saveAdminWhatsapp()" class="btn btn-primary btn-sm">Simpan</button>
+          </div>
+          <div class="form-hint">Masukkan tanpa +62, cukup 08xxx. Sistem akan otomatis mengubah ke format +62.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password Baru Super Admin</label>
+          <div style="display:flex;gap:8px;">
+            <input type="password" id="adminNewPassword" placeholder="Password baru">
+            <button onclick="changeAdminPassword()" class="btn btn-warning btn-sm">Ganti Password</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nama Super Admin</label>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="adminNewName" placeholder="Nama baru">
+            <button onclick="changeAdminName()" class="btn btn-primary btn-sm">Ganti Nama</button>
+          </div>
+        </div>
+
+        <hr style="border-color:var(--border-color);margin:20px 0;">
+
+        <button onclick="restartApplication()" class="btn btn-warning btn-block" style="margin-bottom:12px;">🔄 Restart Aplikasi</button>
+        <button onclick="resetAllApplicationData()" class="btn btn-danger btn-block">⚠️ Reset Semua Data Aplikasi</button>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;text-align:center;">Perhatian: Semua data user, riwayat lacak, dan pengaturan akan dihapus permanen!</p>
+      </div>
+
+      <!-- ========== TAB 6: IKLAN ========== -->
+      <div class="admin-tab-content hidden" id="adminTabIklan">
+        <h4 style="margin-bottom:12px;">📢 Edit Iklan Halaman Depan</h4>
+        <div class="form-group">
+          <label class="form-label">Judul Iklan</label>
+          <input type="text" id="adTitle" placeholder="Contoh: 📍 TraceID – Lacak Sekarang!">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Deskripsi Iklan</label>
+          <textarea id="adDescription" rows="3" placeholder="Tulis deskripsi iklan..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teks Tombol</label>
+          <input type="text" id="adButtonText" placeholder="Contoh: 🔍 Mulai Lacak Gratis">
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="saveAdSettings()" class="btn btn-primary btn-block">💾 Simpan Iklan</button>
+          <button onclick="resetAdSettings()" class="btn btn-warning btn-block">🔄 Reset ke Default</button>
+        </div>
+        <div id="adSaveResult" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- ========== TAB 7: CHAT USER ========== -->
+      <div class="admin-tab-content hidden" id="adminTabChat">
+        <h4 style="margin-bottom:12px;">💬 Chat dengan User</h4>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.85rem;color:var(--text-secondary);display:block;margin-bottom:4px;">Pilih User:</label>
+          <select id="adminChatUserSelect" onchange="setAdminChatTarget(this.value)" style="width:100%;padding:8px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
+            <option value="">-- Pilih User --</option>
+          </select>
+        </div>
+        <div class="chat-messages" id="adminChatMessages" style="height:250px;overflow-y:auto;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:8px;margin-bottom:12px;">
+          <p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <input type="text" id="adminChatInput" placeholder="Ketik balasan..." style="flex:1;">
+          <button onclick="sendAdminChat()" class="btn btn-primary btn-sm">Kirim</button>
+        </div>
+        <hr style="border-color:var(--border-color);margin:16px 0;">
+        <h4 style="margin-bottom:8px;">📢 Chat Massal ke Semua User</h4>
+        <textarea id="massChatMessage" rows="3" placeholder="Tulis pesan untuk semua user..." style="margin-bottom:8px;"></textarea>
+        <button onclick="sendMassChat()" class="btn btn-warning btn-block">Kirim ke Semua User</button>
+      </div>
+
+      <!-- ========== TAB 8: BACKUP ========== -->
+      <div class="admin-tab-content hidden" id="adminTabBackup">
+        <h4 style="margin-bottom:12px;">💾 Backup &amp; Restore Data</h4>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">
+          Simpan dan pulihkan seluruh data aplikasi (JSON) atau halaman (HTML).
+        </p>
+
+        <button onclick="backupAllDataJSON()" class="btn btn-primary btn-block" style="margin-bottom:12px;">⬇ Backup Data (JSON)</button>
+        <label class="btn btn-warning btn-block" style="margin-bottom:12px;cursor:pointer;">
+          📤 Restore Data (JSON)
+          <input type="file" accept=".json" onchange="restoreAllDataJSON(this)" hidden>
+        </label>
+
+        <hr style="border-color:var(--border-color);margin:16px 0;">
+
+        <button onclick="downloadOfflineHTML()" class="btn btn-success btn-block" style="margin-bottom:12px;">⬇ Download HTML (Offline)</button>
+        <label class="btn btn-warning btn-block" style="cursor:pointer;">
+          📤 Restore HTML
+          <input type="file" accept=".html" onchange="restoreFromHTML(this)" hidden>
+        </label>
+
+        <hr style="border-color:var(--border-color);margin:16px 0;">
+
+        <button onclick="saveToGoogleDrive()" class="btn btn-primary btn-block" style="background:#4285F4;margin-bottom:12px;">
+          ☁️ Simpan ke Google Drive / Memori
+        </button>
+        <button onclick="emailBackup()" class="btn btn-primary btn-block" style="background:#DB4437;">
+          📧 Kirim Backup via Email
+        </button>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;text-align:center;">
+          Backup akan didownload dan siap dilampirkan ke email Anda.
+        </p>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('superAdminModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AKHIR BLOK 4 R1
+     Blok 5 akan melanjutkan: Modal Lacak & Link Tracker
+     ============================================================ -->
+<!-- ============================================================
+     BLOK 5 R1 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP)
+     (Modal Lacak, Link Tracker, Hasil Klik, Detail Riwayat, Confirm, Edit Package)
+     ============================================================
+     PENJELASAN:
+     - Berisi 6 modal: Lacak, Link Tracker, Hasil Klik, Detail Riwayat, Confirm, Edit Package
+     - Identik dengan struktur Notepad+ v3.3
+     - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
+     ============================================================ -->
+
+<!-- ============================================================
+     MODAL LACAK
+     ============================================================ -->
+<div class="modal-overlay" id="lacakModal">
+  <div class="modal-content" style="max-width:600px;">
+    <div class="modal-header">
+      <h3 id="lacakModalTitle">🔍 Lacak</h3>
+      <button class="modal-close" onclick="closeModal('lacakModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="lacakType" value="ip">
+      
+      <div class="form-group">
+        <label class="form-label" id="lacakLabel">Masukkan Data Target</label>
+        <input type="text" id="lacakInput" placeholder="Masukkan data...">
+        <div class="form-hint" id="lacakHint">Contoh data target.</div>
+      </div>
+      
+      <button onclick="executeLacak()" class="btn btn-primary btn-block">🔍 Lacak Sekarang</button>
+      
+      <!-- Loading -->
+      <div id="lacakLoading" class="hidden" style="text-align:center;padding:20px;">
+        <span style="font-size:1.2rem;">⏳</span> Memproses...
+      </div>
+      
+      <!-- Hasil Lacakan -->
+      <div id="lacakResultDetail" class="hidden" style="margin-top:16px;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
+        <h4 style="margin-bottom:8px;">📋 Hasil Lacakan</h4>
+        <div id="lacakResultContent"></div>
+      </div>
+      
+      <div class="form-error" id="lacakError"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('lacakModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL LINK TRACKER (KIRIM PESAN & GAMBAR)
+     ============================================================ -->
+<div class="modal-overlay" id="linkTrackerModal">
+  <div class="modal-content" style="max-width:550px;">
+    <div class="modal-header">
+      <h3>🔗 Kirim Pesan &amp; Gambar</h3>
+      <button class="modal-close" onclick="closeModal('linkTrackerModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-secondary);margin-bottom:16px;">
+        Kirim pesan dan gambar ke target. Gunakan untuk mengirim foto dan mendapatkan balasan.
+      </p>
+      
+      <!-- Judul Pesan -->
+      <div class="form-group">
+        <label class="form-label">Judul Pesan</label>
+        <input type="text" id="trackerTitle" placeholder="Contoh: Foto Anak Kita - Lihat ya">
+      </div>
+      
+      <!-- Pesan Teks -->
+      <div class="form-group">
+        <label class="form-label">Pesan Teks</label>
+        <textarea id="trackerMessage" rows="3" placeholder="Tulis pesan... Contoh: Sayang, ini foto anak kita. Kamu dimana? Tolong kabari."></textarea>
+      </div>
+      
+      <!-- Upload Gambar -->
+      <div class="form-group">
+        <label class="form-label">Upload Gambar dari HP</label>
+        <input type="file" id="trackerImageFile" accept="image/*" onchange="previewTrackerImage()" style="padding:8px;">
+        <div id="trackerImagePreview" style="margin-top:8px;display:none;">
+          <img id="trackerImagePreviewImg" src="" style="max-width:100%;max-height:200px;border-radius:8px;">
+          <button onclick="removeTrackerImage()" class="btn btn-danger btn-sm" style="margin-top:4px;">✕ Hapus Gambar</button>
+        </div>
+        <div class="form-hint">Pilih gambar dari galeri HP. Gambar akan dikirim bersama pesan.</div>
+      </div>
+      
+      <!-- URL Gambar -->
+      <div class="form-group">
+        <label class="form-label">Atau URL Gambar (opsional)</label>
+        <input type="text" id="trackerImageUrl" placeholder="https://example.com/foto.jpg">
+        <div class="form-hint">Tempel URL gambar dari internet. Upload dulu ke imgbb.com (gratis).</div>
+      </div>
+      
+      <!-- Tombol Siapkan -->
+      <button class="btn btn-primary btn-block" id="btnSiapkanKiriman" onclick="generateTrackerLink()">📤 Siapkan Kiriman</button>
+      
+      <!-- Hasil Tracker -->
+      <div id="trackerResult" class="hidden" style="margin-top:16px;">
+        <div style="background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
+          <h4 style="margin-bottom:8px;color:var(--accent-light);">✅ Pesan &amp; Gambar Siap</h4>
+          <div id="trackerPreviewFinal" style="margin-bottom:12px;"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button onclick="shareTrackerWA()" class="btn btn-success btn-sm">📱 Kirim via WhatsApp</button>
+            <button onclick="shareTrackerEmail()" class="btn btn-blue btn-sm">📧 Kirim via Email</button>
+            <button onclick="shareTrackerSMS()" class="btn btn-warning btn-sm">💬 Kirim via SMS</button>
+            <button onclick="copyTrackerMessage()" class="btn btn-primary btn-sm">📋 Copy Pesan</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-error" id="trackerError"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('linkTrackerModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL HASIL KLIK TRACKER
+     ============================================================ -->
+<div class="modal-overlay" id="trackerClicksModal">
+  <div class="modal-content" style="max-width:550px;">
+    <div class="modal-header">
+      <h3>📊 Riwayat Pesan Tracker</h3>
+      <button class="modal-close" onclick="closeModal('trackerClicksModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="trackerClicksContent">
+        <p style="text-align:center;padding:20px;color:var(--text-muted);">Memuat data...</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('trackerClicksModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL DETAIL RIWAYAT
+     ============================================================ -->
+<div class="modal-overlay" id="detailRiwayatModal">
+  <div class="modal-content" style="max-width:550px;">
+    <div class="modal-header">
+      <h3 id="detailRiwayatTitle">📋 Detail</h3>
+      <button class="modal-close" onclick="closeModal('detailRiwayatModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="detailRiwayatContent"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('detailRiwayatModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL KONFIRMASI
+     ============================================================ -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-content" style="max-width:380px;">
+    <div class="modal-header">
+      <h3 id="confirmTitle">Konfirmasi</h3>
+      <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMessage">Apakah Anda yakin ingin melanjutkan?</p>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('confirmModal')" class="btn btn-gray">Batal</button>
+      <button onclick="executeConfirmAction()" class="btn btn-danger" id="confirmButton">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL EDIT PAKET
+     ============================================================ -->
+<div class="modal-overlay" id="editPackageModal">
+  <div class="modal-content" style="max-width:420px;">
+    <div class="modal-header">
+      <h3 id="editPackageTitle">Edit Paket</h3>
+      <button class="modal-close" onclick="closeModal('editPackageModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editPackageId">
+      
+      <div class="form-group">
+        <label class="form-label">Nama Paket</label>
+        <input type="text" id="editPackageName" placeholder="Contoh: Starter">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Harga (Rupiah)</label>
+        <input type="number" id="editPackagePrice" placeholder="25000">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Durasi (hari)</label>
+        <input type="number" id="editPackageDays" placeholder="7">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Label Durasi</label>
+        <input type="text" id="editPackageLabel" placeholder="Contoh: 1 Minggu">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Fitur</label>
+        <input type="text" id="editPackageFeatures" placeholder="Contoh: 5x lacak/hari">
+      </div>
+      
+      <div class="form-error" id="editPackageError"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('editPackageModal')" class="btn btn-gray">Batal</button>
+      <button onclick="savePackageChanges()" class="btn btn-primary">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AKHIR BLOK 5 R1
+     Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container
+     ============================================================ -->     
