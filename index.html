@@ -1,6 +1,7 @@
 <!-- ============================================================
-     BLOK 1 R1 – PEMBUKA APLIKASI TraceID
-     (Landing Page, Header, CSS Lengkap, Hero Section)
+     BLOK 1 R2 – PEMBUKA APLIKASI TraceID (LENGKAP)
+     (Landing Page, Header, CSS Lengkap, Hero Section, 
+      Fitur, Paket, Install Banner, Expiry Banner)
      ============================================================
      PENJELASAN:
      - Ini adalah blok pembuka aplikasi TraceID.
@@ -8,6 +9,7 @@
        hero section dengan tagline dan tombol CTA.
      - CSS dibuat identik dengan Notepad+ agar tampilan tetap modern.
      - Warna aksen diubah ke biru (#3b82f6) untuk tema pelacakan.
+     - Perbaikan: installBanner, expiryWarning, price-grid CSS.
      ============================================================ -->
 <!DOCTYPE html>
 <html lang="id">
@@ -23,7 +25,7 @@
   <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlRyYWNlSUQiLAogICJzaG9ydF9uYW1lIjogIlRyYWNlSUQiLAogICJzdGFydF91cmwiOiAiLi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwYTBhMWEiLAogICJ0aGVtZV9jb2xvciI6ICIjMGEwYTFhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3JlY3Qgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIHJ4PScyMCcgZmlsbD0nJTIzMGEwYTFhJy8lM0UlM0N0ZXh0IHg9JzUwJyB5PSc2OCcgdGV4dC1hbmNob3I9J21pZGRsZScgZm9udC1zaXplPSc2MCcgZmlsbD0nJTIzZmZmZmZmJyUzRSZwIzEyODIwNTsmI3gxMjgwNjU7PC90ZXh0JTNFJTNDL3N2ZyUzRSIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
   <style>
     /* ============================================================
-       TraceID v1.0 - MAIN STYLESHEET
+       TraceID v1.0 - MAIN STYLESHEET (LENGKAP)
        ============================================================ */
     *,
     *::before,
@@ -109,12 +111,14 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: var(--radius-full); }
     * { scrollbar-width: thin; scrollbar-color: var(--accent-primary) transparent; }
+    
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); } 50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.5); } }
+    
     .hidden { display: none !important; }
     .flex { display: flex; }
     .flex-center { display: flex; align-items: center; justify-content: center; }
@@ -154,6 +158,7 @@
     .overflow-hidden { overflow: hidden; }
     .overflow-auto { overflow-y: auto; }
     .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
       padding: 10px 20px; border: none; border-radius: var(--radius-sm); font-weight: 600;
@@ -184,6 +189,7 @@
     .btn-lg { padding: 14px 28px; font-size: 1.05rem; min-height: 48px; }
     .btn-xl { padding: 18px 36px; font-size: 1.15rem; min-height: 56px; }
     .btn-block { width: 100%; display: flex; }
+    
     .badge {
       display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px;
       border-radius: var(--radius-full); font-size: 0.7rem; font-weight: 600;
@@ -193,6 +199,7 @@
     .badge-danger { background: var(--color-danger); color: #ffffff; }
     .badge-warning { background: var(--color-warning); color: #000000; }
     .badge-purple { background: var(--accent-primary); color: #ffffff; }
+    
     input, textarea, select {
       width: 100%; padding: 10px 14px; border: 1px solid var(--border-color-strong);
       border-radius: var(--radius-sm); font-size: 0.9rem; transition: all var(--transition-base);
@@ -202,6 +209,7 @@
     input::placeholder, textarea::placeholder { color: var(--text-muted); }
     textarea { resize: vertical; min-height: 80px; font-family: 'Courier New', monospace; font-size: 0.85rem; line-height: 1.7; }
     select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a0a0b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
+    
     .form-group { margin-bottom: var(--spacing-lg); }
     .form-label { display: block; margin-bottom: var(--spacing-sm); font-weight: 500; font-size: 0.85rem; color: var(--text-secondary); }
     .form-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: var(--spacing-xs); }
@@ -211,12 +219,14 @@
     .form-success.show { display: block; }
     .link-text { color: var(--accent-light); cursor: pointer; transition: color var(--transition-base); }
     .link-text:hover { color: var(--accent-primary); text-decoration: underline; }
+    
     .toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: var(--z-toast); max-width: 90%; pointer-events: none; }
     .toast { background: var(--bg-secondary); color: var(--text-primary); padding: 12px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); font-size: 0.9rem; opacity: 0; transform: translateY(20px); transition: all var(--transition-base); pointer-events: auto; text-align: center; margin-bottom: 8px; border-left: 4px solid var(--accent-primary); }
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast.toast-success { border-left-color: var(--color-success); }
     .toast.toast-error { border-left-color: var(--color-danger); }
     .toast.toast-warning { border-left-color: var(--color-warning); }
+    
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: var(--z-modal); padding: var(--spacing-lg); }
     .modal-overlay.show { display: flex; }
     .modal-content { background: var(--bg-secondary); border-radius: var(--radius-lg); max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; padding: var(--spacing-2xl); animation: slideUp 0.3s ease; border: 1px solid var(--border-color); box-shadow: var(--shadow-lg); }
@@ -226,36 +236,110 @@
     .modal-close:hover { color: var(--color-danger); transform: rotate(90deg); }
     .modal-body { padding: var(--spacing-sm) 0; }
     .modal-footer { display: flex; gap: var(--spacing-md); padding-top: var(--spacing-xl); border-top: 1px solid var(--border-color); margin-top: var(--spacing-xl); justify-content: flex-end; }
+    
     .container { max-width: 1000px; margin: 0 auto; padding: var(--spacing-lg); min-height: 100vh; }
     .header { display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md) var(--spacing-xl); background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: var(--spacing-xl); flex-wrap: wrap; gap: var(--spacing-sm); }
     .logo { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: var(--spacing-sm); }
     .logo-icon { font-size: 1.3rem; }
     .logo-text { background: linear-gradient(135deg, var(--accent-light), #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .header-buttons { display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap; }
+    
     .user-badge { display: flex; align-items: center; gap: var(--spacing-sm); padding: 4px 12px 4px 8px; background: var(--bg-tertiary); border-radius: var(--radius-full); font-size: 0.85rem; }
     .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-primary); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #ffffff; font-weight: 600; }
     .user-name { font-size: 0.85rem; font-weight: 500; }
+    
     .hero { text-align: center; padding: var(--spacing-3xl) var(--spacing-xl); background: var(--bg-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: var(--spacing-xl); }
     .hero-icon { font-size: 3rem; margin-bottom: var(--spacing-md); }
     .hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: var(--spacing-sm); }
     .gradient-text { background: linear-gradient(135deg, var(--accent-light), #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero-description { font-size: 1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto var(--spacing-xl); line-height: 1.6; }
     .hero-buttons { display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap; }
+    
+    .whatsapp-banner { background: linear-gradient(135deg, #25D366, #128C7E); color: #ffffff; padding: var(--spacing-lg) var(--spacing-xl); border-radius: var(--radius-md); margin-bottom: var(--spacing-xl); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md); cursor: pointer; transition: all var(--transition-base); border: 2px solid transparent; }
+    .whatsapp-banner:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: rgba(255, 255, 255, 0.3); }
+    .whatsapp-banner-left { display: flex; align-items: center; gap: var(--spacing-md); }
+    .whatsapp-banner-icon { font-size: 1.5rem; }
+    .whatsapp-banner-right { display: flex; align-items: center; gap: var(--spacing-sm); }
+    
+    .offline-banner { background: var(--color-orange); color: #ffffff; padding: var(--spacing-md) var(--spacing-xl); border-radius: var(--radius-md); margin-bottom: var(--spacing-xl); display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md); }
+    .offline-banner.show { display: flex; }
+    
+    .expiry-warning { background: var(--color-danger); color: #ffffff; padding: var(--spacing-md) var(--spacing-xl); border-radius: var(--radius-md); margin-bottom: var(--spacing-xl); display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md); }
+    .expiry-warning.show { display: flex; }
+    
+    .install-banner { background: linear-gradient(135deg, var(--accent-primary), var(--accent-light)); color: #ffffff; padding: 12px 20px; border-radius: var(--radius-md); margin-bottom: var(--spacing-xl); display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md); cursor: pointer; transition: all var(--transition-base); border: 2px solid transparent; }
+    .install-banner:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: rgba(255, 255, 255, 0.3); }
+    .install-banner.show { display: flex; }
+    
+    .section-title { text-align: center; font-size: 1.3rem; font-weight: 700; margin-bottom: var(--spacing-lg); margin-top: var(--spacing-sm); }
+    
     .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl); }
     .feature-card { background: var(--bg-secondary); border-radius: var(--radius-md); padding: var(--spacing-xl); border: 1px solid var(--border-color); text-align: center; transition: all var(--transition-base); }
     .feature-card:hover { border-color: var(--accent-primary); transform: translateY(-3px); box-shadow: var(--shadow-md); }
     .feature-icon { font-size: 2rem; margin-bottom: var(--spacing-sm); }
     .feature-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: var(--spacing-xs); }
     .feature-card p { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.5; }
-    .section-title { text-align: center; font-size: 1.3rem; font-weight: 700; margin-bottom: var(--spacing-lg); margin-top: var(--spacing-sm); }
+    
+    .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl); }
+    .price-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--spacing-2xl); border: 2px solid var(--border-color); text-align: center; transition: all var(--transition-base); position: relative; cursor: pointer; }
+    .price-card:hover { border-color: var(--accent-primary); transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .price-card.featured { border-color: var(--accent-primary); background: var(--bg-tertiary); }
+    .price-card.featured .featured-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: #ffffff; padding: 3px 16px; border-radius: var(--radius-full); font-size: 0.7rem; font-weight: 700; white-space: nowrap; }
+    .price-icon { font-size: 2.5rem; margin-bottom: var(--spacing-sm); }
+    .price-name { font-size: 1.2rem; font-weight: 700; }
+    .price-value { font-size: 2rem; font-weight: 800; color: var(--color-success); margin: var(--spacing-sm) 0; }
+    .price-duration { font-size: 0.85rem; color: var(--text-secondary); }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-xl); }
+    .stat-card { background: var(--bg-secondary); border-radius: var(--radius-sm); padding: var(--spacing-lg); border: 1px solid var(--border-color); text-align: center; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent-light); }
+    .stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: var(--spacing-xs); }
+    
+    .toolbar { display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-xl); }
+    
+    .chat-container { display: flex; flex-direction: column; height: 50vh; max-height: 400px; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: var(--spacing-md); background: var(--bg-tertiary); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md); }
+    .chat-msg { margin-bottom: var(--spacing-sm); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-sm); max-width: 80%; word-wrap: break-word; font-size: 0.85rem; line-height: 1.4; }
+    .chat-msg.user { background: var(--accent-primary); color: #ffffff; margin-left: auto; text-align: right; }
+    .chat-msg.admin { background: var(--bg-hover); color: var(--text-primary); margin-right: auto; }
+    .chat-msg .chat-sender { font-size: 0.7rem; opacity: 0.8; margin-bottom: 2px; }
+    .chat-msg .chat-time { font-size: 0.65rem; opacity: 0.6; margin-top: 4px; }
+    .chat-input-row { display: flex; gap: var(--spacing-sm); }
+    .chat-input-row input { flex: 1; }
+    
+    .empty-state { text-align: center; padding: var(--spacing-3xl) var(--spacing-lg); color: var(--text-secondary); }
+    .empty-state-icon { font-size: 3rem; margin-bottom: var(--spacing-md); }
+    .empty-state h3 { font-size: 1.2rem; color: var(--text-primary); margin-bottom: var(--spacing-sm); }
+    .empty-state p { color: var(--text-muted); margin-bottom: var(--spacing-lg); }
+    
+    .admin-tabs { display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-bottom: var(--spacing-lg); border-bottom: 1px solid var(--border-color); padding-bottom: var(--spacing-md); }
+    .admin-tab { padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all var(--transition-base); }
+    .admin-tab:hover { background: var(--accent-primary); color: #ffffff; }
+    .admin-tab.active { background: var(--accent-primary); color: #ffffff; }
+    .admin-tab-content { animation: fadeIn 0.3s ease; }
+    
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .admin-table th, .admin-table td { padding: 8px 10px; border: 1px solid var(--border-color); text-align: left; vertical-align: middle; }
+    .admin-table th { background: var(--bg-hover); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .admin-table tr:hover { background: var(--bg-tertiary); }
+    
+    .admin-chat-user-list { max-height: 200px; overflow-y: auto; margin-bottom: var(--spacing-md); }
+    .admin-chat-user-item { padding: var(--spacing-sm) var(--spacing-md); border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .admin-chat-user-item:hover { background: var(--bg-hover); }
+    
     @media (max-width: 640px) {
       .hero h1 { font-size: 1.5rem; }
       .hero { padding: var(--spacing-2xl) var(--spacing-md); }
+      .price-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
       .header { flex-direction: column; align-items: stretch; }
       .header-buttons { justify-content: center; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .modal-content { padding: var(--spacing-lg); }
       .hero-buttons { flex-direction: column; }
       .hero-buttons .btn { width: 100%; }
+      .admin-table { font-size: 0.65rem; }
+      .admin-table th, .admin-table td { padding: 4px 6px; }
     }
   </style>
 </head>
@@ -264,6 +348,24 @@
 <!-- CONNECTION STATUS BADGE -->
 <div id="connectionBadge" style="position:fixed;top:10px;right:10px;z-index:997;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:#10b981;color:#fff;opacity:0.85;">
   ONLINE
+</div>
+
+<!-- OFFLINE BANNER -->
+<div class="offline-banner" id="offlineBanner">
+  <span><strong>Mode Offline</strong> - Data disimpan di browser. Beberapa fitur terbatas.</span>
+  <button onclick="downloadForOffline()" class="btn btn-warning btn-sm">Download Untuk Offline</button>
+</div>
+
+<!-- EXPIRY WARNING BANNER -->
+<div class="expiry-warning" id="expiryWarning">
+  <span id="expiryWarningText">Premium akan segera berakhir!</span>
+  <button onclick="showActivationModal()" class="btn btn-warning btn-sm">Perpanjang Premium</button>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner" onclick="installApplication()">
+  <span><strong>Install TraceID sebagai Aplikasi Desktop!</strong> Buka dari layar utama.</span>
+  <span style="font-size:1.2rem;">📲 Klik Disini</span>
 </div>
 
 <!-- LANDING PAGE -->
@@ -278,6 +380,7 @@
       <button onclick="showRegisterModal()" class="btn btn-primary btn-sm">Daftar</button>
       <button onclick="toggleTheme()" id="themeButton1" class="btn btn-gray btn-sm">🌙 Dark Mode</button>
       <button onclick="openApplication()" class="btn btn-success btn-sm">Buka Aplikasi</button>
+      <button onclick="downloadForOffline()" class="btn btn-blue btn-sm">Download Offline</button>
     </div>
   </header>
 
@@ -292,33 +395,28 @@
     <div class="hero-buttons">
       <button onclick="openApplication()" class="btn btn-primary btn-lg">🔍 Mulai Lacak Sekarang</button>
       <button onclick="showLoginModal()" class="btn btn-outline btn-lg">Login</button>
+      <button onclick="installApplication()" class="btn btn-success btn-lg" id="heroInstallButton">📲 Install Desktop</button>
     </div>
   </section>
 
-  <!-- BANNER HUBUNGI ADMIN -->
-  <div style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; padding: var(--spacing-lg) var(--spacing-xl); border-radius: var(--radius-md); margin-bottom: var(--spacing-xl); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md); cursor: pointer; transition: all var(--transition-base); border: 2px solid transparent;" onclick="hubungiAdminLanding()">
-    <div style="display: flex; align-items: center; gap: var(--spacing-md);">
-      <span style="font-size: 1.5rem;">💬</span>
+  <!-- BANNER HUBUNGI ADMIN VIA CHAT -->
+  <div class="whatsapp-banner" onclick="hubungiAdminLanding()">
+    <div class="whatsapp-banner-left">
+      <span class="whatsapp-banner-icon">💬</span>
       <div>
         <strong>Hubungi Admin</strong>
         <br>
         <small>Butuh bantuan lacak? Chat langsung dengan Admin.</small>
       </div>
     </div>
-    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+    <div class="whatsapp-banner-right">
       <span>Chat Admin</span>
       <span style="font-size:1.2rem;">👉</span>
     </div>
   </div>
 
 <!-- ============================================================
-     AKHIR BLOK 1 R1
-     Blok 2 akan melanjutkan: Fitur Unggulan & Paket Premium
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 2 R1 – FITUR UNGGULAN & PAKET PREMIUM
-     (Lanjutan dari Blok 1 - masih di dalam landingPage)
+     BLOK 1 LANJUTAN – FITUR UNGGULAN & PAKET PREMIUM
      ============================================================ -->
   <h3 class="section-title">🔍 Fitur Pelacakan Unggulan</h3>
   <div class="features-grid">
@@ -355,30 +453,8 @@
   </div>
 
   <h3 class="section-title">💎 Paket Premium TraceID</h3>
-  <div class="price-grid" id="landingPriceGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl);">
-    <div class="price-card featured" onclick="showLoginModal()" style="background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--spacing-2xl); border: 2px solid var(--accent-primary); text-align: center; transition: all var(--transition-base); position: relative; cursor: pointer;">
-      <div class="featured-badge" style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent-primary); color: #ffffff; padding: 3px 16px; border-radius: var(--radius-full); font-size: 0.7rem; font-weight: 700; white-space: nowrap;">POPULER</div>
-      <div class="price-icon" style="font-size: 2.5rem; margin-bottom: var(--spacing-sm);">🌟</div>
-      <div class="price-name" style="font-size: 1.2rem; font-weight: 700;">Starter</div>
-      <div class="price-value" style="font-size: 2rem; font-weight: 800; color: var(--color-success); margin: var(--spacing-sm) 0;">Rp 25.000</div>
-      <div class="price-duration" style="font-size: 0.85rem; color: var(--text-secondary);">1 Minggu</div>
-      <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">5x lacak/hari • IP & Email</p>
-    </div>
-    <div class="price-card featured" onclick="showLoginModal()" style="background: var(--bg-tertiary); border-radius: var(--radius-lg); padding: var(--spacing-2xl); border: 2px solid var(--accent-primary); text-align: center; transition: all var(--transition-base); position: relative; cursor: pointer;">
-      <div class="featured-badge" style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #f59e0b; color: #000; padding: 3px 16px; border-radius: var(--radius-full); font-size: 0.7rem; font-weight: 700; white-space: nowrap;">TERLARIS</div>
-      <div class="price-icon" style="font-size: 2.5rem; margin-bottom: var(--spacing-sm);">💎</div>
-      <div class="price-name" style="font-size: 1.2rem; font-weight: 700;">Professional</div>
-      <div class="price-value" style="font-size: 2rem; font-weight: 800; color: var(--color-success); margin: var(--spacing-sm) 0;">Rp 50.000</div>
-      <div class="price-duration" style="font-size: 0.85rem; color: var(--text-secondary);">1 Bulan</div>
-      <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">20x lacak/hari • Semua Fitur</p>
-    </div>
-    <div class="price-card" onclick="showLoginModal()" style="background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--spacing-2xl); border: 2px solid var(--border-color); text-align: center; transition: all var(--transition-base); position: relative; cursor: pointer;">
-      <div class="price-icon" style="font-size: 2.5rem; margin-bottom: var(--spacing-sm);">👑</div>
-      <div class="price-name" style="font-size: 1.2rem; font-weight: 700;">Enterprise</div>
-      <div class="price-value" style="font-size: 2rem; font-weight: 800; color: var(--color-success); margin: var(--spacing-sm) 0;">Rp 100.000</div>
-      <div class="price-duration" style="font-size: 0.85rem; color: var(--text-secondary);">3 Bulan</div>
-      <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">Unlimited lacak • Prioritas Support</p>
-    </div>
+  <div class="price-grid" id="landingPriceGrid">
+    <!-- Diisi oleh JavaScript refreshPackageDisplay() -->
   </div>
 
   <!-- TOMBOL BACKUP DATA -->
@@ -391,27 +467,43 @@
     </p>
   </div>
 
+  <!-- TOMBOL SIMPAN KE GOOGLE DRIVE / MEMORI -->
+  <div style="text-align:center;margin:30px 0;">
+    <button class="btn btn-lg" style="background:#4285F4;color:#fff;" onclick="saveToGoogleDrive()">
+      ☁️ Simpan Data ke Google Drive / Memori
+    </button>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">
+      Backup semua data Anda ke Google Drive atau simpan di memori HP.
+    </p>
+  </div>
+
   <!-- IKLAN LANDING PAGE -->
   <div id="landingAdContainer" style="max-width:1000px;margin:0 auto 30px auto;padding:0 var(--spacing-lg);">
-    <div style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:20px 24px;border-radius:var(--radius-lg);text-align:center;margin-bottom:20px;border:2px solid rgba(255,255,255,0.2);">
-      <h3 style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">📍 TraceID – Lacak Sekarang!</h3>
-      <p style="margin-bottom:12px;opacity:0.9;">HP hilang? Kerabat kabur? Awasi anak Anda dengan teknologi pelacakan terkini.</p>
-      <button onclick="showRegisterModal()" class="btn btn-lg" style="background:#fff;color:#3b82f6;font-weight:700;">🔍 Mulai Lacak Gratis</button>
-    </div>
+    <!-- Diisi oleh renderLandingAd() -->
   </div>
 </div>
 <!-- END LANDING PAGE -->
-<!-- ============================================================
-     AKHIR BLOK 2 R1
-     Blok 3 akan melanjutkan: Halaman Aplikasi (Dashboard + Toolbar)
-     ============================================================ -->
 
 <!-- ============================================================
-     BLOK 3 R3 – APPLICATION PAGE (LENGKAP)
-     Revisi 3: Header + Stats + Toolbar + Riwayat + Search
+     AKHIR BLOK 1 R2
+     Blok 2 akan melanjutkan: Halaman Aplikasi (Application Page)
      ============================================================ -->
+     <!-- ============================================================
+     BLOK 2 R1 – APPLICATION PAGE TraceID (LENGKAP)
+     (Header, Stats Dashboard, Toolbar, Search Bar, Riwayat)
+     ============================================================
+     PENJELASAN:
+     - Halaman utama aplikasi setelah login
+     - Berisi: Header dengan user badge, stats dashboard,
+       toolbar lengkap (lacak IP, email, sosmed, tracker, dll),
+       search bar, dan riwayat pelacakan
+     - Identik dengan struktur Notepad+ v3.3
+     ============================================================ -->
+
 <!-- APPLICATION PAGE -->
 <div class="container hidden" id="applicationPage">
+  
+  <!-- ========== HEADER ========== -->
   <header class="header">
     <div class="logo">
       <span class="logo-icon">📍</span>
@@ -421,17 +513,19 @@
       <button onclick="toggleTheme()" id="themeButton2" class="btn btn-gray btn-sm">🌙 Dark Mode</button>
       <button onclick="showProfileModal()" id="profileButton" class="btn btn-outline btn-sm hidden">Profil</button>
       <button onclick="showSuperAdminPanel()" id="adminButton" class="btn btn-warning btn-sm hidden">Panel Admin</button>
+      
       <div class="user-badge" id="userBadge" style="display:none;">
         <div class="user-avatar" id="userAvatar">U</div>
         <span class="user-name" id="userNameDisplay">User</span>
       </div>
+      
       <button onclick="handleLogout()" id="logoutButton" class="btn btn-danger btn-sm hidden">Logout</button>
       <button onclick="goToLandingPage()" class="btn btn-gray btn-sm">Halaman Utama</button>
       <button onclick="downloadForOffline()" class="btn btn-blue btn-sm">Download Offline</button>
     </div>
   </header>
 
-  <!-- STATS DASHBOARD -->
+  <!-- ========== STATS DASHBOARD ========== -->
   <div class="stats-grid" id="dashboardStats">
     <div class="stat-card">
       <div class="stat-value" id="statTotalLacak">0</div>
@@ -455,29 +549,47 @@
     </div>
   </div>
 
-  <!-- TOOLBAR -->
+  <!-- ========== TOOLBAR ========== -->
   <div class="toolbar">
+    <!-- Tombol Lacak -->
     <button onclick="showLacakModal('ip')" class="btn btn-primary">🌐 Lacak IP</button>
     <button onclick="showLacakModal('email')" class="btn btn-blue">📧 Lacak Email</button>
     <button onclick="showLacakModal('tiktok')" class="btn btn-success">🎵 TikTok</button>
     <button onclick="showLacakModal('instagram')" class="btn btn-warning">📷 Instagram</button>
     <button onclick="showLacakModal('facebook')" class="btn btn-info">📘 Facebook</button>
     <button onclick="showLacakModal('whatsapp')" class="btn btn-success">📱 WhatsApp</button>
+    
+    <!-- Tombol Tracker -->
     <button onclick="showLinkTrackerModal()" class="btn btn-orange">🔗 Kirim Pesan/Gambar</button>
     <button onclick="showTrackerClicks()" class="btn btn-primary" style="background:#8b5cf6;">📊 Hasil Klik</button>
+    
+    <!-- Tombol Import/Export -->
     <button onclick="exportAllData()" class="btn btn-orange">📤 Export</button>
     <button onclick="document.getElementById('importFileInput').click()" class="btn btn-gray">📥 Import</button>
     <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importAllData(this)">
-    <button onclick="toggleSearch()" class="btn btn-gray">🔍 Cari</button>
+    
+    <!-- Tombol Aktivasi Premium -->
     <button onclick="showActivationModal()" class="btn btn-warning" id="activationToolbarButton" style="display:none;">🔑 Premium</button>
+    
+    <!-- Tombol Chat -->
     <button onclick="showChatModal()" class="btn btn-blue" id="chatButton">💬 Chat Admin</button>
-    <button onclick="showUserChatModal()" class="btn btn-info" id="chatUserButton">👥 Chat User</button>
-    <button onclick="backupUserData()" class="btn btn-success" style="background:#3b82f6;">💾 Backup</button>
-    <label class="btn btn-warning" style="cursor:pointer;margin:0;">📤 Restore<input type="file" id="restoreFileInput" accept=".json" hidden onchange="restoreUserData(this)"></label>
+    <button onclick="showUserChatModal()" class="btn btn-info hidden" id="chatUserButton">👥 Chat User</button>
+    
+    <!-- Tombol Backup & Restore -->
+    <button onclick="backupUserData()" class="btn btn-success" style="background:#4285F4;">💾 Backup Data</button>
+    <label class="btn btn-warning" style="cursor:pointer;margin:0;">
+      📤 Restore Data
+      <input type="file" id="restoreFileInput" accept=".json" hidden onchange="restoreUserData(this)">
+    </label>
+    
+    <!-- Tombol Backup Upgrade -->
     <button onclick="backupSebelumUpgrade()" class="btn btn-orange">📦 Backup Upgrade</button>
+    
+    <!-- Tombol Search -->
+    <button onclick="toggleSearch()" class="btn btn-gray">🔍 Cari</button>
   </div>
 
-  <!-- SEARCH BAR -->
+  <!-- ========== SEARCH BAR ========== -->
   <div id="searchBar" class="hidden" style="margin-bottom:20px;">
     <div style="display:flex;gap:8px;">
       <input type="text" id="searchInput" placeholder="Cari riwayat lacak..." style="flex:2;" oninput="performSearch()">
@@ -485,1678 +597,23 @@
     </div>
   </div>
 
-  <!-- RIWAYAT PELACAKAN -->
+  <!-- ========== RIWAYAT PELACAKAN ========== -->
   <h3 class="section-title" style="text-align: left; margin-top: var(--spacing-xl);">📋 Riwayat Pelacakan</h3>
   <div id="riwayatLacakContainer">
+    <!-- Empty State (ditampilkan jika belum ada riwayat) -->
     <div class="empty-state" id="emptyRiwayat">
       <div class="empty-state-icon">📋</div>
       <h3>Belum Ada Riwayat</h3>
       <p>Riwayat pelacakan Anda akan muncul di sini.</p>
+      <button onclick="showLacakModal('ip')" class="btn btn-primary">🔍 Mulai Lacak</button>
     </div>
   </div>
+
 </div>
 <!-- END APPLICATION PAGE -->
-<!-- ============================================================
-     AKHIR BLOK 3 R3
-     ============================================================ -->
 
 <!-- ============================================================
-     BLOK 4 R1 – MODAL AUTH (Login, Register, Forgot Password)
+     AKHIR BLOK 2 R1
+     Blok 3 akan melanjutkan: Modal Auth (Login, Register, Forgot Password)
      ============================================================ -->
-<!-- LOGIN MODAL -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal-content" style="max-width:420px;">
-    <div class="modal-header">
-      <h3>🔐 Login TraceID</h3>
-      <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <input type="text" id="loginUsername" placeholder="Username atau Email" autocomplete="username">
-      </div>
-      <div class="form-group">
-        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
-      </div>
-      <button onclick="handleLogin()" class="btn btn-primary btn-block">Masuk</button>
-      <div class="form-error" id="loginError"></div>
-      <div style="display:flex;justify-content:space-between;margin-top:16px;font-size:0.8rem;">
-        <span class="link-text" onclick="closeModal('loginModal');showRegisterModal()">Daftar Akun Baru</span>
-        <span class="link-text" onclick="closeModal('loginModal');openModal('forgotPasswordModal')">Lupa Password?</span>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('loginModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- REGISTER MODAL -->
-<div class="modal-overlay" id="registerModal">
-  <div class="modal-content" style="max-width:420px;">
-    <div class="modal-header">
-      <h3>📝 Daftar Akun TraceID</h3>
-      <button class="modal-close" onclick="closeModal('registerModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <input type="text" id="registerNama" placeholder="Nama Lengkap *">
-      </div>
-      <div class="form-group">
-        <input type="email" id="registerEmail" placeholder="Email *">
-      </div>
-      <div class="form-group">
-        <input type="text" id="registerHp" placeholder="Nomor HP * (contoh: 081234567890)">
-      </div>
-      <div class="form-group">
-        <input type="text" id="registerUsername" placeholder="Username *">
-      </div>
-      <div class="form-group">
-        <input type="password" id="registerPassword" placeholder="Password * (minimal 6 karakter)">
-      </div>
-      <div class="form-group">
-        <input type="password" id="registerPasswordConfirm" placeholder="Konfirmasi Password *">
-      </div>
-      <button onclick="handleRegister()" class="btn btn-primary btn-block">Daftar Sekarang</button>
-      <div class="form-error" id="registerError"></div>
-      <div class="form-success" id="registerSuccess"></div>
-      <p style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--text-secondary);">
-        Sudah punya akun?
-        <span class="link-text" onclick="closeModal('registerModal');showLoginModal()">Login disini</span>
-      </p>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('registerModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- FORGOT PASSWORD MODAL -->
-<div class="modal-overlay" id="forgotPasswordModal">
-  <div class="modal-content" style="max-width:420px;">
-    <div class="modal-header">
-      <h3>🔑 Lupa Password</h3>
-      <button class="modal-close" onclick="closeModal('forgotPasswordModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
-        Masukkan data Anda untuk mereset password.
-      </p>
-      <div class="form-group">
-        <input type="text" id="forgotNama" placeholder="Nama Lengkap *">
-      </div>
-      <div class="form-group">
-        <input type="email" id="forgotEmail" placeholder="Email *">
-      </div>
-      <div class="form-group">
-        <input type="text" id="forgotHp" placeholder="Nomor HP *">
-      </div>
-      <button onclick="handleForgotPassword()" class="btn btn-warning btn-block">Kirim Link Reset Password</button>
-      <div class="form-error" id="forgotError"></div>
-      <div class="form-success" id="forgotSuccess"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('forgotPasswordModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-<!-- ============================================================
-     AKHIR BLOK 4 R1
-     Blok 5 akan melanjutkan: Modal Profil & Super Admin Panel
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 5 R1 – MODAL PROFIL & SUPER ADMIN PANEL
-     ============================================================ -->
-<!-- PROFILE MODAL -->
-<div class="modal-overlay" id="profileModal">
-  <div class="modal-content" style="max-width:450px;">
-    <div class="modal-header">
-      <h3>👤 Profil Saya</h3>
-      <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-        <div id="profileAvatar" style="width:60px;height:60px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;">U</div>
-        <div>
-          <h4 id="profileName" style="margin:0;">User</h4>
-          <p id="profileRole" style="margin:0;font-size:0.8rem;color:var(--text-secondary);">User Biasa</p>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Nama Lengkap</label>
-        <input type="text" id="editProfileNama">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email" id="editProfileEmail">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Nomor HP</label>
-        <input type="text" id="editProfileHp">
-      </div>
-      <button onclick="saveProfile()" class="btn btn-primary btn-block">Simpan Profil</button>
-      <div class="form-error" id="profileError"></div>
-      <div class="form-success" id="profileSuccess"></div>
-      <hr style="border-color:var(--border-color);margin:20px 0;">
-      <button onclick="deleteAccount()" id="deleteAccountButton" class="btn btn-danger btn-block">🗑 Hapus Akun Saya</button>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('profileModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- SUPER ADMIN PANEL MODAL -->
-<div class="modal-overlay" id="superAdminModal">
-  <div class="modal-content" style="max-width:750px;">
-    <div class="modal-header">
-      <h3>🛡 Panel Super Admin TraceID</h3>
-      <button class="modal-close" onclick="closeModal('superAdminModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="admin-tabs" style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; margin-bottom: var(--spacing-lg); border-bottom: 1px solid var(--border-color); padding-bottom: var(--spacing-md);">
-        <button class="admin-tab active" onclick="switchAdminTab('codes')" id="tabCodes" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: var(--accent-primary); color: #ffffff; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">Kode Aktivasi</button>
-        <button class="admin-tab" onclick="switchAdminTab('users')" id="tabUsers" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">Daftar User</button>
-        <button class="admin-tab" onclick="switchAdminTab('packages')" id="tabPackages" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">Paket & Harga</button>
-        <button class="admin-tab" onclick="switchAdminTab('security')" id="tabSecurity" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">Log Keamanan</button>
-        <button class="admin-tab" onclick="switchAdminTab('settings')" id="tabSettings" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">Pengaturan</button>
-        <button class="admin-tab" onclick="switchAdminTab('iklan')" id="tabIklan" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">📢 Iklan</button>
-        <button class="admin-tab" onclick="switchAdminTab('chat')" id="tabChat" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">💬 Chat User</button>
-        <button class="admin-tab" onclick="switchAdminTab('backup')" id="tabBackup" style="padding: 8px 16px; border: 2px solid var(--accent-primary); background: transparent; color: var(--accent-light); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem;">💾 Backup</button>
-      </div>
-
-      <!-- TAB: KODE AKTIVASI -->
-      <div class="admin-tab-content" id="adminTabCodes">
-        <h4 style="margin-bottom:12px;">Buat Kode Aktivasi Baru</h4>
-        <div class="form-group">
-          <label class="form-label">Pilih User</label>
-          <select id="adminActivationUserSelect" style="width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
-            <option value="">-- Pilih User --</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Pilih Paket</label>
-          <select id="adminActivationPackage">
-            <option value="">-- Pilih Paket --</option>
-          </select>
-        </div>
-        <button onclick="adminCreateActivationCode()" class="btn btn-primary btn-block">Buat Kode Aktivasi</button>
-        <div id="adminCodeResult" style="margin-top:12px;"></div>
-        <h4 style="margin-top:24px;margin-bottom:8px;">Kode Aktivasi Aktif</h4>
-        <div id="activeCodesList" style="max-height:200px;overflow-y:auto;font-size:0.8rem;"></div>
-      </div>
-
-      <!-- TAB: DAFTAR USER -->
-      <div class="admin-tab-content hidden" id="adminTabUsers">
-        <h4 style="margin-bottom:12px;">Daftar Semua User</h4>
-        <div id="adminUserList" style="max-height:400px;overflow-y:auto;"></div>
-      </div>
-
-      <!-- TAB: PAKET & HARGA -->
-      <div class="admin-tab-content hidden" id="adminTabPackages">
-        <h4 style="margin-bottom:12px;">Edit Paket dan Harga</h4>
-        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">Ubah nama, harga, dan durasi paket premium.</p>
-        <div id="packageEditList"></div>
-      </div>
-
-      <!-- TAB: LOG KEAMANAN -->
-      <div class="admin-tab-content hidden" id="adminTabSecurity">
-        <h4 style="margin-bottom:12px;">Log Keamanan</h4>
-        <div id="securityLogList" style="max-height:250px;overflow-y:auto;font-size:0.8rem;"></div>
-        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
-          <button onclick="clearAllSecurityLogs()" class="btn btn-warning btn-sm">Bersihkan Log</button>
-          <button onclick="lockAllUsers()" class="btn btn-danger btn-sm">Kunci Semua User</button>
-          <button onclick="unlockAllUsers()" class="btn btn-success btn-sm">Buka Semua User</button>
-        </div>
-      </div>
-
-      <!-- TAB: PENGATURAN -->
-      <div class="admin-tab-content hidden" id="adminTabSettings">
-        <h4 style="margin-bottom:12px;">Pengaturan Super Admin</h4>
-        <div class="form-group">
-          <label class="form-label">Nomor WhatsApp Admin</label>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="adminWhatsappInput" placeholder="081220285226">
-            <button onclick="saveAdminWhatsapp()" class="btn btn-primary btn-sm">Simpan</button>
-          </div>
-          <div class="form-hint">Masukkan tanpa +62, cukup 08xxx.</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password Baru Super Admin</label>
-          <div style="display:flex;gap:8px;">
-            <input type="password" id="adminNewPassword" placeholder="Password baru">
-            <button onclick="changeAdminPassword()" class="btn btn-warning btn-sm">Ganti Password</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Nama Super Admin</label>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="adminNewName" placeholder="Nama baru">
-            <button onclick="changeAdminName()" class="btn btn-primary btn-sm">Ganti Nama</button>
-          </div>
-        </div>
-        <hr style="border-color:var(--border-color);margin:20px 0;">
-        <button onclick="restartApplication()" class="btn btn-warning btn-block" style="margin-bottom:12px;">🔄 Restart Aplikasi</button>
-        <button onclick="resetAllApplicationData()" class="btn btn-danger btn-block">Reset Semua Data Aplikasi</button>
-        <p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;text-align:center;">Perhatian: Semua data akan dihapus permanen!</p>
-      </div>
-
-      <!-- TAB: IKLAN -->
-      <div class="admin-tab-content hidden" id="adminTabIklan">
-        <h4 style="margin-bottom:12px;">📢 Edit Iklan Halaman Depan</h4>
-        <div class="form-group">
-          <label class="form-label">Judul Iklan</label>
-          <input type="text" id="adTitle" placeholder="Contoh: 📍 TraceID – Lacak Sekarang!">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Deskripsi Iklan</label>
-          <textarea id="adDescription" rows="3" placeholder="Tulis deskripsi iklan..."></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Teks Tombol</label>
-          <input type="text" id="adButtonText" placeholder="Contoh: 🔍 Mulai Lacak Gratis">
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="saveAdSettings()" class="btn btn-primary btn-block">💾 Simpan Iklan</button>
-          <button onclick="resetAdSettings()" class="btn btn-warning btn-block">🔄 Reset ke Default</button>
-        </div>
-        <div id="adSaveResult" style="margin-top:12px;"></div>
-      </div>
-
-      <!-- TAB: CHAT USER -->
-      <div class="admin-tab-content hidden" id="adminTabChat">
-        <h4 style="margin-bottom:12px;">💬 Chat dengan User</h4>
-        <div style="margin-bottom:12px;">
-          <label style="font-size:0.85rem;color:var(--text-secondary);display:block;margin-bottom:4px;">Pilih User:</label>
-          <select id="adminChatUserSelect" onchange="setAdminChatTarget(this.value)" style="width:100%;padding:8px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
-            <option value="">-- Pilih User --</option>
-          </select>
-        </div>
-        <div class="chat-messages" id="adminChatMessages" style="height:250px;overflow-y:auto;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:8px;margin-bottom:12px;">
-          <p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <input type="text" id="adminChatInput" placeholder="Ketik balasan..." style="flex:1;">
-          <button onclick="sendAdminChat()" class="btn btn-primary btn-sm">Kirim</button>
-        </div>
-        <hr style="border-color:var(--border-color);margin:16px 0;">
-        <h4 style="margin-bottom:8px;">📢 Chat Massal ke Semua User</h4>
-        <textarea id="massChatMessage" rows="3" placeholder="Tulis pesan untuk semua user..." style="margin-bottom:8px;"></textarea>
-        <button onclick="sendMassChat()" class="btn btn-warning btn-block">Kirim ke Semua User</button>
-      </div>
-
-      <!-- TAB: BACKUP -->
-      <div class="admin-tab-content hidden" id="adminTabBackup">
-        <h4 style="margin-bottom:12px;">💾 Backup & Restore Data</h4>
-        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">Simpan dan pulihkan seluruh data aplikasi (JSON) atau halaman (HTML).</p>
-        <button onclick="backupAllDataJSON()" class="btn btn-primary btn-block" style="margin-bottom:12px;">⬇ Backup Data (JSON)</button>
-        <label class="btn btn-warning btn-block" style="margin-bottom:12px;cursor:pointer;">
-          📤 Restore Data (JSON)
-          <input type="file" accept=".json" onchange="restoreAllDataJSON(this)" hidden>
-        </label>
-        <hr style="border-color:var(--border-color);margin:16px 0;">
-        <button onclick="downloadOfflineHTML()" class="btn btn-success btn-block" style="margin-bottom:12px;">⬇ Download HTML (Offline)</button>
-        <label class="btn btn-warning btn-block" style="cursor:pointer;">
-          📤 Restore HTML
-          <input type="file" accept=".html" onchange="restoreFromHTML(this)" hidden>
-        </label>
-        <hr style="border-color:var(--border-color);margin:16px 0;">
-        <button onclick="saveToGoogleDrive()" class="btn btn-primary btn-block" style="background:#3b82f6;margin-bottom:12px;">☁️ Simpan ke Google Drive / Memori</button>
-        <button onclick="emailBackup()" class="btn btn-primary btn-block" style="background:#DB4437;">📧 Kirim Backup via Email</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('superAdminModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-<!-- ============================================================
-     AKHIR BLOK 5 R1
-     Blok 6 akan melanjutkan: Modal Lacak, Hasil Lacak, Konfirmasi
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 6 R7 – MODAL LINK TRACKER (PERBAIKAN ID & STRUKTUR)
-     Revisi 7: ID disederhanakan, event onclick inline
-     ============================================================ -->
-<!-- MODAL LINK TRACKER (DENGAN UPLOAD GAMBAR) -->
-<div class="modal-overlay" id="linkTrackerModal">
-  <div class="modal-content" style="max-width:550px;">
-    <div class="modal-header">
-      <h3>🔗 Kirim Pesan & Gambar</h3>
-      <button class="modal-close" onclick="closeModal('linkTrackerModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="color:var(--text-secondary);margin-bottom:16px;">
-        Kirim pesan dan gambar ke target. Gunakan untuk mengirim foto dan mendapatkan balasan.
-      </p>
-      <div class="form-group">
-        <label class="form-label">Judul Pesan</label>
-        <input type="text" id="trackerTitle" placeholder="Contoh: Foto Anak Kita - Lihat ya">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Pesan Teks</label>
-        <textarea id="trackerMessage" rows="3" placeholder="Tulis pesan... Contoh: Sayang, ini foto anak kita. Kamu dimana? Tolong kabari."></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Upload Gambar dari HP</label>
-        <input type="file" id="trackerImageFile" accept="image/*" onchange="previewTrackerImage()" style="padding:8px;">
-        <div id="trackerImagePreview" style="margin-top:8px;display:none;">
-          <img id="trackerImagePreviewImg" src="" style="max-width:100%;max-height:200px;border-radius:8px;">
-          <button onclick="removeTrackerImage()" class="btn btn-danger btn-sm" style="margin-top:4px;">✕ Hapus Gambar</button>
-        </div>
-        <div class="form-hint">Pilih gambar dari galeri HP. Gambar akan dikirim bersama pesan.</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Atau URL Gambar (opsional)</label>
-        <input type="text" id="trackerImageUrl" placeholder="https://example.com/foto.jpg">
-        <div class="form-hint">Tempel URL gambar dari internet. Upload dulu ke imgbb.com (gratis).</div>
-      </div>
-      <button class="btn btn-primary btn-block" id="btnSiapkanKiriman">📤 Siapkan Kiriman</button>
-      <div id="trackerResult" class="hidden" style="margin-top:16px;">
-        <div style="background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
-          <h4 style="margin-bottom:8px;color:var(--accent-light);">✅ Pesan & Gambar Siap</h4>
-          <div id="trackerPreviewFinal" style="margin-bottom:12px;"></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button onclick="shareTrackerWA()" class="btn btn-success btn-sm">📱 Kirim via WhatsApp</button>
-            <button onclick="shareTrackerEmail()" class="btn btn-blue btn-sm">📧 Kirim via Email</button>
-            <button onclick="shareTrackerSMS()" class="btn btn-warning btn-sm">💬 Kirim via SMS</button>
-            <button onclick="copyTrackerMessage()" class="btn btn-primary btn-sm">📋 Copy Pesan</button>
-          </div>
-        </div>
-      </div>
-      <div id="trackerError" class="form-error"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('linkTrackerModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL HASIL KLIK TRACKER -->
-<div class="modal-overlay" id="trackerClicksModal">
-  <div class="modal-content" style="max-width:550px;">
-    <div class="modal-header">
-      <h3>📊 Riwayat Pesan Tracker</h3>
-      <button class="modal-close" onclick="closeModal('trackerClicksModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="trackerClicksContent"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('trackerClicksModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DETAIL RIWAYAT -->
-<div class="modal-overlay" id="detailRiwayatModal">
-  <div class="modal-content" style="max-width:550px;">
-    <div class="modal-header">
-      <h3 id="detailRiwayatTitle">📋 Detail</h3>
-      <button class="modal-close" onclick="closeModal('detailRiwayatModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="detailRiwayatContent"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('detailRiwayatModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- CONFIRM MODAL -->
-<div class="modal-overlay" id="confirmModal">
-  <div class="modal-content" style="max-width:380px;">
-    <div class="modal-header">
-      <h3 id="confirmTitle">Konfirmasi</h3>
-      <button class="modal-close" onclick="closeModal('confirmModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p id="confirmMessage">Apakah Anda yakin?</p>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('confirmModal')" class="btn btn-gray">Batal</button>
-      <button onclick="executeConfirmAction()" class="btn btn-danger" id="confirmButton">Ya</button>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT PACKAGE MODAL -->
-<div class="modal-overlay" id="editPackageModal">
-  <div class="modal-content" style="max-width:420px;">
-    <div class="modal-header">
-      <h3 id="editPackageTitle">Edit Paket</h3>
-      <button class="modal-close" onclick="closeModal('editPackageModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="editPackageId">
-      <div class="form-group"><label class="form-label">Nama Paket</label><input type="text" id="editPackageName" placeholder="Contoh: Basic"></div>
-      <div class="form-group"><label class="form-label">Harga (Rp)</label><input type="number" id="editPackagePrice" placeholder="25000"></div>
-      <div class="form-group"><label class="form-label">Durasi (hari)</label><input type="number" id="editPackageDays" placeholder="7"></div>
-      <div class="form-group"><label class="form-label">Label Durasi</label><input type="text" id="editPackageLabel" placeholder="1 Minggu"></div>
-      <div class="form-group"><label class="form-label">Fitur</label><input type="text" id="editPackageFeatures" placeholder="5x lacak/hari"></div>
-      <div class="form-error" id="editPackageError"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('editPackageModal')" class="btn btn-gray">Batal</button>
-      <button onclick="savePackageChanges()" class="btn btn-primary">Simpan</button>
-    </div>
-  </div>
-</div>
-<!-- ============================================================
-     AKHIR BLOK 6 R7
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 7 R1 – MODAL CHAT, AKTIVASI & TOAST CONTAINER
-     ============================================================ -->
-<!-- CHAT MODAL (USER KE ADMIN) -->
-<div class="modal-overlay" id="chatModal">
-  <div class="modal-content" style="max-width:500px;">
-    <div class="modal-header">
-      <h3>💬 Chat dengan Admin</h3>
-      <button class="modal-close" onclick="closeModal('chatModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="chat-container" id="userChatContainer" style="display: flex; flex-direction: column; height: 50vh; max-height: 400px;">
-        <div class="chat-messages" id="userChatMessages" style="flex: 1; overflow-y: auto; padding: var(--spacing-md); background: var(--bg-tertiary); border-radius: var(--radius-sm); margin-bottom: var(--spacing-md);"></div>
-        <div class="chat-input-row" style="display: flex; gap: var(--spacing-sm);">
-          <input type="text" id="userChatInput" placeholder="Ketik pesan..." style="flex: 1;">
-          <button onclick="sendUserChat()" class="btn btn-primary btn-sm">Kirim</button>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('chatModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- CHAT SESAMA USER MODAL -->
-<div class="modal-overlay" id="userChatModal">
-  <div class="modal-content" style="max-width:500px;">
-    <div class="modal-header">
-      <h3>👥 Chat dengan Sesama User</h3>
-      <button class="modal-close" onclick="closeModal('userChatModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div style="margin-bottom:12px;">
-        <label style="font-size:0.85rem;color:var(--text-secondary);display:block;margin-bottom:4px;">Pilih User:</label>
-        <select id="userChatTargetSelect" onchange="loadUserToUserChat()" style="width:100%;padding:8px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
-          <option value="">-- Pilih User --</option>
-        </select>
-      </div>
-      <div class="chat-messages" id="userToUserChatMessages" style="height:300px;overflow-y:auto;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:8px;margin-bottom:12px;">
-        <p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>
-      </div>
-      <div class="chat-input-row" style="display: flex; gap: var(--spacing-sm);">
-        <input type="text" id="userToUserChatInput" placeholder="Ketik pesan..." style="flex: 1;">
-        <button onclick="sendUserToUserChat()" class="btn btn-primary btn-sm">Kirim</button>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('userChatModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- ACTIVATION MODAL -->
-<div class="modal-overlay" id="activationModal">
-  <div class="modal-content" style="max-width:420px;">
-    <div class="modal-header">
-      <h3>🔑 Aktivasi Premium</h3>
-      <button class="modal-close" onclick="closeModal('activationModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:16px;">Masukkan kode aktivasi yang Anda dapatkan dari Admin.</p>
-      <div class="form-group">
-        <input type="text" id="activationCodeInputMain" placeholder="Masukkan kode aktivasi">
-      </div>
-      <button onclick="activatePremiumFromModal()" class="btn btn-primary btn-block">Aktifkan Sekarang</button>
-      <div class="form-error" id="activationModalError"></div>
-      <div class="form-success" id="activationModalSuccess"></div>
-    </div>
-    <div class="modal-footer">
-      <button onclick="closeModal('activationModal')" class="btn btn-gray">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST CONTAINER -->
-<div id="toastContainer" class="toast-container"></div>
-<!-- ============================================================
-     AKHIR BLOK 7 R1
-     Blok 8 akan melanjutkan: JS Core 1 (Storage, Auth, PWA, dll)
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 8 R2 – JS CORE 1 (TRACEID)
-     ============================================================ -->
-</body>
-<script>
-var deferredPrompt;
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  var banner = document.getElementById('installBanner');
-  if (banner) banner.style.display = 'flex';
-});
-
-function installApplication() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(choiceResult) {
-      if (choiceResult.outcome === 'accepted') {
-        showToast('Instalasi berhasil! TraceID bisa dibuka dari layar utama.', 'success');
-      }
-      deferredPrompt = null;
-      var banner = document.getElementById('installBanner');
-      if (banner) banner.style.display = 'none';
-    });
-  } else if (window.matchMedia('(display-mode: standalone)').matches) {
-    showToast('Aplikasi sudah terinstall!', 'warning');
-  } else {
-    alert('Buka menu browser lalu pilih "Tambahkan ke Layar Utama" atau "Install" untuk menginstal aplikasi ini.');
-  }
-}
-
-if ('serviceWorker' in navigator) {
-  var swCode = `
-    var CACHE_NAME = 'traceid-v1';
-    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
-    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-  `;
-  var swBlob = new Blob([swCode], {type: 'application/javascript'});
-  var swUrl = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl).catch(function(){});
-}
-
-function encodePassword(pw) { return btoa(pw); }
-function decodePassword(hash) { return atob(hash); }
-
-var SUPER_ADMIN_DATA = {
-  username: 'superadmin', password: encodePassword('admin123'),
-  nama: 'Super Admin', email: 'admin@traceid.com', hp: '081220285226',
-  role: 'superadmin', premium: true, premiumExpiry: null, locked: false
-};
-var DEFAULT_WHATSAPP = '081220285226';
-var DEFAULT_PACKAGES = [
-  { id: '1minggu', name: 'Starter', price: 25000, days: 7, label: '1 Minggu', features: '5x lacak/hari • IP & Email' },
-  { id: '1bulan', name: 'Professional', price: 50000, days: 30, label: '1 Bulan', features: '20x lacak/hari • Semua Fitur' },
-  { id: '3bulan', name: 'Enterprise', price: 100000, days: 90, label: '3 Bulan', features: 'Unlimited lacak • Prioritas Support' }
-];
-
-function getStore(key, def) { try { var v = localStorage.getItem('tr_' + key); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
-function setStore(key, val) { localStorage.setItem('tr_' + key, JSON.stringify(val)); }
-function remStore(key) { localStorage.removeItem('tr_' + key); }
-
-function getAllUsers() { return getStore('users', []); }
-function saveAllUsers(arr) { setStore('users', arr); }
-function getAllLacakData() { return getStore('lacak', {}); }
-function saveAllLacakData(obj) { setStore('lacak', obj); }
-function getSession() { return getStore('session', null); }
-function saveSession(s) { setStore('session', s); }
-function clearSession() { remStore('session'); }
-function getPackages() { return getStore('packages', DEFAULT_PACKAGES); }
-function savePackages(p) { setStore('packages', p); }
-function getWhatsapp() { return getStore('whatsapp', DEFAULT_WHATSAPP); }
-function saveWhatsapp(n) { setStore('whatsapp', n); }
-function getValidCodes() { return getStore('validCodes', {}); }
-function saveValidCodes(c) { setStore('validCodes', c); }
-function getSecurityLogs() { return getStore('securityLogs', []); }
-function saveSecurityLogs(l) { setStore('securityLogs', l); }
-function getChatMessages() { return getStore('chatMessages', []); }
-function saveChatMessages(m) { setStore('chatMessages', m); }
-
-function formatWa(raw) {
-  var n = raw.replace(/[^0-9]/g,'');
-  if (n.startsWith('0')) n = '62' + n.substring(1);
-  if (!n.startsWith('62')) n = '62' + n;
-  return '+' + n;
-}
-function updateAllWaDisplays() {
-  var f = formatWa(getWhatsapp());
-  var ids = ['whatsappNumberLanding','whatsappNumberApp'];
-  ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.textContent = f; });
-}
-function openWhatsApp(msg) {
-  var link = getWhatsapp().replace(/[^0-9]/g,'');
-  var url = 'https://wa.me/' + link + (msg ? '?text=' + encodeURIComponent(msg) : '');
-  window.open(url,'_blank');
-}
-
-function showToast(msg, type) {
-  var c = document.getElementById('toastContainer');
-  var t = document.createElement('div');
-  t.className = 'toast toast-' + (type||'info');
-  t.textContent = msg;
-  c.appendChild(t);
-  requestAnimationFrame(function(){ t.classList.add('show'); });
-  setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); },300); },3000);
-}
-
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); clearModalErrors(); }
-function clearModalErrors() {
-  document.querySelectorAll('.form-error,.form-success').forEach(function(el){ el.textContent=''; el.classList.remove('show'); });
-}
-
-function toggleTheme() {
-  document.body.classList.toggle('light-theme');
-  var isLight = document.body.classList.contains('light-theme');
-  var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
-  document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ b.textContent = label; });
-  localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
-}
-(function(){ if(localStorage.getItem('tr_theme')==='light'){ document.body.classList.add('light-theme'); document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ b.textContent='☀️ Light Mode'; }); } })();
-
-function openApplication() {
-  var s = getSession();
-  if (!s) return showLoginModal();
-  document.getElementById('landingPage').classList.add('hidden');
-  document.getElementById('applicationPage').classList.remove('hidden');
-  refreshAppUI(); updateStats(); updateHeaderUser(); checkAllExpiredActivations();
-}
-function goToLandingPage() {
-  document.getElementById('applicationPage').classList.add('hidden');
-  document.getElementById('landingPage').classList.remove('hidden');
-  refreshPackageDisplay();
-}
-function showLoginModal() { openModal('loginModal'); }
-function showRegisterModal() { openModal('registerModal'); }
-function showProfileModal() { openModal('profileModal'); loadProfileData(); }
-function showActivationModal() { if(!getSession()) return showLoginModal(); openModal('activationModal'); }
-
-function handleLogin() {
-  var u = document.getElementById('loginUsername');
-  var p = document.getElementById('loginPassword');
-  var err = document.getElementById('loginError');
-  if (!u || !p) return showToast('Form login tidak ditemukan.','error');
-  var username = u.value.trim();
-  var password = p.value;
-  err.classList.remove('show');
-  if(!username||!password){ err.textContent='Isi semua field!'; err.classList.add('show'); return; }
-
-  if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
-    saveSession(SUPER_ADMIN_DATA);
-    addSecurityLog('Super Admin login.');
-    closeModal('loginModal'); showToast('Login Super Admin berhasil!','success');
-    openApplication(); return;
-  }
-
-  var users = getAllUsers();
-  var user = null;
-  for (var i = 0; i < users.length; i++) {
-    if ((users[i].username === username || users[i].email === username) && password === decodePassword(users[i].password)) {
-      user = users[i]; break;
-    }
-  }
-  if (!user) { err.textContent='Username/password salah!'; err.classList.add('show'); return; }
-  if (user.locked) { err.textContent='Akun terkunci! Hubungi admin.'; err.classList.add('show'); return; }
-  saveSession(user);
-  addSecurityLog('User ' + user.username + ' login.');
-  closeModal('loginModal'); showToast('Login berhasil!','success');
-  openApplication();
-}
-
-function handleRegister() {
-  var n = document.getElementById('registerNama').value.trim();
-  var e = document.getElementById('registerEmail').value.trim();
-  var hp = document.getElementById('registerHp').value.trim();
-  var un = document.getElementById('registerUsername').value.trim();
-  var pw = document.getElementById('registerPassword').value;
-  var cp = document.getElementById('registerPasswordConfirm').value;
-  var err = document.getElementById('registerError'); var suc = document.getElementById('registerSuccess');
-  err.classList.remove('show'); suc.classList.remove('show');
-  if(!n||!e||!hp||!un||!pw||!cp){ err.textContent='Semua field wajib!'; err.classList.add('show'); return; }
-  if(pw!==cp){ err.textContent='Password tidak cocok!'; err.classList.add('show'); return; }
-  if(pw.length<6){ err.textContent='Password minimal 6 karakter!'; err.classList.add('show'); return; }
-  var users = getAllUsers();
-  if(users.find(function(x){return x.username===un;})){ err.textContent='Username sudah dipakai!'; err.classList.add('show'); return; }
-  if(users.find(function(x){return x.email===e;})){ err.textContent='Email sudah dipakai!'; err.classList.add('show'); return; }
-  var newUser = { id: Date.now().toString(), nama:n, email:e, hp:hp, username:un, password:encodePassword(pw), role:'user', premium:false, premiumExpiry:null, locked:false, createdAt:new Date().toISOString() };
-  users.push(newUser); saveAllUsers(users);
-  suc.textContent='Pendaftaran berhasil! Silakan login.'; suc.classList.add('show');
-  setTimeout(function(){ closeModal('registerModal'); showLoginModal(); },2000);
-}
-
-function handleLogout() {
-  var s = getSession();
-  if (s) { addSecurityLog('User ' + s.username + ' logout.'); }
-  clearSession(); goToLandingPage(); updateHeaderUser(); showToast('Logout berhasil.','info');
-}
-
-function activatePremiumFromModal() {
-  var code = document.getElementById('activationCodeInputMain').value.trim();
-  activatePremium(code, 'activationModalError','activationModalSuccess');
-}
-function activatePremium(code, errId, sucId) {
-  var err = document.getElementById(errId); var suc = document.getElementById(sucId);
-  err.classList.remove('show'); suc.classList.remove('show');
-  if(!code){ err.textContent='Masukkan kode aktivasi!'; err.classList.add('show'); return; }
-  var session = getSession();
-  if(!session){ err.textContent='Anda harus login!'; err.classList.add('show'); return; }
-  var valid = getValidCodes();
-  var cd = valid[code];
-  if(!cd||cd.used){ err.textContent='Kode tidak valid/sudah dipakai!'; err.classList.add('show'); return; }
-  var users = getAllUsers();
-  var idx = users.findIndex(function(x){return x.id===session.id;});
-  if(idx===-1){ err.textContent='User tidak ditemukan!'; err.classList.add('show'); return; }
-  var pkgs = getPackages();
-  var pkg = pkgs.find(function(p){return p.id===cd.packageId;});
-  if(!pkg){ err.textContent='Paket tidak valid!'; err.classList.add('show'); return; }
-  var now = new Date();
-  var exp = new Date(now.getTime() + pkg.days*86400000);
-  users[idx].premium = true; users[idx].premiumExpiry = exp.toISOString(); saveAllUsers(users);
-  cd.used = true; cd.usedBy = session.username; cd.usedAt = now.toISOString(); valid[code] = cd; saveValidCodes(valid);
-  var newSess = Object.assign({}, users[idx]); saveSession(newSess);
-  suc.textContent = 'Aktivasi sukses! Premium hingga ' + exp.toLocaleDateString(); suc.classList.add('show');
-  updateHeaderUser();
-  if (!document.getElementById('applicationPage').classList.contains('hidden')) { refreshAppUI(); updateStats(); }
-  setTimeout(function(){ if(document.getElementById('activationModal').classList.contains('show')) closeModal('activationModal'); },2000);
-}
-</script>
-<!-- ============================================================
-     AKHIR BLOK 8 R2
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 9 R15 – JS CORE 2 (TRACEID FINAL)
-     ============================================================ -->
-<script>
-function showLacakModal(type) {
-  var s = getSession(); if(!s) return showToast('Login dulu!','error');
-  document.getElementById('lacakType').value = type;
-  var t = {
-    'ip': ['🌐 Lacak via IP Address','Masukkan IP Address target','Contoh: 8.8.8.8','Dapatkan koordinat & lokasi dari IP.'],
-    'email': ['📧 Lacak via Email','Masukkan Email target','Contoh: target@gmail.com','Cari akun terdaftar.'],
-    'tiktok': ['🎵 Lacak via TikTok','Masukkan Username TikTok','Contoh: username','Username tanpa @.'],
-    'instagram': ['📷 Lacak via Instagram','Masukkan Username Instagram','Contoh: username','Username IG target.'],
-    'facebook': ['📘 Lacak via Facebook','Masukkan URL/ID Facebook','Contoh: facebook.com/username','URL profil Facebook.'],
-    'whatsapp': ['📱 Lacak via WhatsApp','Masukkan Nomor HP','Contoh: 081234567890','Nomor WhatsApp target.']
-  }[type];
-  document.getElementById('lacakModalTitle').textContent = t[0];
-  document.getElementById('lacakLabel').textContent = t[1];
-  document.getElementById('lacakInput').placeholder = t[2];
-  document.getElementById('lacakHint').textContent = t[3];
-  document.getElementById('lacakInput').value = '';
-  document.getElementById('lacakResultDetail').classList.add('hidden');
-  document.getElementById('lacakLoading').classList.add('hidden');
-  document.getElementById('lacakError').classList.remove('show');
-  openModal('lacakModal');
-}
-
-function executeLacak() {
-  var type = document.getElementById('lacakType').value;
-  var input = document.getElementById('lacakInput').value.trim();
-  var err = document.getElementById('lacakError');
-  err.classList.remove('show');
-  if (!input) { err.textContent = 'Masukkan data target!'; err.classList.add('show'); return; }
-  var s = getSession(); if (!s) return;
-  document.getElementById('lacakLoading').classList.remove('hidden');
-  document.getElementById('lacakResultDetail').classList.add('hidden');
-  if (type === 'ip') {
-    fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        document.getElementById('lacakLoading').classList.add('hidden');
-        if (d && d.latitude && d.longitude) {
-          var hasil = { ip: d.ip || input, kota: d.city || '-', provinsi: d.region || '-', negara: d.country_name || '-', lat: d.latitude, lng: d.longitude, maps: 'https://www.google.com/maps?q=' + d.latitude + ',' + d.longitude };
-          simpanDanTampilkan('ip', input, hasil);
-          showToast('✅ Koordinat ditemukan!', 'success');
-        } else {
-          var lat = (Math.random() * 10 - 6).toFixed(4), lng = (Math.random() * 20 + 106).toFixed(4);
-          simpanDanTampilkan('ip', input, { ip: input, kota: 'Tidak diketahui', provinsi: 'Indonesia', negara: 'Indonesia', lat: lat, lng: lng, maps: 'https://www.google.com/maps?q=' + lat + ',' + lng });
-          showToast('⚠️ Data perkiraan', 'warning');
-        }
-      })
-      .catch(function() {
-        document.getElementById('lacakLoading').classList.add('hidden');
-        var lat = (Math.random() * 10 - 6).toFixed(4), lng = (Math.random() * 20 + 106).toFixed(4);
-        simpanDanTampilkan('ip', input, { ip: input, kota: 'Offline', provinsi: 'Indonesia', negara: 'Indonesia', lat: lat, lng: lng, maps: 'https://www.google.com/maps?q=' + lat + ',' + lng });
-        showToast('⚠️ Offline', 'warning');
-      });
-  } else {
-    setTimeout(function() {
-      document.getElementById('lacakLoading').classList.add('hidden');
-      simpanDanTampilkan(type, input, { input: input, info: 'Data ditemukan (simulasi)', waktu: new Date().toLocaleString() });
-      showToast('✅ Selesai', 'success');
-    }, 1000);
-  }
-}
-
-function simpanDanTampilkan(type, input, hasil) {
-  var s = getSession();
-  if (s) {
-    var d = getAllLacakData(); var u = d[s.id] || [];
-    u.push({ id: Date.now().toString(), type: type, input: input, result: hasil, time: new Date().toISOString() });
-    d[s.id] = u; saveAllLacakData(d); autoSaveData();
-  }
-  tampilkanHasil(hasil); updateStats();
-}
-
-function tampilkanHasil(hasil) {
-  var html = '<div style="font-size:0.9rem;line-height:1.8;">';
-  if (hasil.lat !== undefined && hasil.lng !== undefined) {
-    html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;"><div style="font-size:0.8rem;opacity:0.9;">📍 TITIK KOORDINAT</div><div style="font-size:1.5rem;font-weight:800;">' + hasil.lat + ', ' + hasil.lng + '</div>';
-    if (hasil.maps) html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;font-size:0.85rem;">🗺 Buka di Google Maps</a>';
-    html += '</div>';
-  }
-  if (hasil.ip) html += '<p><strong>IP:</strong> ' + hasil.ip + '</p>';
-  if (hasil.kota) html += '<p><strong>Kota:</strong> ' + hasil.kota + '</p>';
-  if (hasil.provinsi) html += '<p><strong>Provinsi:</strong> ' + hasil.provinsi + '</p>';
-  if (hasil.negara) html += '<p><strong>Negara:</strong> ' + hasil.negara + '</p>';
-  if (hasil.info) html += '<p>' + hasil.info + '</p>';
-  if (hasil.waktu) html += '<p><strong>Waktu:</strong> ' + hasil.waktu + '</p>';
-  html += '</div>';
-  document.getElementById('lacakResultContent').innerHTML = html;
-  document.getElementById('lacakResultDetail').classList.remove('hidden');
-}
-
-function refreshAppUI() {
-  var s = getSession();
-  if (!s) { document.getElementById('riwayatLacakContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>'; return; }
-  initUserApps(s);
-  var data = getAllLacakData()[s.id] || [];
-  var c = document.getElementById('riwayatLacakContainer');
-  if (data.length === 0) { c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>'; return; }
-  data.sort(function(a,b){ return new Date(b.time) - new Date(a.time); });
-  var icons = { ip:'🌐', email:'📧', tiktok:'🎵', instagram:'📷', facebook:'📘', whatsapp:'📱', tracker:'🔗' };
-  c.innerHTML = data.map(function(d){
-    var k = '';
-    if (d.result && d.result.lat) k = ' <span style="color:#10b981;">📍' + d.result.lat + ',' + d.result.lng + '</span>';
-    return '<div style="background:var(--bg-secondary);border-radius:8px;padding:12px;border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\''+d.id+'\')"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;"><span>'+(icons[d.type]||'🔍')+' <strong>'+d.type.toUpperCase()+'</strong> – '+d.input+k+'</span><span style="font-size:0.75rem;color:var(--text-muted);">'+new Date(d.time).toLocaleString()+'</span></div></div>';
-  }).join('');
-}
-
-function showDetailRiwayat(id) {
-  var s = getSession(); if(!s) return;
-  var data = getAllLacakData()[s.id] || [];
-  var item = data.find(function(d){ return d.id === id; });
-  if (!item) return;
-  document.getElementById('detailRiwayatTitle').textContent = '📋 Detail ' + item.type.toUpperCase();
-  var h = '<p><strong>Target:</strong> ' + item.input + '</p><p><strong>Waktu:</strong> ' + new Date(item.time).toLocaleString() + '</p><hr style="border-color:var(--border-color);margin:12px 0;">';
-  var hasil = item.result;
-  if (hasil.lat !== undefined && hasil.lng !== undefined) {
-    h += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;"><div style="font-size:0.8rem;">📍 TITIK KOORDINAT</div><div style="font-size:1.3rem;font-weight:800;">' + hasil.lat + ', ' + hasil.lng + '</div>';
-    if (hasil.maps) h += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;">🗺 Buka Google Maps</a>';
-    h += '</div>';
-  }
-  if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) h += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:250px;border-radius:8px;margin-bottom:8px;">';
-  for (var key in hasil) {
-    if (key === 'lat' || key === 'lng' || key === 'maps' || key === 'gambarData') continue;
-    h += '<p><strong>' + key + ':</strong> ' + hasil[key] + '</p>';
-  }
-  document.getElementById('detailRiwayatContent').innerHTML = h;
-  openModal('detailRiwayatModal');
-}
-
-function exportAllData() {
-  var s = getSession(); if(!s) return showToast('Login dulu!','error');
-  var data = { lacak: getAllLacakData()[s.id]||[], exportedAt: new Date().toISOString() };
-  var blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-  var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='traceid_backup.json'; a.click();
-  showToast('Data diekspor!','success');
-}
-function importAllData(input) {
-  var s = getSession(); if(!s) return; var file = input.files[0]; if(!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e){
-    try{
-      var data = JSON.parse(e.target.result);
-      if(!data.lacak||!Array.isArray(data.lacak)) throw new Error('Format salah');
-      var all = getAllLacakData(); all[s.id]=data.lacak; saveAllLacakData(all);
-      autoSaveData(); refreshAppUI(); updateStats(); showToast('Data diimpor!','success');
-    }catch(ex){ showToast('Format file tidak valid.','error'); }
-  };
-  reader.readAsText(file);
-}
-
-var confirmCb = null;
-function showConfirm(title,msg,cb){
-  document.getElementById('confirmTitle').textContent=title;
-  document.getElementById('confirmMessage').textContent=msg;
-  confirmCb = cb; openModal('confirmModal');
-}
-function executeConfirmAction(){ if(confirmCb){confirmCb(); confirmCb=null;} closeModal('confirmModal'); }
-
-function checkAllExpiredActivations() {
-  var s = getSession(); if(!s||!s.premiumExpiry) return;
-  var now = new Date(); var exp = new Date(s.premiumExpiry); var diff = exp - now;
-  var warn = document.getElementById('expiryWarning');
-  if (warn) {
-    if(diff<0){
-      s.premium=false; s.premiumExpiry=null; saveSession(s);
-      var users = getAllUsers(); var idx=users.findIndex(function(u){return u.id===s.id;});
-      if(idx!==-1){ users[idx].premium=false; users[idx].premiumExpiry=null; saveAllUsers(users); }
-      warn.classList.remove('show'); showToast('Masa premium habis.','warning');
-      updateHeaderUser(); if(!document.getElementById('applicationPage').classList.contains('hidden')) updateStats();
-    }else if(diff < 3*86400000){
-      document.getElementById('expiryWarningText').textContent = 'Premium berakhir dalam '+Math.ceil(diff/86400000)+' hari!';
-      warn.classList.add('show');
-    }else{ warn.classList.remove('show'); }
-  }
-}
-
-function backupUserData() {
-  var s = getSession(); if (!s) return showToast('Login dulu!','error');
-  var data = getAllLacakData()[s.id] || [];
-  var json = { lacak: data, exportedAt: new Date().toISOString(), user: s.username };
-  var blob = new Blob([JSON.stringify(json, null, 2)], {type: 'application/json'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'traceid_backup_' + s.username + '_' + new Date().toISOString().slice(0,10) + '.json';
-  a.click();
-  showToast('✅ Backup didownload!', 'success');
-}
-function restoreUserData(input) {
-  var s = getSession(); if (!s) return;
-  var file = input.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      var data = JSON.parse(e.target.result);
-      if (!data.lacak || !Array.isArray(data.lacak)) throw new Error('Format salah');
-      var all = getAllLacakData(); all[s.id] = data.lacak; saveAllLacakData(all);
-      autoSaveData(); refreshAppUI(); updateStats();
-      showToast('✅ Data dipulihkan!', 'success');
-    } catch (ex) { showToast('❌ Format tidak valid.', 'error'); }
-  };
-  reader.readAsText(file); input.value = '';
-}
-
-function toggleSearch() { document.getElementById('searchBar').classList.toggle('hidden'); }
-function performSearch() {
-  var q = document.getElementById('searchInput').value.toLowerCase();
-  document.querySelectorAll('#riwayatLacakContainer > div').forEach(function(it){
-    if(it.id==='emptyRiwayat') return;
-    it.style.display = it.textContent.toLowerCase().includes(q)?'':'none';
-  });
-}
-function clearSearch() { document.getElementById('searchInput').value=''; performSearch(); }
-
-var trackerImageData = null;
-
-function showLinkTrackerModal() {
-  if (!getSession()) return showToast('Login dulu!','error');
-  document.getElementById('trackerTitle').value = '';
-  document.getElementById('trackerMessage').value = '';
-  document.getElementById('trackerImageUrl').value = '';
-  document.getElementById('trackerImageFile').value = '';
-  document.getElementById('trackerImagePreview').style.display = 'none';
-  document.getElementById('trackerResult').classList.add('hidden');
-  document.getElementById('trackerError').classList.remove('show');
-  var btn = document.getElementById('btnSiapkanKiriman');
-  if (btn) { btn.disabled = false; btn.textContent = '📤 Siapkan Kiriman'; }
-  trackerImageData = null;
-  openModal('linkTrackerModal');
-}
-
-function previewTrackerImage() {
-  var f = document.getElementById('trackerImageFile');
-  if (!f || !f.files || !f.files[0]) return;
-  var file = f.files[0];
-  if (!file.type.startsWith('image/')) { showToast('❌ Pilih file gambar!', 'error'); return; }
-  if (file.size > 5242880) { showToast('❌ Gambar terlalu besar (max 5MB)!', 'error'); return; }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    trackerImageData = e.target.result;
-    document.getElementById('trackerImagePreviewImg').src = trackerImageData;
-    document.getElementById('trackerImagePreview').style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-}
-
-function removeTrackerImage() {
-  trackerImageData = null;
-  document.getElementById('trackerImageFile').value = '';
-  document.getElementById('trackerImagePreview').style.display = 'none';
-}
-
-function generateTrackerLink() {
-  var title = document.getElementById('trackerTitle').value.trim();
-  var message = document.getElementById('trackerMessage').value.trim();
-  var imageUrl = document.getElementById('trackerImageUrl').value.trim();
-  var errEl = document.getElementById('trackerError');
-  var btn = document.getElementById('btnSiapkanKiriman');
-  
-  errEl.classList.remove('show');
-  if (!title) { errEl.textContent = 'Isi judul dulu!'; errEl.classList.add('show'); return; }
-  if (!message) { errEl.textContent = 'Isi pesan dulu!'; errEl.classList.add('show'); return; }
-  
-  var finalImage = trackerImageData || imageUrl || '';
-  if (btn) { btn.textContent = '⏳ Menyiapkan...'; btn.disabled = true; }
-  
-  fetch('https://ipapi.co/json/')
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (btn) { btn.textContent = '📤 Siapkan Kiriman'; btn.disabled = false; }
-      var hasil = {
-        judul: title, pesan: message,
-        gambar: finalImage ? '📷 Ada' : '(tidak ada)',
-        gambarData: finalImage, status: 'Siap Dikirim',
-        waktu: new Date().toLocaleString(),
-        lat: d.latitude || 0, lng: d.longitude || 0,
-        ip: d.ip || '-', kota: d.city || '-',
-        maps: 'https://www.google.com/maps?q=' + (d.latitude || 0) + ',' + (d.longitude || 0)
-      };
-      simpanDanTampilkan('tracker', title, hasil);
-      var prev = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
-      if (finalImage) prev += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
-      prev += '<p style="margin-top:8px;color:#10b981;font-weight:700;">📍 Lokasi Anda: ' + hasil.lat + ', ' + hasil.lng + '</p>';
-      document.getElementById('trackerPreviewFinal').innerHTML = prev;
-      var r = document.getElementById('trackerResult'); r.classList.remove('hidden');
-      r.setAttribute('data-title', title); r.setAttribute('data-message', message); r.setAttribute('data-image', finalImage);
-      showToast('✅ Pesan & koordinat siap!', 'success');
-    })
-    .catch(function() {
-      if (btn) { btn.textContent = '📤 Siapkan Kiriman'; btn.disabled = false; }
-      var hasil = { judul: title, pesan: message, gambar: finalImage ? '📷 Ada' : '(tidak ada)', gambarData: finalImage, status: 'Siap Dikirim', waktu: new Date().toLocaleString() };
-      simpanDanTampilkan('tracker', title, hasil);
-      var prev = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
-      if (finalImage) prev += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
-      document.getElementById('trackerPreviewFinal').innerHTML = prev;
-      var r = document.getElementById('trackerResult'); r.classList.remove('hidden');
-      r.setAttribute('data-title', title); r.setAttribute('data-message', message); r.setAttribute('data-image', finalImage);
-      showToast('✅ Pesan siap (koordinat offline)', 'warning');
-    });
-}
-
-function copyTrackerMessage() {
-  var m = document.getElementById('trackerResult').getAttribute('data-message') || '';
-  navigator.clipboard.writeText(m).then(function() { showToast('✅ Pesan disalin!', 'success'); });
-}
-function shareTrackerWA() {
-  var r = document.getElementById('trackerResult');
-  var t = '📌 ' + (r.getAttribute('data-title')||'') + '\n\n' + (r.getAttribute('data-message')||'');
-  var img = r.getAttribute('data-image')||'';
-  if (img && img.startsWith('http')) t += '\n\n📷 ' + img;
-  window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank');
-}
-function shareTrackerEmail() {
-  var r = document.getElementById('trackerResult');
-  window.open('mailto:?subject=' + encodeURIComponent(r.getAttribute('data-title')||'') + '&body=' + encodeURIComponent(r.getAttribute('data-message')||''), '_blank');
-}
-function shareTrackerSMS() {
-  var r = document.getElementById('trackerResult');
-  window.open('sms:?body=' + encodeURIComponent((r.getAttribute('data-title')||'') + ': ' + (r.getAttribute('data-message')||'')), '_blank');
-}
-function showTrackerClicks() {
-  var s = getSession(); if (!s) return showToast('Login dulu!','error');
-  var data = getAllLacakData()[s.id] || [];
-  var trackers = data.filter(function(d) { return d.type === 'tracker'; });
-  var html = '';
-  if (trackers.length === 0) {
-    html = '<p style="text-align:center;padding:20px;">Belum ada pesan tracker.</p>';
-  } else {
-    html = '<p style="margin-bottom:12px;"><strong>Total:</strong> ' + trackers.length + ' pesan</p>';
-    trackers.reverse().forEach(function(t) {
-      var hasil = t.result;
-      html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
-      html += '<strong>📌 ' + (hasil.judul || t.input) + '</strong><br>';
-      html += '<span style="font-size:0.8rem;">🕐 ' + new Date(t.time).toLocaleString() + '</span><br>';
-      if (hasil.lat && hasil.lng) {
-        html += '<span style="color:#10b981;font-weight:700;">📍 ' + hasil.lat + ', ' + hasil.lng + '</span> ';
-        html += '<a href="' + (hasil.maps || 'https://www.google.com/maps?q=' + hasil.lat + ',' + hasil.lng) + '" target="_blank" style="color:#3b82f6;">🗺 Buka Maps</a><br>';
-      }
-      if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) {
-        html += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:150px;border-radius:8px;margin-top:8px;"><br>';
-      }
-      html += '</div>';
-    });
-  }
-  document.getElementById('trackerClicksContent').innerHTML = html;
-  openModal('trackerClicksModal');
-}
-
-function initUserApps(session) {
-  if (!session) return;
-  var all = getAllLacakData();
-  if (!all[session.id] || !Array.isArray(all[session.id])) { all[session.id] = []; saveAllLacakData(all); }
-}
-
-function autoSaveData() {
-  try {
-    var s = getSession(); if (!s) return;
-    var d = getAllLacakData(); var u = d[s.id] || [];
-    localStorage.setItem('tr_userdata_' + s.username, JSON.stringify(u));
-    sessionStorage.setItem('tr_autosave_' + s.id, JSON.stringify(u));
-  } catch (e) {}
-}
-
-window.backupSebelumUpgrade = function() {
-  var all = {};
-  for (var i = 0; i < localStorage.length; i++) {
-    var k = localStorage.key(i);
-    if (k.startsWith('tr_')) all[k] = localStorage.getItem(k);
-  }
-  var blob = new Blob([JSON.stringify(all,null,2)], {type:'application/json'});
-  var a = document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='traceid_full_backup_'+new Date().toISOString().slice(0,10)+'.json'; a.click();
-  showToast('✅ Backup penuh berhasil!', 'success');
-};
-
-setInterval(function() {
-  var s = getSession();
-  if (s && !document.getElementById('applicationPage').classList.contains('hidden')) autoSaveData();
-}, 30000);
-window.addEventListener('beforeunload', autoSaveData);
-document.addEventListener('visibilitychange', function() { if (document.hidden) autoSaveData(); });
-</script>
-<!-- ============================================================
-     AKHIR BLOK 9 R15
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 10 R1 – JS ADMIN PANEL TraceID
-     ============================================================ -->
-<script>
-// ---------- SUPER ADMIN PANEL ----------
-function showSuperAdminPanel() {
-  if(!getSession()||getSession().role!=='superadmin') return;
-  openModal('superAdminModal');
-  var sel = document.getElementById('adminActivationPackage'); sel.innerHTML='<option value="">-- Pilih Paket --</option>';
-  getPackages().forEach(function(p){ sel.innerHTML += '<option value="'+p.id+'">'+p.name+' - Rp '+p.price+' ('+p.label+')</option>'; });
-  renderAdminUserSelect();
-  switchAdminTab('codes');
-  refreshAllAdminTabs();
-}
-function refreshAllAdminTabs() { renderActiveCodesList(); }
-function switchAdminTab(tab) {
-  document.querySelectorAll('.admin-tab-content').forEach(function(el){ el.classList.add('hidden'); });
-  document.getElementById('adminTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.remove('hidden');
-  document.querySelectorAll('.admin-tab').forEach(function(b){ b.classList.remove('active'); });
-  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
-  if(tab==='users') renderAdminUserList();
-  if(tab==='packages') renderPackageEditList();
-  if(tab==='security') renderSecurityLogs();
-  if(tab==='chat') renderAdminChat();
-  if(tab==='codes') renderActiveCodesList();
-  if(tab==='iklan') loadAdSettings();
-}
-
-// ---------- DROPDOWN USER UNTUK KODE AKTIVASI ----------
-function renderAdminUserSelect() {
-  var select = document.getElementById('adminActivationUserSelect');
-  if (!select) return;
-  var users = getAllUsers();
-  var filtered = [];
-  for (var i = 0; i < users.length; i++) {
-    if (users[i].role !== 'superadmin') filtered.push(users[i]);
-  }
-  select.innerHTML = '<option value="">-- Pilih User --</option>';
-  for (var i = 0; i < filtered.length; i++) {
-    var u = filtered[i];
-    select.innerHTML += '<option value="' + u.username + '">' + u.nama + ' (' + u.username + ')</option>';
-  }
-}
-
-// ---------- KODE AKTIVASI ----------
-function adminCreateActivationCode() {
-  var userField = document.getElementById('adminActivationUserSelect').value;
-  var pkgId = document.getElementById('adminActivationPackage').value;
-  var res = document.getElementById('adminCodeResult'); res.innerHTML='';
-  if(!userField||!pkgId){ res.innerHTML='<p class="form-error show">Pilih user dan paket!</p>'; return; }
-  var code = 'TR-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
-  var valid = getValidCodes();
-  valid[code] = { packageId: pkgId, used: false, createdBy: 'superadmin', createdAt: new Date().toISOString() };
-  saveValidCodes(valid);
-  res.innerHTML = '<p class="form-success show">✅ Kode: <strong>'+code+'</strong></p>';
-  renderActiveCodesList();
-}
-
-function renderActiveCodesList() {
-  var valid = getValidCodes(); var html='';
-  Object.keys(valid).forEach(function(code){
-    var c = valid[code];
-    html += '<div style="padding:4px 0;border-bottom:1px solid var(--border-color);">'+
-      '<strong>'+code+'</strong> - Paket: '+c.packageId+' - '+(c.used?'<span style="color:red;">Terpakai</span>':'<span style="color:green;">Aktif</span>')+
-      (c.usedBy?' oleh '+c.usedBy:'')+'</div>';
-  });
-  document.getElementById('activeCodesList').innerHTML = html || '<p style="color:var(--text-muted);">Belum ada kode.</p>';
-}
-
-function renderAdminUserList() {
-  var users = getAllUsers(); var html='<table class="admin-table" style="width:100%;border-collapse:collapse;font-size:0.8rem;"><tr style="background:var(--bg-hover);"><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Nama</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Username</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Email</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Premium</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Terkunci</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Aksi</th></tr>';
-  users.forEach(function(u){
-    html+='<tr>'+
-      '<td style="padding:8px 10px;border:1px solid var(--border-color);">'+u.nama+'</td><td style="padding:8px 10px;border:1px solid var(--border-color);">'+u.username+'</td><td style="padding:8px 10px;border:1px solid var(--border-color);">'+u.email+'</td>'+
-      '<td style="padding:8px 10px;border:1px solid var(--border-color);">'+(u.premium?'Ya':'Tidak')+'</td><td style="padding:8px 10px;border:1px solid var(--border-color);">'+(u.locked?'Ya':'Tidak')+'</td>'+
-      '<td style="padding:8px 10px;border:1px solid var(--border-color);"><button class="btn btn-sm btn-warning" onclick="toggleLockUser(\''+u.id+'\')">'+(u.locked?'Buka':'Kunci')+'</button>'+
-      ' <button class="btn btn-sm btn-danger" onclick="deleteUser(\''+u.id+'\')">Hapus</button></td>'+
-    '</tr>';
-  });
-  html+='</table>'; document.getElementById('adminUserList').innerHTML=html;
-}
-function toggleLockUser(id) {
-  var users = getAllUsers(); var u = users.find(function(x){return x.id===id;}); if(!u) return;
-  u.locked = !u.locked; saveAllUsers(users);
-  showToast(u.locked?'User dikunci.':'User dibuka.','warning');
-  renderAdminUserList();
-}
-function deleteUser(id) {
-  showConfirm('Hapus User?','Data user akan hilang.',function(){
-    var users = getAllUsers().filter(function(x){return x.id!==id;}); saveAllUsers(users);
-    var lacak = getAllLacakData(); delete lacak[id]; saveAllLacakData(lacak);
-    showToast('User dihapus.','warning'); renderAdminUserList();
-  });
-}
-
-function renderPackageEditList() {
-  var pkgs = getPackages(); var html='';
-  pkgs.forEach(function(p){
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);">'+
-      '<span>'+p.name+' - Rp '+p.price+' ('+p.label+') – '+p.features+'</span>'+
-      '<button class="btn btn-sm btn-warning" onclick="editPackage(\''+p.id+'\')">Edit</button></div>';
-  });
-  document.getElementById('packageEditList').innerHTML = html;
-}
-function editPackage(id) {
-  var p = getPackages().find(function(x){return x.id===id;}); if(!p) return;
-  document.getElementById('editPackageId').value=p.id;
-  document.getElementById('editPackageName').value=p.name;
-  document.getElementById('editPackagePrice').value=p.price;
-  document.getElementById('editPackageDays').value=p.days;
-  document.getElementById('editPackageLabel').value=p.label;
-  document.getElementById('editPackageFeatures').value=p.features||'';
-  document.getElementById('editPackageTitle').textContent='Edit Paket '+p.name;
-  openModal('editPackageModal');
-}
-function savePackageChanges() {
-  var id = document.getElementById('editPackageId').value;
-  var name = document.getElementById('editPackageName').value.trim();
-  var price = parseInt(document.getElementById('editPackagePrice').value);
-  var days = parseInt(document.getElementById('editPackageDays').value);
-  var label = document.getElementById('editPackageLabel').value.trim();
-  var features = document.getElementById('editPackageFeatures').value.trim();
-  var err = document.getElementById('editPackageError'); err.classList.remove('show');
-  if(!name||!price||!days||!label){ err.textContent='Semua field wajib!'; err.classList.add('show'); return; }
-  var pkgs = getPackages(); var p = pkgs.find(function(x){return x.id===id;}); if(!p) return;
-  p.name=name; p.price=price; p.days=days; p.label=label; p.features=features; savePackages(pkgs);
-  closeModal('editPackageModal'); renderPackageEditList();
-  refreshPackageDisplay(); showToast('Paket diperbarui!','success');
-}
-
-function renderSecurityLogs() {
-  var logs = getSecurityLogs(); var html = '';
-  logs.slice(-50).reverse().forEach(function(l){
-    html += '<div style="padding:4px 0;font-size:0.75rem;">['+new Date(l.time).toLocaleString()+'] '+l.msg+'</div>';
-  });
-  document.getElementById('securityLogList').innerHTML = html || '<p>Tidak ada log.</p>';
-}
-function addSecurityLog(msg) {
-  var logs = getSecurityLogs(); logs.push({time:new Date().toISOString(), msg:msg}); saveSecurityLogs(logs);
-}
-function clearAllSecurityLogs() { saveSecurityLogs([]); renderSecurityLogs(); showToast('Log dibersihkan.','warning'); }
-function lockAllUsers() {
-  var users = getAllUsers(); users.forEach(function(u){ u.locked=true; }); saveAllUsers(users);
-  showToast('Semua user dikunci.','warning'); renderAdminUserList(); addSecurityLog('Semua user dikunci.');
-}
-function unlockAllUsers() {
-  var users = getAllUsers(); users.forEach(function(u){ u.locked=false; }); saveAllUsers(users);
-  showToast('Semua user dibuka.','success'); renderAdminUserList(); addSecurityLog('Semua user dibuka.');
-}
-
-function saveAdminWhatsapp() {
-  var val = document.getElementById('adminWhatsappInput').value.trim();
-  if(!val) return; saveWhatsapp(val); updateAllWaDisplays();
-  showToast('Nomor WhatsApp admin disimpan.','success'); addSecurityLog('Nomor WA admin diubah.');
-}
-function changeAdminPassword() {
-  var pw = document.getElementById('adminNewPassword').value.trim();
-  if(!pw) return showToast('Isi password baru!','error');
-  SUPER_ADMIN_DATA.password = encodePassword(pw);
-  showToast('Password Super Admin diubah.','success'); addSecurityLog('Password super admin diubah.');
-}
-function changeAdminName() {
-  var nm = document.getElementById('adminNewName').value.trim();
-  if(!nm) return; SUPER_ADMIN_DATA.nama = nm;
-  var s = getSession(); if(s&&s.role=='superadmin'){ s.nama=nm; saveSession(s); }
-  showToast('Nama Super Admin diubah.','success'); addSecurityLog('Nama super admin diubah.');
-}
-function resetAllApplicationData() {
-  showConfirm('RESET SEMUA DATA?','Semua user, data lacak, pengaturan akan terhapus permanen!',function(){
-    localStorage.clear();
-    saveAllUsers([SUPER_ADMIN_DATA]);
-    saveAllLacakData({}); savePackages(DEFAULT_PACKAGES); saveValidCodes({});
-    saveSecurityLogs([]); saveChatMessages([]); saveWhatsapp(DEFAULT_WHATSAPP);
-    updateAllWaDisplays(); showToast('Semua data telah direset!','warning');
-    addSecurityLog('RESET SEMUA DATA dilakukan.');
-    if(getSession()&&getSession().role=='superadmin') saveSession(SUPER_ADMIN_DATA);
-    closeModal('superAdminModal'); refreshAppUI(); updateStats(); updateHeaderUser();
-  });
-}
-
-function restartApplication() {
-  if (confirm('🔄 Restart aplikasi? Halaman akan dimuat ulang.')) { location.reload(); }
-}
-
-// ========== EDIT IKLAN ==========
-function loadAdSettings() {
-  var ad = JSON.parse(localStorage.getItem('tr_adSettings') || '{"title":"📍 TraceID – Lacak Sekarang!","description":"HP hilang? Kerabat kabur? Awasi anak Anda dengan teknologi pelacakan terkini.","buttonText":"🔍 Mulai Lacak Gratis"}');
-  document.getElementById('adTitle').value = ad.title || '';
-  document.getElementById('adDescription').value = ad.description || '';
-  document.getElementById('adButtonText').value = ad.buttonText || '';
-}
-function saveAdSettings() {
-  var ad = { title: document.getElementById('adTitle').value.trim(), description: document.getElementById('adDescription').value.trim(), buttonText: document.getElementById('adButtonText').value.trim() };
-  if (!ad.title || !ad.description || !ad.buttonText) { document.getElementById('adSaveResult').innerHTML = '<p class="form-error show">Semua field wajib diisi!</p>'; return; }
-  localStorage.setItem('tr_adSettings', JSON.stringify(ad));
-  document.getElementById('adSaveResult').innerHTML = '<p class="form-success show">✅ Iklan berhasil disimpan!</p>';
-  renderLandingAd(); showToast('Iklan diperbarui!', 'success');
-}
-function resetAdSettings() {
-  if (confirm('Reset iklan ke default?')) { localStorage.removeItem('tr_adSettings'); document.getElementById('adSaveResult').innerHTML = '<p class="form-success show">✅ Iklan direset ke default!</p>'; loadAdSettings(); renderLandingAd(); showToast('Iklan direset.', 'warning'); }
-}
-
-// ========== BACKUP & RESTORE ==========
-function backupAllDataJSON() {
-  var allData = {}; for (var i=0; i<localStorage.length; i++) { var key = localStorage.key(i); allData[key] = localStorage.getItem(key); }
-  var blob = new Blob([JSON.stringify(allData,null,2)], {type:'application/json'});
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'traceid_full_backup_'+new Date().toISOString().slice(0,10)+'.json'; a.click();
-  showToast('✅ Backup JSON berhasil!', 'success');
-}
-function restoreAllDataJSON(input) {
-  var file = input.files[0]; if (!file) return;
-  if (!confirm('⚠️ SEMUA data saat ini akan ditimpa. Lanjutkan?')) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    try { var data = JSON.parse(e.target.result); localStorage.clear(); Object.keys(data).forEach(function(key){ localStorage.setItem(key, data[key]); }); showToast('✅ Data JSON berhasil di-restore! Refresh...', 'success'); setTimeout(function(){ location.reload(); }, 2000); }
-    catch (err) { showToast('❌ File JSON tidak valid.', 'error'); }
-  };
-  reader.readAsText(file);
-}
-function downloadOfflineHTML() {
-  var html = '<!DOCTYPE html>\n'+document.documentElement.outerHTML;
-  var blob = new Blob([html], {type:'text/html'}); var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'traceid_offline_'+new Date().toISOString().slice(0,10)+'.html'; a.click();
-  showToast('⬇ HTML berhasil didownload!', 'success');
-}
-function restoreFromHTML(input) {
-  var file = input.files[0]; if (!file) return;
-  if (!confirm('⚠️ Halaman akan diganti dengan file HTML ini. Lanjutkan?')) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var match = e.target.result.match(/<html[^>]*>([\s\S]*)<\/html>/i);
-    if (match) { document.documentElement.innerHTML = match[1]; showToast('✅ Halaman dipulihkan! Refresh...', 'success'); setTimeout(function(){ location.reload(); }, 1500); }
-    else { document.open(); document.write(e.target.result); document.close(); showToast('✅ Halaman dipulihkan! Refresh...', 'success'); setTimeout(function(){ location.reload(); }, 1500); }
-  };
-  reader.readAsText(file);
-}
-
-function saveToGoogleDrive() {
-  var allData = {};
-  for (var i = 0; i < localStorage.length; i++) { var key = localStorage.key(i); allData[key] = localStorage.getItem(key); }
-  var jsonStr = JSON.stringify(allData, null, 2);
-  var blob = new Blob([jsonStr], { type: 'application/json' });
-  var file = new File([blob], 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json', { type: 'application/json' });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ title: 'Backup TraceID', text: 'Simpan file backup TraceID ke Google Drive atau memori.', files: [file] })
-      .then(function() { showToast('✅ File berhasil dibagikan! Pilih Google Drive untuk menyimpan.', 'success'); })
-      .catch(function(err) { downloadBackupFile(blob); });
-  } else { downloadBackupFile(blob); }
-}
-function downloadBackupFile(blob) {
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
-  showToast('⬇ File backup didownload. Simpan ke Google Drive secara manual.', 'success');
-}
-function emailBackup() {
-  var allData = {};
-  for (var i = 0; i < localStorage.length; i++) { var key = localStorage.key(i); allData[key] = localStorage.getItem(key); }
-  var jsonStr = JSON.stringify(allData, null, 2);
-  var blob = new Blob([jsonStr], { type: 'application/json' });
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
-  showToast('📧 File backup telah didownload. Silakan lampirkan ke email Anda.', 'success');
-}
-
-// ========== CHAT ADMIN ==========
-function renderAdminChat() {
-  var allMessages = getChatMessages(); var userList = [];
-  for (var i = 0; i < allMessages.length; i++) { var m = allMessages[i]; var other = (m.from==='admin')?m.to:m.from; if (other!=='admin'&&other!=='all'&&userList.indexOf(other)===-1) userList.push(other); }
-  var select = document.getElementById('adminChatUserSelect');
-  if (select) { select.innerHTML = '<option value="">-- Pilih User --</option>'; var users = getAllUsers(); for (var i = 0; i < users.length; i++) { if (userList.indexOf(users[i].username)!==-1&&users[i].role!=='superadmin') { select.innerHTML += '<option value="'+users[i].username+'">'+users[i].nama+' ('+users[i].username+')</option>'; } } }
-  document.getElementById('adminChatMessages').innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk melihat chat.</p>';
-}
-function setAdminChatTarget(username) { if (!username) return; loadAdminChat(username); }
-function loadAdminChat(username) {
-  var allMessages = getChatMessages(); var filtered = [];
-  for (var i = 0; i < allMessages.length; i++) { var m = allMessages[i]; if ((m.from==='admin'&&m.to===username)||(m.from===username&&m.to==='admin')) filtered.push(m); }
-  var container = document.getElementById('adminChatMessages'); if (!container) return;
-  if (filtered.length===0) { container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan '+username+'.</p>'; return; }
-  filtered.sort(function(a,b){ return new Date(a.time)-new Date(b.time); });
-  var html = ''; for (var i = 0; i < filtered.length; i++) { var m = filtered[i]; var isAdmin = (m.from==='admin'); var cls = isAdmin?'chat-msg admin':'chat-msg user'; var sender = isAdmin?'Admin':m.from; html += '<div class="'+cls+'"><div class="chat-sender">'+sender+'</div>'+m.text+'<div class="chat-time">'+new Date(m.time).toLocaleString()+'</div></div>'; }
-  container.innerHTML = html; container.scrollTop = container.scrollHeight;
-}
-function sendAdminChat() {
-  var select = document.getElementById('adminChatUserSelect'); var target = select?select.value:''; if (!target) { showToast('Pilih user!','error'); return; }
-  var input = document.getElementById('adminChatInput'); var text = input.value.trim(); if (!text) return;
-  var msgs = getChatMessages(); msgs.push({ from:'admin', to:target, text:text, time:new Date().toISOString() }); saveChatMessages(msgs); input.value=''; loadAdminChat(target);
-  showToast('Balasan terkirim ke '+target, 'success');
-}
-function sendMassChat() {
-  var textarea = document.getElementById('massChatMessage'); var text = textarea.value.trim(); if (!text) { showToast('Tulis pesan!','error'); return; }
-  var users = getAllUsers(); var msgs = getChatMessages(); var count = 0;
-  for (var i = 0; i < users.length; i++) { if (users[i].role!=='superadmin') { msgs.push({ from:'admin', to:users[i].username, text:text, time:new Date().toISOString() }); count++; } }
-  msgs.push({ from:'admin', to:'all', text:text, time:new Date().toISOString() }); saveChatMessages(msgs); textarea.value = '';
-  showToast('Pesan massal terkirim ke '+count+' user!', 'success');
-}
-</script>
-<!-- ============================================================
-     AKHIR BLOK 10 R1
-     Blok 11 akan melanjutkan: JS Chat, Landing Display, Offline, Init
-     ============================================================ -->
-
-<!-- ============================================================
-     BLOK 11 R1 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT
-     ============================================================ -->
-<script>
-// ---------- HUBUNGI ADMIN (LANDING PAGE) ----------
-function hubungiAdminLanding() {
-  var session = getSession();
-  if (session) {
-    showChatModal();
-  } else {
-    showToast('Silakan Daftar terlebih dahulu untuk menghubungi Admin.', 'warning');
-    showRegisterModal();
-  }
-}
-
-// ---------- CHAT USER KE ADMIN ----------
-function showChatModal() {
-  var s = getSession(); if(!s) return showToast('Login dulu!','error');
-  openModal('chatModal'); loadUserChat();
-}
-function loadUserChat() {
-  var s = getSession(); if(!s) return;
-  var msgs = getChatMessages().filter(function(m){ return m.to==='admin'||m.from===s.username||(m.from==='admin'&&m.to===s.username); });
-  var container = document.getElementById('userChatMessages'); container.innerHTML='';
-  msgs.forEach(function(m){
-    var cls = m.from===s.username?'user':'admin';
-    container.innerHTML += '<div class="chat-msg '+cls+'"><div class="chat-sender">'+(cls==='user'?'Anda':'Admin')+'</div>'+m.text+'<div class="chat-time">'+new Date(m.time).toLocaleString()+'</div></div>';
-  });
-  container.scrollTop = container.scrollHeight;
-}
-function sendUserChat() {
-  var s = getSession(); if(!s) return;
-  var input = document.getElementById('userChatInput'); var text = input.value.trim(); if(!text) return;
-  var msgs = getChatMessages();
-  msgs.push({ from: s.username, to: 'admin', text: text, time: new Date().toISOString() });
-  saveChatMessages(msgs); input.value=''; loadUserChat();
-}
-
-// ---------- LANDING PAGE PRICE DISPLAY ----------
-function refreshPackageDisplay() {
-  var grid = document.getElementById('landingPriceGrid'); if(!grid) return;
-  var pkgs = getPackages();
-  grid.innerHTML = pkgs.map(function(p,idx){
-    var featured = (idx===1) ? ' featured' : '';
-    var badge = (idx===1) ? '<div class="featured-badge" style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#000;padding:3px 16px;border-radius:var(--radius-full);font-size:0.7rem;font-weight:700;">TERLARIS</div>' : (idx===0 ? '<div class="featured-badge" style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent-primary);color:#fff;padding:3px 16px;border-radius:var(--radius-full);font-size:0.7rem;font-weight:700;">POPULER</div>' : '');
-    return '<div class="price-card'+featured+'" onclick="showLoginModal()" style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:var(--spacing-2xl);border:2px solid '+(idx===1?'var(--accent-primary)':'var(--border-color)')+';text-align:center;transition:all var(--transition-base);position:relative;cursor:pointer;">'+
-      badge+
-      '<div class="price-icon" style="font-size:2.5rem;margin-bottom:var(--spacing-sm);">'+(idx===0?'🌟':idx===1?'💎':'👑')+'</div>'+
-      '<div class="price-name" style="font-size:1.2rem;font-weight:700;">'+p.name+'</div>'+
-      '<div class="price-value" style="font-size:2rem;font-weight:800;color:var(--color-success);margin:var(--spacing-sm)0;">Rp '+p.price.toLocaleString('id-ID')+'</div>'+
-      '<div class="price-duration" style="font-size:0.85rem;color:var(--text-secondary);">'+p.label+'</div>'+
-      '<p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">'+(p.features||'')+'</p>'+
-    '</div>';
-  }).join('');
-}
-
-// ---------- LANDING PAGE AD ----------
-function renderLandingAd() {
-  var container = document.getElementById('landingAdContainer');
-  if (!container) return;
-  var ad = JSON.parse(localStorage.getItem('tr_adSettings') || '{"title":"📍 TraceID – Lacak Sekarang!","description":"HP hilang? Kerabat kabur? Awasi anak Anda dengan teknologi pelacakan terkini.","buttonText":"🔍 Mulai Lacak Gratis"}');
-  container.innerHTML = '<div style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:20px 24px;border-radius:var(--radius-lg);text-align:center;margin-bottom:20px;border:2px solid rgba(255,255,255,0.2);">'+
-    '<h3 style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">'+ad.title+'</h3>'+
-    '<p style="margin-bottom:12px;opacity:0.9;">'+ad.description+'</p>'+
-    '<button onclick="showRegisterModal()" class="btn btn-lg" style="background:#fff;color:#3b82f6;font-weight:700;">'+ad.buttonText+'</button>'+
-  '</div>';
-}
-
-// ---------- OFFLINE / INSTALL ----------
-function downloadForOffline() {
-  var html = document.documentElement.outerHTML;
-  var blob = new Blob(['<!DOCTYPE html>\n'+html],{type:'text/html'});
-  var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='TraceID_v1.0_Offline.html';
-  a.click(); showToast('File offline didownload.','success');
-}
-
-function updateOnlineStatus() {
-  var badge = document.getElementById('connectionBadge');
-  if(navigator.onLine){ badge.textContent='ONLINE'; badge.style.background='#10b981'; }
-  else { badge.textContent='OFFLINE'; badge.style.background='#ef4444'; }
-}
-window.addEventListener('online',updateOnlineStatus); window.addEventListener('offline',updateOnlineStatus);
-
-// ---------- CHAT USER-TO-USER ----------
-window.showUserChatModal = function() {
-  var s = getSession();
-  if (!s) return showToast('Login dulu!','error');
-  var select = document.getElementById('userChatTargetSelect');
-  if (!select) return;
-  var users = getAllUsers();
-  var options = '<option value="">-- Pilih User --</option>';
-  for (var i = 0; i < users.length; i++) {
-    if (users[i].username !== s.username && users[i].role !== 'superadmin') {
-      options += '<option value="' + users[i].username + '">' + users[i].nama + ' (' + users[i].username + ')</option>';
-    }
-  }
-  select.innerHTML = options;
-  document.getElementById('userToUserChatMessages').innerHTML =
-    '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>';
-  document.getElementById('userToUserChatInput').value = '';
-  openModal('userChatModal');
-};
-
-window.loadUserToUserChat = function() {
-  var s = getSession(); if (!s) return;
-  var select = document.getElementById('userChatTargetSelect');
-  var target = select ? select.value : '';
-  var container = document.getElementById('userToUserChatMessages');
-  if (!target) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>';
-    return;
-  }
-  var allMessages = getChatMessages();
-  var filtered = [];
-  for (var i = 0; i < allMessages.length; i++) {
-    var m = allMessages[i];
-    if (m.from !== 'admin' && m.to !== 'admin') {
-      if ((m.from === s.username && m.to === target) || (m.from === target && m.to === s.username)) {
-        filtered.push(m);
-      }
-    }
-  }
-  if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan ' + target + '.</p>';
-    return;
-  }
-  filtered.sort(function(a, b) { return new Date(a.time) - new Date(b.time); });
-  var html = '';
-  for (var i = 0; i < filtered.length; i++) {
-    var m = filtered[i];
-    var isMe = (m.from === s.username);
-    var cls = isMe ? 'chat-msg user' : 'chat-msg admin';
-    var sender = isMe ? 'Anda' : m.from;
-    html += '<div class="' + cls + '"><div class="chat-sender">' + sender + '</div>' +
-      m.text + '<div class="chat-time">' + new Date(m.time).toLocaleString() + '</div></div>';
-  }
-  container.innerHTML = html;
-  container.scrollTop = container.scrollHeight;
-};
-
-window.sendUserToUserChat = function() {
-  var s = getSession(); if (!s) return;
-  var select = document.getElementById('userChatTargetSelect');
-  var target = select ? select.value : '';
-  if (!target) { showToast('Pilih user dulu!','error'); return; }
-  var input = document.getElementById('userToUserChatInput');
-  var text = input.value.trim(); if (!text) return;
-  var msgs = getChatMessages();
-  msgs.push({ from: s.username, to: target, text: text, time: new Date().toISOString() });
-  saveChatMessages(msgs);
-  input.value = '';
-  window.loadUserToUserChat();
-};
-
-// ---------- PATCH HEADER SUPERADMIN ----------
-function patchSuperadminHeader() {
-  var s = getSession();
-  if (!s || s.role !== 'superadmin') return;
-  var chatUserBtn = document.getElementById('chatUserButton');
-  var chatAdminBtn = document.getElementById('chatButton');
-  if (chatUserBtn) chatUserBtn.classList.remove('hidden');
-  if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
-}
-
-// ---------- INIT ----------
-(function init(){
-  var banner = document.getElementById('installBanner');
-  if (banner) { banner.style.display = 'none'; }
-
-  var users = getAllUsers();
-  if(!users.find(function(u){return u.role==='superadmin';})) users.push(SUPER_ADMIN_DATA);
-  saveAllUsers(users);
-  updateOnlineStatus();
-  updateAllWaDisplays();
-  refreshPackageDisplay();
-  renderLandingAd();
-  updateHeaderUser();
-
-  window.addEventListener('load', function() {
-    patchSuperadminHeader();
-  });
-
-  var origUpdateHeader = window.updateHeaderUser;
-  if (origUpdateHeader) {
-    window.updateHeaderUser = function() {
-      origUpdateHeader();
-      patchSuperadminHeader();
-    };
-  }
-
-  console.log('✅ TraceID v1.0 siap digunakan.');
-})();
-</script>
-
-<!-- ========== TOMBOL DOWNLOAD HALAMAN ========== -->
-<div style="text-align:center;margin:30px 0;">
-  <button class="btn btn-lg" style="background:var(--accent-primary);color:#fff;" onclick="downloadForOffline()">
-    ⬇️ Download Halaman (Offline)
-  </button>
-  <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">
-    Simpan halaman ini sebagai file .html untuk offline.
-  </p>
-</div>
-
-</body>
-</html>
-<!-- ============================================================
-     AKHIR BLOK 11 R1
-     SEMUA 11 BLOK TraceID v1.0 SELESAI
-     ============================================================ -->
+     
