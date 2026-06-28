@@ -3275,3 +3275,216 @@ function sendMassChat() {
   showToast('Pesan massal terkirim ke '+count+' user!', 'success');
 }
 </script>
+<!-- ============================================================
+     BLOK 11 R1 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT
+     ============================================================ -->
+<script>
+// ============================================================
+// HUBUNGI ADMIN (LANDING PAGE)
+// ============================================================
+function hubungiAdminLanding() {
+  var session = getSession();
+  if (session) {
+    showChatModal();
+  } else {
+    showToast('Silakan Daftar terlebih dahulu untuk menghubungi Admin.', 'warning');
+    showRegisterModal();
+  }
+}
+
+// ============================================================
+// CHAT USER KE ADMIN
+// ============================================================
+function showChatModal() {
+  var s = getSession(); if(!s) return showToast('Login dulu!','error');
+  openModal('chatModal'); loadUserChat();
+}
+function loadUserChat() {
+  var s = getSession(); if(!s) return;
+  var msgs = getChatMessages().filter(function(m){ return m.to==='admin'||m.from===s.username||(m.from==='admin'&&m.to===s.username); });
+  var container = document.getElementById('userChatMessages'); container.innerHTML='';
+  if (msgs.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan Admin.</p>';
+    return;
+  }
+  msgs.forEach(function(m){
+    var cls = m.from===s.username?'user':'admin';
+    container.innerHTML += '<div class="chat-msg '+cls+'"><div class="chat-sender">'+(cls==='user'?'Anda':'Admin')+'</div>'+m.text+'<div class="chat-time">'+new Date(m.time).toLocaleString()+'</div></div>';
+  });
+  container.scrollTop = container.scrollHeight;
+}
+function sendUserChat() {
+  var s = getSession(); if(!s) return;
+  var input = document.getElementById('userChatInput'); var text = input.value.trim(); if(!text) return;
+  var msgs = getChatMessages();
+  msgs.push({ from: s.username, to: 'admin', text: text, time: new Date().toISOString() });
+  saveChatMessages(msgs); input.value=''; loadUserChat();
+}
+
+// ============================================================
+// LANDING PAGE PRICE DISPLAY
+// ============================================================
+function refreshPackageDisplay() {
+  var grid = document.getElementById('landingPriceGrid'); if(!grid) return;
+  var pkgs = getPackages();
+  grid.innerHTML = pkgs.map(function(p,idx){
+    var featured = (idx===1) ? ' featured' : '';
+    var badge = (idx===1) ? '<div class="featured-badge" style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#f59e0b;color:#000;padding:3px 16px;border-radius:var(--radius-full);font-size:0.7rem;font-weight:700;">TERLARIS</div>' : (idx===0 ? '<div class="featured-badge" style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent-primary);color:#fff;padding:3px 16px;border-radius:var(--radius-full);font-size:0.7rem;font-weight:700;">POPULER</div>' : '');
+    return '<div class="price-card'+featured+'" onclick="showLoginModal()" style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:var(--spacing-2xl);border:2px solid '+(idx===1?'var(--accent-primary)':'var(--border-color)')+';text-align:center;transition:all var(--transition-base);position:relative;cursor:pointer;">'+
+      badge+
+      '<div class="price-icon" style="font-size:2.5rem;margin-bottom:var(--spacing-sm);">'+(idx===0?'🌟':idx===1?'💎':'👑')+'</div>'+
+      '<div class="price-name" style="font-size:1.2rem;font-weight:700;">'+p.name+'</div>'+
+      '<div class="price-value" style="font-size:2rem;font-weight:800;color:var(--color-success);margin:var(--spacing-sm)0;">Rp '+p.price.toLocaleString('id-ID')+'</div>'+
+      '<div class="price-duration" style="font-size:0.85rem;color:var(--text-secondary);">'+p.label+'</div>'+
+      '<p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">'+(p.features||'')+'</p>'+
+    '</div>';
+  }).join('');
+}
+
+// ============================================================
+// LANDING PAGE AD
+// ============================================================
+function renderLandingAd() {
+  var container = document.getElementById('landingAdContainer');
+  if (!container) return;
+  var ad = JSON.parse(localStorage.getItem('tr_adSettings') || '{"title":"📍 TraceID – Lacak Sekarang!","description":"HP hilang? Kerabat kabur? Awasi anak Anda dengan teknologi pelacakan terkini.","buttonText":"🔍 Mulai Lacak Gratis"}');
+  container.innerHTML = '<div style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:20px 24px;border-radius:var(--radius-lg);text-align:center;margin-bottom:20px;border:2px solid rgba(255,255,255,0.2);">'+
+    '<h3 style="font-size:1.3rem;font-weight:700;margin-bottom:8px;">'+ad.title+'</h3>'+
+    '<p style="margin-bottom:12px;opacity:0.9;">'+ad.description+'</p>'+
+    '<button onclick="showRegisterModal()" class="btn btn-lg" style="background:#fff;color:#3b82f6;font-weight:700;">'+ad.buttonText+'</button>'+
+  '</div>';
+}
+
+// ============================================================
+// OFFLINE / INSTALL
+// ============================================================
+function downloadForOffline() {
+  var html = document.documentElement.outerHTML;
+  var blob = new Blob(['<!DOCTYPE html>\n'+html],{type:'text/html'});
+  var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='TraceID_v1.0_Offline.html';
+  a.click(); showToast('File offline didownload.','success');
+}
+
+function updateOnlineStatus() {
+  var badge = document.getElementById('connectionBadge');
+  if(navigator.onLine){ badge.textContent='ONLINE'; badge.style.background='#10b981'; }
+  else { badge.textContent='OFFLINE'; badge.style.background='#ef4444'; }
+}
+window.addEventListener('online',updateOnlineStatus); window.addEventListener('offline',updateOnlineStatus);
+
+// ============================================================
+// CHAT USER-TO-USER
+// ============================================================
+window.showUserChatModal = function() {
+  var s = getSession();
+  if (!s) return showToast('Login dulu!','error');
+  var select = document.getElementById('userChatTargetSelect');
+  if (!select) return;
+  var users = getAllUsers();
+  var options = '<option value="">-- Pilih User --</option>';
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].username !== s.username && users[i].role !== 'superadmin') {
+      options += '<option value="' + users[i].username + '">' + users[i].nama + ' (' + users[i].username + ')</option>';
+    }
+  }
+  select.innerHTML = options;
+  document.getElementById('userToUserChatMessages').innerHTML =
+    '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>';
+  document.getElementById('userToUserChatInput').value = '';
+  openModal('userChatModal');
+};
+
+window.loadUserToUserChat = function() {
+  var s = getSession(); if (!s) return;
+  var select = document.getElementById('userChatTargetSelect');
+  var target = select ? select.value : '';
+  var container = document.getElementById('userToUserChatMessages');
+  if (!target) {
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>';
+    return;
+  }
+  var allMessages = getChatMessages();
+  var filtered = [];
+  for (var i = 0; i < allMessages.length; i++) {
+    var m = allMessages[i];
+    if (m.from !== 'admin' && m.to !== 'admin') {
+      if ((m.from === s.username && m.to === target) || (m.from === target && m.to === s.username)) {
+        filtered.push(m);
+      }
+    }
+  }
+  if (filtered.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan ' + target + '.</p>';
+    return;
+  }
+  filtered.sort(function(a, b) { return new Date(a.time) - new Date(b.time); });
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var m = filtered[i];
+    var isMe = (m.from === s.username);
+    var cls = isMe ? 'chat-msg user' : 'chat-msg admin';
+    var sender = isMe ? 'Anda' : m.from;
+    html += '<div class="' + cls + '"><div class="chat-sender">' + sender + '</div>' +
+      m.text + '<div class="chat-time">' + new Date(m.time).toLocaleString() + '</div></div>';
+  }
+  container.innerHTML = html;
+  container.scrollTop = container.scrollHeight;
+};
+
+window.sendUserToUserChat = function() {
+  var s = getSession(); if (!s) return;
+  var select = document.getElementById('userChatTargetSelect');
+  var target = select ? select.value : '';
+  if (!target) { showToast('Pilih user dulu!','error'); return; }
+  var input = document.getElementById('userToUserChatInput');
+  var text = input.value.trim(); if (!text) return;
+  var msgs = getChatMessages();
+  msgs.push({ from: s.username, to: target, text: text, time: new Date().toISOString() });
+  saveChatMessages(msgs);
+  input.value = '';
+  window.loadUserToUserChat();
+};
+
+// ============================================================
+// PATCH HEADER SUPERADMIN
+// ============================================================
+function patchSuperadminHeader() {
+  var s = getSession();
+  if (!s || s.role !== 'superadmin') return;
+  var chatUserBtn = document.getElementById('chatUserButton');
+  var chatAdminBtn = document.getElementById('chatButton');
+  if (chatUserBtn) chatUserBtn.classList.remove('hidden');
+  if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(function init(){
+  var banner = document.getElementById('installBanner');
+  if (banner) { banner.style.display = 'none'; }
+
+  var users = getAllUsers();
+  if(!users.find(function(u){return u.role==='superadmin';})) users.push(SUPER_ADMIN_DATA);
+  saveAllUsers(users);
+  updateOnlineStatus();
+  updateAllWaDisplays();
+  refreshPackageDisplay();
+  renderLandingAd();
+  updateHeaderUser();
+
+  window.addEventListener('load', function() {
+    patchSuperadminHeader();
+  });
+
+  var origUpdateHeader = window.updateHeaderUser;
+  if (origUpdateHeader) {
+    window.updateHeaderUser = function() {
+      origUpdateHeader();
+      patchSuperadminHeader();
+    };
+  }
+
+  console.log('✅ TraceID v1.0 siap digunakan.');
+})();
+</script>
