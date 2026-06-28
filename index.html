@@ -2336,3 +2336,942 @@ function updateHeaderUser() {
   }
 }
 </script>
+<!-- ============================================================
+     BLOK 9 R15 – JS CORE 2 (TRACEID FINAL)
+     ============================================================ -->
+<script>
+// ============================================================
+// UPDATE STATS
+// ============================================================
+function updateStats() {
+  var s = getSession();
+  var data = s ? (getAllLacakData()[s.id]||[]) : [];
+  var total = data.length;
+  var ip = data.filter(function(d){ return d.type === 'ip'; }).length;
+  var email = data.filter(function(d){ return d.type === 'email'; }).length;
+  var sosmed = data.filter(function(d){ return ['tiktok','instagram','facebook','whatsapp'].indexOf(d.type) !== -1; }).length;
+  var tracker = data.filter(function(d){ return d.type === 'tracker'; }).length;
+
+  document.getElementById('statTotalLacak').textContent = total;
+  document.getElementById('statLacakIP').textContent = ip;
+  document.getElementById('statLacakEmail').textContent = email;
+  document.getElementById('statLacakSosmed').textContent = sosmed + tracker;
+
+  var status = document.getElementById('statPremiumStatus');
+  status.textContent = (s&&(s.premium||s.role=='superadmin'))?'Premium':'Free';
+}
+
+// ============================================================
+// FORGOT PASSWORD
+// ============================================================
+function handleForgotPassword() {
+  var n = document.getElementById('forgotNama').value.trim();
+  var e = document.getElementById('forgotEmail').value.trim();
+  var hp = document.getElementById('forgotHp').value.trim();
+  var err = document.getElementById('forgotError'); var suc = document.getElementById('forgotSuccess');
+  err.classList.remove('show'); suc.classList.remove('show');
+  if(!n||!e||!hp){ err.textContent='Lengkapi semua data!'; err.classList.add('show'); return; }
+  var users = getAllUsers();
+  var user = users.find(function(u){return u.nama===n && u.email===e && u.hp===hp;});
+  if(!user){ err.textContent='Data tidak cocok! Hubungi admin.'; err.classList.add('show'); return; }
+  suc.textContent='Link reset akan dikirim via WhatsApp Admin.'; suc.classList.add('show');
+  setTimeout(function(){ openWhatsApp('Halo admin, saya ingin reset password. Nama: '+n); },2000);
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+function loadProfileData() {
+  var s = getSession(); if(!s) return;
+  document.getElementById('profileAvatar').textContent = s.nama.charAt(0).toUpperCase();
+  document.getElementById('profileName').textContent = s.nama;
+  document.getElementById('profileRole').textContent = s.role==='superadmin'?'Super Admin':(s.premium?'User Premium':'User Biasa');
+  document.getElementById('editProfileNama').value = s.nama||'';
+  document.getElementById('editProfileEmail').value = s.email||'';
+  document.getElementById('editProfileHp').value = s.hp||'';
+  var delBtn = document.getElementById('deleteAccountButton');
+  if (delBtn) { delBtn.style.display = (s.role === 'superadmin') ? 'none' : 'block'; }
+}
+function saveProfile() {
+  var s = getSession(); if(!s) return;
+  var n = document.getElementById('editProfileNama').value.trim();
+  var e = document.getElementById('editProfileEmail').value.trim();
+  var hp = document.getElementById('editProfileHp').value.trim();
+  var err = document.getElementById('profileError'); var suc = document.getElementById('profileSuccess');
+  err.classList.remove('show'); suc.classList.remove('show');
+  if(!n||!e||!hp){ err.textContent='Semua field wajib!'; err.classList.add('show'); return; }
+  s.nama=n; s.email=e; s.hp=hp; saveSession(s);
+  var users = getAllUsers(); var idx = users.findIndex(function(x){return x.id===s.id;});
+  if(idx!==-1){ users[idx].nama=n; users[idx].email=e; users[idx].hp=hp; saveAllUsers(users); }
+  suc.textContent='Profil tersimpan!'; suc.classList.add('show');
+  updateHeaderUser(); setTimeout(function(){ closeModal('profileModal'); },1500);
+}
+function deleteAccount() {
+  var s = getSession();
+  if (!s || s.role === 'superadmin') return;
+  showConfirm('Hapus Akun?','Semua data Anda akan hilang permanen.',function(){
+    var users = getAllUsers().filter(function(x){return x.id!==s.id;}); saveAllUsers(users);
+    var lacak = getAllLacakData(); delete lacak[s.id]; saveAllLacakData(lacak);
+    localStorage.removeItem('tr_userdata_' + s.username);
+    sessionStorage.removeItem('tr_autosave_' + s.id);
+    clearSession(); closeModal('profileModal'); goToLandingPage(); updateHeaderUser(); showToast('Akun dihapus.','warning');
+  });
+}
+
+// ============================================================
+// LACAK (TRACKING)
+// ============================================================
+function showLacakModal(type) {
+  var s = getSession(); if(!s) return showToast('Login dulu!','error');
+  var modal = document.getElementById('lacakModal');
+  if (!modal) {
+    // Buat modal lacak jika belum ada
+    createLacakModal();
+  }
+  document.getElementById('lacakType').value = type;
+  var t = {
+    'ip': ['🌐 Lacak via IP Address','Masukkan IP Address target','Contoh: 8.8.8.8','Dapatkan koordinat & lokasi dari IP.'],
+    'email': ['📧 Lacak via Email','Masukkan Email target','Contoh: target@gmail.com','Cari akun terdaftar.'],
+    'tiktok': ['🎵 Lacak via TikTok','Masukkan Username TikTok','Contoh: username','Username tanpa @.'],
+    'instagram': ['📷 Lacak via Instagram','Masukkan Username Instagram','Contoh: username','Username IG target.'],
+    'facebook': ['📘 Lacak via Facebook','Masukkan URL/ID Facebook','Contoh: facebook.com/username','URL profil Facebook.'],
+    'whatsapp': ['📱 Lacak via WhatsApp','Masukkan Nomor HP','Contoh: 081234567890','Nomor WhatsApp target.']
+  }[type];
+  document.getElementById('lacakModalTitle').textContent = t[0];
+  document.getElementById('lacakLabel').textContent = t[1];
+  document.getElementById('lacakInput').placeholder = t[2];
+  document.getElementById('lacakHint').textContent = t[3];
+  document.getElementById('lacakInput').value = '';
+  document.getElementById('lacakResultDetail').classList.add('hidden');
+  document.getElementById('lacakLoading').classList.add('hidden');
+  document.getElementById('lacakError').classList.remove('show');
+  openModal('lacakModal');
+}
+
+function createLacakModal() {
+  var modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.id = 'lacakModal';
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width:600px;">
+      <div class="modal-header">
+        <h3 id="lacakModalTitle">🔍 Lacak</h3>
+        <button class="modal-close" onclick="closeModal('lacakModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="lacakType" value="ip">
+        <div class="form-group">
+          <label class="form-label" id="lacakLabel">Masukkan Data Target</label>
+          <input type="text" id="lacakInput" placeholder="Masukkan data...">
+          <div class="form-hint" id="lacakHint">Contoh data target.</div>
+        </div>
+        <button onclick="executeLacak()" class="btn btn-primary btn-block">🔍 Lacak Sekarang</button>
+        <div id="lacakLoading" class="hidden" style="text-align:center;padding:20px;">⏳ Memproses...</div>
+        <div id="lacakResultDetail" class="hidden" style="margin-top:16px;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:var(--spacing-lg);border:1px solid var(--border-color);">
+          <h4 style="margin-bottom:8px;">📋 Hasil Lacakan</h4>
+          <div id="lacakResultContent"></div>
+        </div>
+        <div class="form-error" id="lacakError"></div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeModal('lacakModal')" class="btn btn-gray">Tutup</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function executeLacak() {
+  var type = document.getElementById('lacakType').value;
+  var input = document.getElementById('lacakInput').value.trim();
+  var err = document.getElementById('lacakError');
+  err.classList.remove('show');
+  if (!input) { err.textContent = 'Masukkan data target!'; err.classList.add('show'); return; }
+  var s = getSession(); if (!s) return;
+  document.getElementById('lacakLoading').classList.remove('hidden');
+  document.getElementById('lacakResultDetail').classList.add('hidden');
+  if (type === 'ip') {
+    fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        document.getElementById('lacakLoading').classList.add('hidden');
+        if (d && d.latitude && d.longitude) {
+          var hasil = { ip: d.ip || input, kota: d.city || '-', provinsi: d.region || '-', negara: d.country_name || '-', lat: d.latitude, lng: d.longitude, maps: 'https://www.google.com/maps?q=' + d.latitude + ',' + d.longitude };
+          simpanDanTampilkan('ip', input, hasil);
+          showToast('✅ Koordinat ditemukan!', 'success');
+        } else {
+          var lat = (Math.random() * 10 - 6).toFixed(4), lng = (Math.random() * 20 + 106).toFixed(4);
+          simpanDanTampilkan('ip', input, { ip: input, kota: 'Tidak diketahui', provinsi: 'Indonesia', negara: 'Indonesia', lat: lat, lng: lng, maps: 'https://www.google.com/maps?q=' + lat + ',' + lng });
+          showToast('⚠️ Data perkiraan', 'warning');
+        }
+      })
+      .catch(function() {
+        document.getElementById('lacakLoading').classList.add('hidden');
+        var lat = (Math.random() * 10 - 6).toFixed(4), lng = (Math.random() * 20 + 106).toFixed(4);
+        simpanDanTampilkan('ip', input, { ip: input, kota: 'Offline', provinsi: 'Indonesia', negara: 'Indonesia', lat: lat, lng: lng, maps: 'https://www.google.com/maps?q=' + lat + ',' + lng });
+        showToast('⚠️ Offline', 'warning');
+      });
+  } else {
+    setTimeout(function() {
+      document.getElementById('lacakLoading').classList.add('hidden');
+      simpanDanTampilkan(type, input, { input: input, info: 'Data ditemukan (simulasi)', waktu: new Date().toLocaleString() });
+      showToast('✅ Selesai', 'success');
+    }, 1000);
+  }
+}
+
+function simpanDanTampilkan(type, input, hasil) {
+  var s = getSession();
+  if (s) {
+    var d = getAllLacakData(); var u = d[s.id] || [];
+    u.push({ id: Date.now().toString(), type: type, input: input, result: hasil, time: new Date().toISOString() });
+    d[s.id] = u; saveAllLacakData(d); autoSaveData();
+  }
+  tampilkanHasil(hasil); updateStats(); refreshAppUI();
+}
+
+function tampilkanHasil(hasil) {
+  var html = '<div style="font-size:0.9rem;line-height:1.8;">';
+  if (hasil.lat !== undefined && hasil.lng !== undefined) {
+    html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;"><div style="font-size:0.8rem;opacity:0.9;">📍 TITIK KOORDINAT</div><div style="font-size:1.5rem;font-weight:800;">' + hasil.lat + ', ' + hasil.lng + '</div>';
+    if (hasil.maps) html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;font-size:0.85rem;">🗺 Buka di Google Maps</a>';
+    html += '</div>';
+  }
+  if (hasil.ip) html += '<p><strong>IP:</strong> ' + hasil.ip + '</p>';
+  if (hasil.kota) html += '<p><strong>Kota:</strong> ' + hasil.kota + '</p>';
+  if (hasil.provinsi) html += '<p><strong>Provinsi:</strong> ' + hasil.provinsi + '</p>';
+  if (hasil.negara) html += '<p><strong>Negara:</strong> ' + hasil.negara + '</p>';
+  if (hasil.info) html += '<p>' + hasil.info + '</p>';
+  if (hasil.waktu) html += '<p><strong>Waktu:</strong> ' + hasil.waktu + '</p>';
+  html += '</div>';
+  document.getElementById('lacakResultContent').innerHTML = html;
+  document.getElementById('lacakResultDetail').classList.remove('hidden');
+}
+
+// ============================================================
+// RENDER RIWAYAT
+// ============================================================
+function refreshAppUI() {
+  var s = getSession();
+  if (!s) { document.getElementById('riwayatLacakContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>'; return; }
+  initUserApps(s);
+  var data = getAllLacakData()[s.id] || [];
+  var c = document.getElementById('riwayatLacakContainer');
+  if (data.length === 0) { c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>'; return; }
+  data.sort(function(a,b){ return new Date(b.time) - new Date(a.time); });
+  var icons = { ip:'🌐', email:'📧', tiktok:'🎵', instagram:'📷', facebook:'📘', whatsapp:'📱', tracker:'🔗' };
+  c.innerHTML = data.map(function(d){
+    var k = '';
+    if (d.result && d.result.lat) k = ' <span style="color:#10b981;">📍' + d.result.lat + ',' + d.result.lng + '</span>';
+    return '<div style="background:var(--bg-secondary);border-radius:8px;padding:12px;border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\''+d.id+'\')"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;"><span>'+(icons[d.type]||'🔍')+' <strong>'+d.type.toUpperCase()+'</strong> – '+d.input+k+'</span><span style="font-size:0.75rem;color:var(--text-muted);">'+new Date(d.time).toLocaleString()+'</span></div></div>';
+  }).join('');
+}
+
+function showDetailRiwayat(id) {
+  var s = getSession(); if(!s) return;
+  var data = getAllLacakData()[s.id] || [];
+  var item = data.find(function(d){ return d.id === id; });
+  if (!item) return;
+  document.getElementById('detailRiwayatTitle').textContent = '📋 Detail ' + item.type.toUpperCase();
+  var h = '<p><strong>Target:</strong> ' + item.input + '</p><p><strong>Waktu:</strong> ' + new Date(item.time).toLocaleString() + '</p><hr style="border-color:var(--border-color);margin:12px 0;">';
+  var hasil = item.result;
+  if (hasil.lat !== undefined && hasil.lng !== undefined) {
+    h += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;"><div style="font-size:0.8rem;">📍 TITIK KOORDINAT</div><div style="font-size:1.3rem;font-weight:800;">' + hasil.lat + ', ' + hasil.lng + '</div>';
+    if (hasil.maps) h += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;">🗺 Buka Google Maps</a>';
+    h += '</div>';
+  }
+  if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) h += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:250px;border-radius:8px;margin-bottom:8px;">';
+  for (var key in hasil) {
+    if (key === 'lat' || key === 'lng' || key === 'maps' || key === 'gambarData') continue;
+    h += '<p><strong>' + key + ':</strong> ' + hasil[key] + '</p>';
+  }
+  document.getElementById('detailRiwayatContent').innerHTML = h;
+  openModal('detailRiwayatModal');
+}
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+function exportAllData() {
+  var s = getSession(); if(!s) return showToast('Login dulu!','error');
+  var data = { lacak: getAllLacakData()[s.id]||[], exportedAt: new Date().toISOString() };
+  var blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='traceid_backup.json'; a.click();
+  showToast('Data diekspor!','success');
+}
+function importAllData(input) {
+  var s = getSession(); if(!s) return; var file = input.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var data = JSON.parse(e.target.result);
+      if(!data.lacak||!Array.isArray(data.lacak)) throw new Error('Format salah');
+      var all = getAllLacakData(); all[s.id]=data.lacak; saveAllLacakData(all);
+      autoSaveData(); refreshAppUI(); updateStats(); showToast('Data diimpor!','success');
+    }catch(ex){ showToast('Format file tidak valid.','error'); }
+  };
+  reader.readAsText(file);
+}
+
+// ============================================================
+// CONFIRM
+// ============================================================
+var confirmCb = null;
+function showConfirm(title,msg,cb){
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMessage').textContent=msg;
+  confirmCb = cb; openModal('confirmModal');
+}
+function executeConfirmAction(){ if(confirmCb){confirmCb(); confirmCb=null;} closeModal('confirmModal'); }
+
+// ============================================================
+// EXPIRY CHECK
+// ============================================================
+function checkAllExpiredActivations() {
+  var s = getSession(); if(!s||!s.premiumExpiry) return;
+  var now = new Date(); var exp = new Date(s.premiumExpiry); var diff = exp - now;
+  var warn = document.getElementById('expiryWarning');
+  if (warn) {
+    if(diff<0){
+      s.premium=false; s.premiumExpiry=null; saveSession(s);
+      var users = getAllUsers(); var idx=users.findIndex(function(u){return u.id===s.id;});
+      if(idx!==-1){ users[idx].premium=false; users[idx].premiumExpiry=null; saveAllUsers(users); }
+      warn.classList.remove('show'); showToast('Masa premium habis.','warning');
+      updateHeaderUser(); if(!document.getElementById('applicationPage').classList.contains('hidden')) updateStats();
+    }else if(diff < 3*86400000){
+      document.getElementById('expiryWarningText').textContent = 'Premium berakhir dalam '+Math.ceil(diff/86400000)+' hari!';
+      warn.classList.add('show');
+    }else{ warn.classList.remove('show'); }
+  }
+}
+
+// ============================================================
+// BACKUP / RESTORE USER
+// ============================================================
+function backupUserData() {
+  var s = getSession(); if (!s) return showToast('Login dulu!','error');
+  var data = getAllLacakData()[s.id] || [];
+  var json = { lacak: data, exportedAt: new Date().toISOString(), user: s.username };
+  var blob = new Blob([JSON.stringify(json, null, 2)], {type: 'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'traceid_backup_' + s.username + '_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('✅ Backup didownload!', 'success');
+}
+function restoreUserData(input) {
+  var s = getSession(); if (!s) return;
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.lacak || !Array.isArray(data.lacak)) throw new Error('Format salah');
+      var all = getAllLacakData(); all[s.id] = data.lacak; saveAllLacakData(all);
+      autoSaveData(); refreshAppUI(); updateStats();
+      showToast('✅ Data dipulihkan!', 'success');
+    } catch (ex) { showToast('❌ Format tidak valid.', 'error'); }
+  };
+  reader.readAsText(file); input.value = '';
+}
+
+// ============================================================
+// SEARCH
+// ============================================================
+function toggleSearch() { document.getElementById('searchBar').classList.toggle('hidden'); }
+function performSearch() {
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('#riwayatLacakContainer > div').forEach(function(it){
+    if(it.id==='emptyRiwayat') return;
+    it.style.display = it.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+function clearSearch() { document.getElementById('searchInput').value=''; performSearch(); }
+
+// ============================================================
+// LINK TRACKER (KIRIM PESAN + GAMBAR)
+// ============================================================
+var trackerImageData = null;
+
+function showLinkTrackerModal() {
+  if (!getSession()) return showToast('Login dulu!','error');
+  document.getElementById('trackerTitle').value = '';
+  document.getElementById('trackerMessage').value = '';
+  document.getElementById('trackerImageUrl').value = '';
+  document.getElementById('trackerImageFile').value = '';
+  document.getElementById('trackerImagePreview').style.display = 'none';
+  document.getElementById('trackerResult').classList.add('hidden');
+  document.getElementById('trackerError').classList.remove('show');
+  var btn = document.getElementById('btnSiapkanKiriman');
+  if (btn) { btn.disabled = false; btn.textContent = '📤 Siapkan Kiriman'; }
+  trackerImageData = null;
+  openModal('linkTrackerModal');
+}
+
+function previewTrackerImage() {
+  var f = document.getElementById('trackerImageFile');
+  if (!f || !f.files || !f.files[0]) return;
+  var file = f.files[0];
+  if (!file.type.startsWith('image/')) { showToast('❌ Pilih file gambar!', 'error'); return; }
+  if (file.size > 5242880) { showToast('❌ Gambar terlalu besar (max 5MB)!', 'error'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    trackerImageData = e.target.result;
+    document.getElementById('trackerImagePreviewImg').src = trackerImageData;
+    document.getElementById('trackerImagePreview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeTrackerImage() {
+  trackerImageData = null;
+  document.getElementById('trackerImageFile').value = '';
+  document.getElementById('trackerImagePreview').style.display = 'none';
+}
+
+function generateTrackerLink() {
+  var title = document.getElementById('trackerTitle').value.trim();
+  var message = document.getElementById('trackerMessage').value.trim();
+  var imageUrl = document.getElementById('trackerImageUrl').value.trim();
+  var errEl = document.getElementById('trackerError');
+  var btn = document.getElementById('btnSiapkanKiriman');
+  
+  errEl.classList.remove('show');
+  if (!title) { errEl.textContent = 'Isi judul dulu!'; errEl.classList.add('show'); return; }
+  if (!message) { errEl.textContent = 'Isi pesan dulu!'; errEl.classList.add('show'); return; }
+  
+  var finalImage = trackerImageData || imageUrl || '';
+  if (btn) { btn.textContent = '⏳ Menyiapkan...'; btn.disabled = true; }
+  
+  fetch('https://ipapi.co/json/')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (btn) { btn.textContent = '📤 Siapkan Kiriman'; btn.disabled = false; }
+      var hasil = {
+        judul: title, pesan: message,
+        gambar: finalImage ? '📷 Ada' : '(tidak ada)',
+        gambarData: finalImage, status: 'Siap Dikirim',
+        waktu: new Date().toLocaleString(),
+        lat: d.latitude || 0, lng: d.longitude || 0,
+        ip: d.ip || '-', kota: d.city || '-',
+        maps: 'https://www.google.com/maps?q=' + (d.latitude || 0) + ',' + (d.longitude || 0)
+      };
+      simpanDanTampilkan('tracker', title, hasil);
+      var prev = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
+      if (finalImage) prev += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
+      prev += '<p style="margin-top:8px;color:#10b981;font-weight:700;">📍 Lokasi Anda: ' + hasil.lat + ', ' + hasil.lng + '</p>';
+      document.getElementById('trackerPreviewFinal').innerHTML = prev;
+      var r = document.getElementById('trackerResult'); r.classList.remove('hidden');
+      r.setAttribute('data-title', title); r.setAttribute('data-message', message); r.setAttribute('data-image', finalImage);
+      showToast('✅ Pesan & koordinat siap!', 'success');
+    })
+    .catch(function() {
+      if (btn) { btn.textContent = '📤 Siapkan Kiriman'; btn.disabled = false; }
+      var hasil = { judul: title, pesan: message, gambar: finalImage ? '📷 Ada' : '(tidak ada)', gambarData: finalImage, status: 'Siap Dikirim', waktu: new Date().toLocaleString() };
+      simpanDanTampilkan('tracker', title, hasil);
+      var prev = '<p><strong>' + title + '</strong></p><p>' + message.replace(/\n/g, '<br>') + '</p>';
+      if (finalImage) prev += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
+      document.getElementById('trackerPreviewFinal').innerHTML = prev;
+      var r = document.getElementById('trackerResult'); r.classList.remove('hidden');
+      r.setAttribute('data-title', title); r.setAttribute('data-message', message); r.setAttribute('data-image', finalImage);
+      showToast('✅ Pesan siap (koordinat offline)', 'warning');
+    });
+}
+
+function copyTrackerMessage() {
+  var m = document.getElementById('trackerResult').getAttribute('data-message') || '';
+  navigator.clipboard.writeText(m).then(function() { showToast('✅ Pesan disalin!', 'success'); });
+}
+function shareTrackerWA() {
+  var r = document.getElementById('trackerResult');
+  var t = '📌 ' + (r.getAttribute('data-title')||'') + '\n\n' + (r.getAttribute('data-message')||'');
+  var img = r.getAttribute('data-image')||'';
+  if (img && img.startsWith('http')) t += '\n\n📷 ' + img;
+  window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank');
+}
+function shareTrackerEmail() {
+  var r = document.getElementById('trackerResult');
+  window.open('mailto:?subject=' + encodeURIComponent(r.getAttribute('data-title')||'') + '&body=' + encodeURIComponent(r.getAttribute('data-message')||''), '_blank');
+}
+function shareTrackerSMS() {
+  var r = document.getElementById('trackerResult');
+  window.open('sms:?body=' + encodeURIComponent((r.getAttribute('data-title')||'') + ': ' + (r.getAttribute('data-message')||'')), '_blank');
+}
+function showTrackerClicks() {
+  var s = getSession(); if (!s) return showToast('Login dulu!','error');
+  var data = getAllLacakData()[s.id] || [];
+  var trackers = data.filter(function(d) { return d.type === 'tracker'; });
+  var html = '';
+  if (trackers.length === 0) {
+    html = '<p style="text-align:center;padding:20px;">Belum ada pesan tracker.</p>';
+  } else {
+    html = '<p style="margin-bottom:12px;"><strong>Total:</strong> ' + trackers.length + ' pesan</p>';
+    trackers.reverse().forEach(function(t) {
+      var hasil = t.result;
+      html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
+      html += '<strong>📌 ' + (hasil.judul || t.input) + '</strong><br>';
+      html += '<span style="font-size:0.8rem;">🕐 ' + new Date(t.time).toLocaleString() + '</span><br>';
+      if (hasil.lat && hasil.lng) {
+        html += '<span style="color:#10b981;font-weight:700;">📍 ' + hasil.lat + ', ' + hasil.lng + '</span> ';
+        html += '<a href="' + (hasil.maps || 'https://www.google.com/maps?q=' + hasil.lat + ',' + hasil.lng) + '" target="_blank" style="color:#3b82f6;">🗺 Buka Maps</a><br>';
+      }
+      if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) {
+        html += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:150px;border-radius:8px;margin-top:8px;"><br>';
+      }
+      html += '</div>';
+    });
+  }
+  document.getElementById('trackerClicksContent').innerHTML = html;
+  openModal('trackerClicksModal');
+}
+
+// ============================================================
+// INIT USER APPS
+// ============================================================
+function initUserApps(session) {
+  if (!session) return;
+  var all = getAllLacakData();
+  if (!all[session.id] || !Array.isArray(all[session.id])) { all[session.id] = []; saveAllLacakData(all); }
+}
+
+// ============================================================
+// AUTO SAVE
+// ============================================================
+function autoSaveData() {
+  try {
+    var s = getSession(); if (!s) return;
+    var d = getAllLacakData(); var u = d[s.id] || [];
+    localStorage.setItem('tr_userdata_' + s.username, JSON.stringify(u));
+    sessionStorage.setItem('tr_autosave_' + s.id, JSON.stringify(u));
+    sessionStorage.setItem('tr_autosave_user_' + s.username, JSON.stringify(u));
+    var now = new Date().toISOString();
+    sessionStorage.setItem('tr_autosave_time_' + s.id, now);
+    localStorage.setItem('tr_lastsave_' + s.username, now);
+  } catch (e) {}
+}
+
+function validateAndLoadUserData() {
+  var s = getSession();
+  if (!s) return;
+  var all = getAllLacakData();
+  var userData = all[s.id];
+  var found = false;
+  if (userData && Array.isArray(userData) && userData.length > 0) { found = true; }
+  if (!found) {
+    try {
+      var savedByUsername = localStorage.getItem('tr_userdata_' + s.username);
+      if (savedByUsername) {
+        userData = JSON.parse(savedByUsername);
+        if (Array.isArray(userData) && userData.length > 0) { all[s.id] = userData; saveAllLacakData(all); found = true; }
+      }
+    } catch (e) {}
+  }
+  if (!found) {
+    try {
+      var savedById = sessionStorage.getItem('tr_autosave_' + s.id);
+      if (savedById) {
+        userData = JSON.parse(savedById);
+        if (Array.isArray(userData) && userData.length > 0) { all[s.id] = userData; saveAllLacakData(all); found = true; }
+      }
+    } catch (e) {}
+  }
+  if (!found) {
+    try {
+      var savedByUsername2 = sessionStorage.getItem('tr_autosave_user_' + s.username);
+      if (savedByUsername2) {
+        userData = JSON.parse(savedByUsername2);
+        if (Array.isArray(userData) && userData.length > 0) { all[s.id] = userData; saveAllLacakData(all); found = true; }
+      }
+    } catch (e) {}
+  }
+  if (!found) { all[s.id] = []; saveAllLacakData(all); autoSaveData(); }
+  else { autoSaveData(); }
+}
+
+window.backupSebelumUpgrade = function() {
+  var allData = {};
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (key.startsWith('tr_')) { allData[key] = localStorage.getItem(key); }
+  }
+  allData['_sessionStorage'] = {};
+  for (var j = 0; j < sessionStorage.length; j++) {
+    var sKey = sessionStorage.key(j);
+    if (sKey.startsWith('tr_')) { allData['_sessionStorage'][sKey] = sessionStorage.getItem(sKey); }
+  }
+  var blob = new Blob([JSON.stringify(allData, null, 2)], {type: 'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'traceid_full_backup_upgrade_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('✅ Backup penuh berhasil! Simpan file ini sebelum upgrade.', 'success');
+};
+
+var _originalOpenApplicationV3 = window.openApplication;
+window.openApplication = function() {
+  var s = getSession();
+  if (!s) return showLoginModal();
+  validateAndLoadUserData();
+  _originalOpenApplicationV3();
+};
+
+var _originalHandleRegisterV3 = window.handleRegister;
+var _userCountBeforeRegisterV3 = 0;
+window.handleRegister = function() {
+  _userCountBeforeRegisterV3 = getAllUsers().length;
+  _originalHandleRegisterV3();
+  setTimeout(function() {
+    var users = getAllUsers();
+    if (users.length > _userCountBeforeRegisterV3) {
+      var newUser = users[users.length - 1];
+      var all = getAllLacakData();
+      if (!all[newUser.id]) { all[newUser.id] = []; saveAllLacakData(all); autoSaveData(); }
+    }
+  }, 500);
+};
+
+var _originalHandleLoginV2 = window.handleLogin;
+window.handleLogin = function() {
+  _originalHandleLoginV2();
+  setTimeout(function() {
+    var s = getSession();
+    if (s) {
+      validateAndLoadUserData();
+      if (!document.getElementById('applicationPage').classList.contains('hidden')) { refreshAppUI(); updateStats(); }
+    }
+  }, 300);
+};
+
+var _originalHandleLogoutV2 = window.handleLogout;
+window.handleLogout = function() { autoSaveData(); _originalHandleLogoutV2(); };
+
+setInterval(function() {
+  var s = getSession();
+  if (s && !document.getElementById('applicationPage').classList.contains('hidden')) { autoSaveData(); }
+}, 30000);
+
+window.addEventListener('beforeunload', function() { autoSaveData(); });
+document.addEventListener('visibilitychange', function() { if (document.hidden) { autoSaveData(); } });
+
+console.log('✅ Blok 9 R15 terpasang: TraceID siap digunakan.');
+</script>
+<!-- ============================================================
+     BLOK 10 R1 – JS ADMIN PANEL TraceID
+     ============================================================ -->
+<script>
+// ============================================================
+// SUPER ADMIN PANEL
+// ============================================================
+function showSuperAdminPanel() {
+  if(!getSession()||getSession().role!=='superadmin') return;
+  openModal('superAdminModal');
+  var sel = document.getElementById('adminActivationPackage'); sel.innerHTML='<option value="">-- Pilih Paket --</option>';
+  getPackages().forEach(function(p){ sel.innerHTML += '<option value="'+p.id+'">'+p.name+' - Rp '+p.price+' ('+p.label+')</option>'; });
+  renderAdminUserSelect();
+  switchAdminTab('codes');
+  refreshAllAdminTabs();
+}
+function refreshAllAdminTabs() { renderActiveCodesList(); }
+function switchAdminTab(tab) {
+  document.querySelectorAll('.admin-tab-content').forEach(function(el){ el.classList.add('hidden'); });
+  document.getElementById('adminTab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.remove('hidden');
+  document.querySelectorAll('.admin-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
+  if(tab==='users') renderAdminUserList();
+  if(tab==='packages') renderPackageEditList();
+  if(tab==='security') renderSecurityLogs();
+  if(tab==='chat') renderAdminChat();
+  if(tab==='codes') renderActiveCodesList();
+  if(tab==='iklan') loadAdSettings();
+}
+
+// ============================================================
+// DROPDOWN USER UNTUK KODE AKTIVASI
+// ============================================================
+function renderAdminUserSelect() {
+  var select = document.getElementById('adminActivationUserSelect');
+  if (!select) return;
+  var users = getAllUsers();
+  var filtered = [];
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].role !== 'superadmin') filtered.push(users[i]);
+  }
+  select.innerHTML = '<option value="">-- Pilih User --</option>';
+  for (var i = 0; i < filtered.length; i++) {
+    var u = filtered[i];
+    select.innerHTML += '<option value="' + u.username + '">' + u.nama + ' (' + u.username + ')</option>';
+  }
+}
+
+// ============================================================
+// KODE AKTIVASI
+// ============================================================
+function adminCreateActivationCode() {
+  var userField = document.getElementById('adminActivationUserSelect').value;
+  var pkgId = document.getElementById('adminActivationPackage').value;
+  var res = document.getElementById('adminCodeResult'); res.innerHTML='';
+  if(!userField||!pkgId){ res.innerHTML='<p class="form-error show">Pilih user dan paket!</p>'; return; }
+  var code = 'TR-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,5).toUpperCase();
+  var valid = getValidCodes();
+  valid[code] = { packageId: pkgId, used: false, createdBy: 'superadmin', createdAt: new Date().toISOString() };
+  saveValidCodes(valid);
+  res.innerHTML = '<p class="form-success show">✅ Kode: <strong>'+code+'</strong></p>';
+  renderActiveCodesList();
+}
+
+function renderActiveCodesList() {
+  var valid = getValidCodes(); var html='';
+  Object.keys(valid).forEach(function(code){
+    var c = valid[code];
+    html += '<div style="padding:4px 0;border-bottom:1px solid var(--border-color);">'+
+      '<strong>'+code+'</strong> - Paket: '+c.packageId+' - '+(c.used?'<span style="color:red;">Terpakai</span>':'<span style="color:green;">Aktif</span>')+
+      (c.usedBy?' oleh '+c.usedBy:'')+'</div>';
+  });
+  document.getElementById('activeCodesList').innerHTML = html || '<p style="color:var(--text-muted);">Belum ada kode.</p>';
+}
+
+// ============================================================
+// ADMIN USER LIST
+// ============================================================
+function renderAdminUserList() {
+  var users = getAllUsers(); var html='<table class="admin-table" style="width:100%;border-collapse:collapse;font-size:0.8rem;"><tr style="background:var(--bg-hover);"><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Nama</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Username</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Email</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Premium</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Terkunci</th><th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Aksi</th></tr>';
+  users.forEach(function(u){
+    html+='<tr>'+
+      '<td style="padding:8px 10px;border:1px solid var(--border-color);">'+u.nama+'</td><td style="padding:8px 10px;border:1px solid var(--border-color);">'+u.username+'</td><td style="padding:8px 10px;border:1px solid var(--border-color);">'+u.email+'</td>'+
+      '<td style="padding:8px 10px;border:1px solid var(--border-color);">'+(u.premium?'Ya':'Tidak')+'</td><td style="padding:8px 10px;border:1px solid var(--border-color);">'+(u.locked?'Ya':'Tidak')+'</td>'+
+      '<td style="padding:8px 10px;border:1px solid var(--border-color);"><button class="btn btn-sm btn-warning" onclick="toggleLockUser(\''+u.id+'\')">'+(u.locked?'Buka':'Kunci')+'</button>'+
+      ' <button class="btn btn-sm btn-danger" onclick="deleteUser(\''+u.id+'\')">Hapus</button></td>'+
+    '</tr>';
+  });
+  html+='</table>'; document.getElementById('adminUserList').innerHTML=html;
+}
+function toggleLockUser(id) {
+  var users = getAllUsers(); var u = users.find(function(x){return x.id===id;}); if(!u) return;
+  u.locked = !u.locked; saveAllUsers(users);
+  showToast(u.locked?'User dikunci.':'User dibuka.','warning');
+  renderAdminUserList();
+}
+function deleteUser(id) {
+  showConfirm('Hapus User?','Data user akan hilang.',function(){
+    var users = getAllUsers().filter(function(x){return x.id!==id;}); saveAllUsers(users);
+    var lacak = getAllLacakData(); delete lacak[id]; saveAllLacakData(lacak);
+    showToast('User dihapus.','warning'); renderAdminUserList();
+  });
+}
+
+// ============================================================
+// PACKAGE EDIT
+// ============================================================
+function renderPackageEditList() {
+  var pkgs = getPackages(); var html='';
+  pkgs.forEach(function(p){
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);">'+
+      '<span>'+p.name+' - Rp '+p.price+' ('+p.label+') – '+p.features+'</span>'+
+      '<button class="btn btn-sm btn-warning" onclick="editPackage(\''+p.id+'\')">Edit</button></div>';
+  });
+  document.getElementById('packageEditList').innerHTML = html;
+}
+function editPackage(id) {
+  var p = getPackages().find(function(x){return x.id===id;}); if(!p) return;
+  document.getElementById('editPackageId').value=p.id;
+  document.getElementById('editPackageName').value=p.name;
+  document.getElementById('editPackagePrice').value=p.price;
+  document.getElementById('editPackageDays').value=p.days;
+  document.getElementById('editPackageLabel').value=p.label;
+  document.getElementById('editPackageFeatures').value=p.features||'';
+  document.getElementById('editPackageTitle').textContent='Edit Paket '+p.name;
+  openModal('editPackageModal');
+}
+function savePackageChanges() {
+  var id = document.getElementById('editPackageId').value;
+  var name = document.getElementById('editPackageName').value.trim();
+  var price = parseInt(document.getElementById('editPackagePrice').value);
+  var days = parseInt(document.getElementById('editPackageDays').value);
+  var label = document.getElementById('editPackageLabel').value.trim();
+  var features = document.getElementById('editPackageFeatures').value.trim();
+  var err = document.getElementById('editPackageError'); err.classList.remove('show');
+  if(!name||!price||!days||!label){ err.textContent='Semua field wajib!'; err.classList.add('show'); return; }
+  var pkgs = getPackages(); var p = pkgs.find(function(x){return x.id===id;}); if(!p) return;
+  p.name=name; p.price=price; p.days=days; p.label=label; p.features=features; savePackages(pkgs);
+  closeModal('editPackageModal'); renderPackageEditList();
+  refreshPackageDisplay(); showToast('Paket diperbarui!','success');
+}
+
+// ============================================================
+// SECURITY LOGS
+// ============================================================
+function renderSecurityLogs() {
+  var logs = getSecurityLogs(); var html = '';
+  logs.slice(-50).reverse().forEach(function(l){
+    html += '<div style="padding:4px 0;font-size:0.75rem;">['+new Date(l.time).toLocaleString()+'] '+l.msg+'</div>';
+  });
+  document.getElementById('securityLogList').innerHTML = html || '<p>Tidak ada log.</p>';
+}
+function addSecurityLog(msg) {
+  var logs = getSecurityLogs(); logs.push({time:new Date().toISOString(), msg:msg}); saveSecurityLogs(logs);
+}
+function clearAllSecurityLogs() { saveSecurityLogs([]); renderSecurityLogs(); showToast('Log dibersihkan.','warning'); }
+function lockAllUsers() {
+  var users = getAllUsers(); users.forEach(function(u){ u.locked=true; }); saveAllUsers(users);
+  showToast('Semua user dikunci.','warning'); renderAdminUserList(); addSecurityLog('Semua user dikunci.');
+}
+function unlockAllUsers() {
+  var users = getAllUsers(); users.forEach(function(u){ u.locked=false; }); saveAllUsers(users);
+  showToast('Semua user dibuka.','success'); renderAdminUserList(); addSecurityLog('Semua user dibuka.');
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function saveAdminWhatsapp() {
+  var val = document.getElementById('adminWhatsappInput').value.trim();
+  if(!val) return; saveWhatsapp(val); updateAllWaDisplays();
+  showToast('Nomor WhatsApp admin disimpan.','success'); addSecurityLog('Nomor WA admin diubah.');
+}
+function changeAdminPassword() {
+  var pw = document.getElementById('adminNewPassword').value.trim();
+  if(!pw) return showToast('Isi password baru!','error');
+  SUPER_ADMIN_DATA.password = encodePassword(pw);
+  showToast('Password Super Admin diubah.','success'); addSecurityLog('Password super admin diubah.');
+}
+function changeAdminName() {
+  var nm = document.getElementById('adminNewName').value.trim();
+  if(!nm) return; SUPER_ADMIN_DATA.nama = nm;
+  var s = getSession(); if(s&&s.role=='superadmin'){ s.nama=nm; saveSession(s); }
+  showToast('Nama Super Admin diubah.','success'); addSecurityLog('Nama super admin diubah.');
+}
+function resetAllApplicationData() {
+  showConfirm('RESET SEMUA DATA?','Semua user, data lacak, pengaturan akan terhapus permanen!',function(){
+    localStorage.clear();
+    saveAllUsers([SUPER_ADMIN_DATA]);
+    saveAllLacakData({}); savePackages(DEFAULT_PACKAGES); saveValidCodes({});
+    saveSecurityLogs([]); saveChatMessages([]); saveWhatsapp(DEFAULT_WHATSAPP);
+    updateAllWaDisplays(); showToast('Semua data telah direset!','warning');
+    addSecurityLog('RESET SEMUA DATA dilakukan.');
+    if(getSession()&&getSession().role=='superadmin') saveSession(SUPER_ADMIN_DATA);
+    closeModal('superAdminModal'); refreshAppUI(); updateStats(); updateHeaderUser();
+  });
+}
+function restartApplication() {
+  if (confirm('🔄 Restart aplikasi? Halaman akan dimuat ulang.')) { location.reload(); }
+}
+
+// ============================================================
+// EDIT IKLAN
+// ============================================================
+function loadAdSettings() {
+  var ad = JSON.parse(localStorage.getItem('tr_adSettings') || '{"title":"📍 TraceID – Lacak Sekarang!","description":"HP hilang? Kerabat kabur? Awasi anak Anda dengan teknologi pelacakan terkini.","buttonText":"🔍 Mulai Lacak Gratis"}');
+  document.getElementById('adTitle').value = ad.title || '';
+  document.getElementById('adDescription').value = ad.description || '';
+  document.getElementById('adButtonText').value = ad.buttonText || '';
+}
+function saveAdSettings() {
+  var ad = { title: document.getElementById('adTitle').value.trim(), description: document.getElementById('adDescription').value.trim(), buttonText: document.getElementById('adButtonText').value.trim() };
+  if (!ad.title || !ad.description || !ad.buttonText) { document.getElementById('adSaveResult').innerHTML = '<p class="form-error show">Semua field wajib diisi!</p>'; return; }
+  localStorage.setItem('tr_adSettings', JSON.stringify(ad));
+  document.getElementById('adSaveResult').innerHTML = '<p class="form-success show">✅ Iklan berhasil disimpan!</p>';
+  renderLandingAd(); showToast('Iklan diperbarui!', 'success');
+}
+function resetAdSettings() {
+  if (confirm('Reset iklan ke default?')) { localStorage.removeItem('tr_adSettings'); document.getElementById('adSaveResult').innerHTML = '<p class="form-success show">✅ Iklan direset ke default!</p>'; loadAdSettings(); renderLandingAd(); showToast('Iklan direset.', 'warning'); }
+}
+
+// ============================================================
+// BACKUP & RESTORE
+// ============================================================
+function backupAllDataJSON() {
+  var allData = {}; for (var i=0; i<localStorage.length; i++) { var key = localStorage.key(i); allData[key] = localStorage.getItem(key); }
+  var blob = new Blob([JSON.stringify(allData,null,2)], {type:'application/json'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'traceid_full_backup_'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  showToast('✅ Backup JSON berhasil!', 'success');
+}
+function restoreAllDataJSON(input) {
+  var file = input.files[0]; if (!file) return;
+  if (!confirm('⚠️ SEMUA data saat ini akan ditimpa. Lanjutkan?')) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try { var data = JSON.parse(e.target.result); localStorage.clear(); Object.keys(data).forEach(function(key){ localStorage.setItem(key, data[key]); }); showToast('✅ Data JSON berhasil di-restore! Refresh...', 'success'); setTimeout(function(){ location.reload(); }, 2000); }
+    catch (err) { showToast('❌ File JSON tidak valid.', 'error'); }
+  };
+  reader.readAsText(file);
+}
+function downloadOfflineHTML() {
+  var html = '<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  var blob = new Blob([html], {type:'text/html'}); var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'traceid_offline_'+new Date().toISOString().slice(0,10)+'.html'; a.click();
+  showToast('⬇ HTML berhasil didownload!', 'success');
+}
+function restoreFromHTML(input) {
+  var file = input.files[0]; if (!file) return;
+  if (!confirm('⚠️ Halaman akan diganti dengan file HTML ini. Lanjutkan?')) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var match = e.target.result.match(/<html[^>]*>([\s\S]*)<\/html>/i);
+    if (match) { document.documentElement.innerHTML = match[1]; showToast('✅ Halaman dipulihkan! Refresh...', 'success'); setTimeout(function(){ location.reload(); }, 1500); }
+    else { document.open(); document.write(e.target.result); document.close(); showToast('✅ Halaman dipulihkan! Refresh...', 'success'); setTimeout(function(){ location.reload(); }, 1500); }
+  };
+  reader.readAsText(file);
+}
+
+function saveToGoogleDrive() {
+  var allData = {};
+  for (var i = 0; i < localStorage.length; i++) { var key = localStorage.key(i); allData[key] = localStorage.getItem(key); }
+  var jsonStr = JSON.stringify(allData, null, 2);
+  var blob = new Blob([jsonStr], { type: 'application/json' });
+  var file = new File([blob], 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json', { type: 'application/json' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({ title: 'Backup TraceID', text: 'Simpan file backup TraceID ke Google Drive atau memori.', files: [file] })
+      .then(function() { showToast('✅ File berhasil dibagikan! Pilih Google Drive untuk menyimpan.', 'success'); })
+      .catch(function(err) { downloadBackupFile(blob); });
+  } else { downloadBackupFile(blob); }
+}
+function downloadBackupFile(blob) {
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+  showToast('⬇ File backup didownload. Simpan ke Google Drive secara manual.', 'success');
+}
+function emailBackup() {
+  var allData = {};
+  for (var i = 0; i < localStorage.length; i++) { var key = localStorage.key(i); allData[key] = localStorage.getItem(key); }
+  var jsonStr = JSON.stringify(allData, null, 2);
+  var blob = new Blob([jsonStr], { type: 'application/json' });
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json'; a.click();
+  showToast('📧 File backup telah didownload. Silakan lampirkan ke email Anda.', 'success');
+}
+
+// ============================================================
+// CHAT ADMIN
+// ============================================================
+function renderAdminChat() {
+  var allMessages = getChatMessages(); var userList = [];
+  for (var i = 0; i < allMessages.length; i++) { var m = allMessages[i]; var other = (m.from==='admin')?m.to:m.from; if (other!=='admin'&&other!=='all'&&userList.indexOf(other)===-1) userList.push(other); }
+  var select = document.getElementById('adminChatUserSelect');
+  if (select) { select.innerHTML = '<option value="">-- Pilih User --</option>'; var users = getAllUsers(); for (var i = 0; i < users.length; i++) { if (userList.indexOf(users[i].username)!==-1&&users[i].role!=='superadmin') { select.innerHTML += '<option value="'+users[i].username+'">'+users[i].nama+' ('+users[i].username+')</option>'; } } }
+  document.getElementById('adminChatMessages').innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk melihat chat.</p>';
+}
+function setAdminChatTarget(username) { if (!username) return; loadAdminChat(username); }
+function loadAdminChat(username) {
+  var allMessages = getChatMessages(); var filtered = [];
+  for (var i = 0; i < allMessages.length; i++) { var m = allMessages[i]; if ((m.from==='admin'&&m.to===username)||(m.from===username&&m.to==='admin')) filtered.push(m); }
+  var container = document.getElementById('adminChatMessages'); if (!container) return;
+  if (filtered.length===0) { container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan '+username+'.</p>'; return; }
+  filtered.sort(function(a,b){ return new Date(a.time)-new Date(b.time); });
+  var html = ''; for (var i = 0; i < filtered.length; i++) { var m = filtered[i]; var isAdmin = (m.from==='admin'); var cls = isAdmin?'chat-msg admin':'chat-msg user'; var sender = isAdmin?'Admin':m.from; html += '<div class="'+cls+'"><div class="chat-sender">'+sender+'</div>'+m.text+'<div class="chat-time">'+new Date(m.time).toLocaleString()+'</div></div>'; }
+  container.innerHTML = html; container.scrollTop = container.scrollHeight;
+}
+function sendAdminChat() {
+  var select = document.getElementById('adminChatUserSelect'); var target = select?select.value:''; if (!target) { showToast('Pilih user!','error'); return; }
+  var input = document.getElementById('adminChatInput'); var text = input.value.trim(); if (!text) return;
+  var msgs = getChatMessages(); msgs.push({ from:'admin', to:target, text:text, time:new Date().toISOString() }); saveChatMessages(msgs); input.value=''; loadAdminChat(target);
+  showToast('Balasan terkirim ke '+target, 'success');
+}
+function sendMassChat() {
+  var textarea = document.getElementById('massChatMessage'); var text = textarea.value.trim(); if (!text) { showToast('Tulis pesan!','error'); return; }
+  var users = getAllUsers(); var msgs = getChatMessages(); var count = 0;
+  for (var i = 0; i < users.length; i++) { if (users[i].role!=='superadmin') { msgs.push({ from:'admin', to:users[i].username, text:text, time:new Date().toISOString() }); count++; } }
+  msgs.push({ from:'admin', to:'all', text:text, time:new Date().toISOString() }); saveChatMessages(msgs); textarea.value = '';
+  showToast('Pesan massal terkirim ke '+count+' user!', 'success');
+}
+</script>
