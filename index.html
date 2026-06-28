@@ -1223,3 +1223,819 @@
      AKHIR BLOK 5 R1
      Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container
      ============================================================ -->     
+<!-- ============================================================
+     BLOK 6 R1 – MODAL CHAT, AKTIVASI & TOAST CONTAINER (LENGKAP)
+     (Chat User ke Admin, Chat Sesama User, Aktivasi Premium, Toast Container)
+     ============================================================
+     PENJELASAN:
+     - Berisi 4 elemen: Chat Modal (User ke Admin), Chat Sesama User Modal,
+       Aktivasi Modal, dan Toast Container
+     - Identik dengan struktur Notepad+ v3.3
+     - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
+     ============================================================ -->
+
+<!-- ============================================================
+     CHAT MODAL (USER KE ADMIN)
+     ============================================================ -->
+<div class="modal-overlay" id="chatModal">
+  <div class="modal-content" style="max-width:500px;">
+    <div class="modal-header">
+      <h3>💬 Chat dengan Admin</h3>
+      <button class="modal-close" onclick="closeModal('chatModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="chat-container" id="userChatContainer">
+        <div class="chat-messages" id="userChatMessages">
+          <p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada pesan.</p>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="userChatInput" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendUserChat()">
+          <button onclick="sendUserChat()" class="btn btn-primary btn-sm">Kirim</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('chatModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CHAT SESAMA USER MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="userChatModal">
+  <div class="modal-content" style="max-width:500px;">
+    <div class="modal-header">
+      <h3>👥 Chat dengan Sesama User</h3>
+      <button class="modal-close" onclick="closeModal('userChatModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- PILIH USER -->
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.85rem;color:var(--text-secondary);display:block;margin-bottom:4px;">Pilih User:</label>
+        <select id="userChatTargetSelect" onchange="loadUserToUserChat()" style="width:100%;padding:8px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
+          <option value="">-- Pilih User --</option>
+        </select>
+      </div>
+
+      <!-- AREA CHAT -->
+      <div class="chat-messages" id="userToUserChatMessages" style="height:300px;overflow-y:auto;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:8px;margin-bottom:12px;">
+        <p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>
+      </div>
+
+      <!-- INPUT CHAT -->
+      <div class="chat-input-row">
+        <input type="text" id="userToUserChatInput" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendUserToUserChat()">
+        <button onclick="sendUserToUserChat()" class="btn btn-primary btn-sm">Kirim</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('userChatModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AKTIVASI PREMIUM MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="activationModal">
+  <div class="modal-content" style="max-width:420px;">
+    <div class="modal-header">
+      <h3>🔑 Aktivasi Premium</h3>
+      <button class="modal-close" onclick="closeModal('activationModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:16px;">
+        Masukkan kode aktivasi yang Anda dapatkan dari Admin.
+      </p>
+      <div class="form-group">
+        <input type="text" id="activationCodeInputMain" placeholder="Masukkan kode aktivasi" onkeydown="if(event.key==='Enter') activatePremiumFromModal()">
+      </div>
+      <button onclick="activatePremiumFromModal()" class="btn btn-success btn-block">Aktifkan Sekarang</button>
+      <div class="form-error" id="activationModalError"></div>
+      <div class="form-success" id="activationModalSuccess"></div>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:12px;text-align:center;">
+        Belum punya kode? Hubungi Admin via Chat.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal('activationModal')" class="btn btn-gray">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOAST CONTAINER (UNTUK NOTIFIKASI)
+     ============================================================ -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- ============================================================
+     AKHIR BLOK 6 R1
+     Blok 7 akan melanjutkan: JS Core 1 (Storage, Auth, PWA, dll)
+     ============================================================ -->
+<!-- ============================================================
+     BLOK 7 R1 – JS CORE 1 (TRACEID)
+     (PWA, Service Worker, Storage, Auth, Theme, Navigation, Premium)
+     ============================================================
+     PENJELASAN:
+     - Berisi semua fungsi core JavaScript untuk TraceID
+     - PWA Install Prompt, Service Worker
+     - Local Storage functions (prefix tr_)
+     - Auth: Login, Register, Logout
+     - Theme toggle, Navigation, Premium Activation
+     - WhatsApp formatter, Toast, Modal helpers
+     - IDENTIK dengan Notepad+ v3.3
+     ============================================================ -->
+
+<script>
+// ============================================================
+// PWA INSTALL PROMPT
+// ============================================================
+var deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'flex';
+});
+
+function installApplication() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(choiceResult) {
+      if (choiceResult.outcome === 'accepted') {
+        showToast('Instalasi berhasil! TraceID bisa dibuka dari layar utama.', 'success');
+      }
+      deferredPrompt = null;
+      var banner = document.getElementById('installBanner');
+      if (banner) banner.style.display = 'none';
+    });
+  } else if (window.matchMedia('(display-mode: standalone)').matches) {
+    showToast('Aplikasi sudah terinstall!', 'warning');
+  } else {
+    alert('Buka menu browser lalu pilih "Tambahkan ke Layar Utama" atau "Install" untuk menginstal aplikasi ini.');
+  }
+}
+
+// ============================================================
+// SERVICE WORKER
+// ============================================================
+if ('serviceWorker' in navigator) {
+  var swCode = `
+    var CACHE_NAME = 'traceid-v1';
+    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
+    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+  `;
+  var swBlob = new Blob([swCode], {type: 'application/javascript'});
+  var swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(function(){});
+}
+
+// ============================================================
+// ENKRIPSI PASSWORD
+// ============================================================
+function encodePassword(pw) { return btoa(pw); }
+function decodePassword(hash) { return atob(hash); }
+
+// ============================================================
+// DATA DEFAULT
+// ============================================================
+var SUPER_ADMIN_DATA = {
+  username: 'superadmin', password: encodePassword('admin123'),
+  nama: 'Super Admin', email: 'admin@traceid.com', hp: '081220285226',
+  role: 'superadmin', premium: true, premiumExpiry: null, locked: false
+};
+var DEFAULT_WHATSAPP = '081220285226';
+var DEFAULT_PACKAGES = [
+  { id: '1minggu', name: 'Starter', price: 25000, days: 7, label: '1 Minggu', features: '5x lacak/hari • IP & Email' },
+  { id: '1bulan', name: 'Professional', price: 50000, days: 30, label: '1 Bulan', features: '20x lacak/hari • Semua Fitur' },
+  { id: '3bulan', name: 'Enterprise', price: 100000, days: 90, label: '3 Bulan', features: 'Unlimited lacak • Prioritas Support' }
+];
+
+// ============================================================
+// LOCAL STORAGE (prefix tr_)
+// ============================================================
+function getStore(key, def) { try { var v = localStorage.getItem('tr_' + key); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
+function setStore(key, val) { localStorage.setItem('tr_' + key, JSON.stringify(val)); }
+function remStore(key) { localStorage.removeItem('tr_' + key); }
+
+function getAllUsers() { return getStore('users', []); }
+function saveAllUsers(arr) { setStore('users', arr); }
+function getAllLacakData() { return getStore('lacak', {}); }
+function saveAllLacakData(obj) { setStore('lacak', obj); }
+function getSession() { return getStore('session', null); }
+function saveSession(s) { setStore('session', s); }
+function clearSession() { remStore('session'); }
+function getPackages() { return getStore('packages', DEFAULT_PACKAGES); }
+function savePackages(p) { setStore('packages', p); }
+function getWhatsapp() { return getStore('whatsapp', DEFAULT_WHATSAPP); }
+function saveWhatsapp(n) { setStore('whatsapp', n); }
+function getValidCodes() { return getStore('validCodes', {}); }
+function saveValidCodes(c) { setStore('validCodes', c); }
+function getSecurityLogs() { return getStore('securityLogs', []); }
+function saveSecurityLogs(l) { setStore('securityLogs', l); }
+function getChatMessages() { return getStore('chatMessages', []); }
+function saveChatMessages(m) { setStore('chatMessages', m); }
+
+// ============================================================
+// WHATSAPP FORMATTER
+// ============================================================
+function formatWa(raw) {
+  var n = raw.replace(/[^0-9]/g,'');
+  if (n.startsWith('0')) n = '62' + n.substring(1);
+  if (!n.startsWith('62')) n = '62' + n;
+  return '+' + n;
+}
+
+function updateAllWaDisplays() {
+  var f = formatWa(getWhatsapp());
+  var ids = ['whatsappNumberLanding','whatsappNumberApp'];
+  ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.textContent = f; });
+}
+
+function openWhatsApp(msg) {
+  var link = getWhatsapp().replace(/[^0-9]/g,'');
+  var url = 'https://wa.me/' + link + (msg ? '?text=' + encodeURIComponent(msg) : '');
+  window.open(url,'_blank');
+}
+
+// ============================================================
+// TOAST NOTIFICATION
+// ============================================================
+function showToast(msg, type) {
+  var c = document.getElementById('toastContainer');
+  if (!c) return;
+  var t = document.createElement('div');
+  t.className = 'toast toast-' + (type||'info');
+  t.textContent = msg;
+  c.appendChild(t);
+  requestAnimationFrame(function(){ t.classList.add('show'); });
+  setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); },300); },3000);
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openModal(id) { 
+  var el = document.getElementById(id);
+  if (el) el.classList.add('show'); 
+}
+
+function closeModal(id) { 
+  var el = document.getElementById(id);
+  if (el) el.classList.remove('show'); 
+  clearModalErrors(); 
+}
+
+function clearModalErrors() {
+  document.querySelectorAll('.form-error,.form-success').forEach(function(el){ 
+    el.textContent=''; 
+    el.classList.remove('show'); 
+  });
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function toggleTheme() {
+  document.body.classList.toggle('light-theme');
+  var isLight = document.body.classList.contains('light-theme');
+  var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+  document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ 
+    if (b) b.textContent = label; 
+  });
+  localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
+}
+
+// Load theme on init
+(function(){ 
+  if(localStorage.getItem('tr_theme')==='light'){ 
+    document.body.classList.add('light-theme'); 
+    document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ 
+      if (b) b.textContent='☀️ Light Mode'; 
+    }); 
+  } 
+})();
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function openApplication() {
+  var s = getSession();
+  if (!s) return showLoginModal();
+  var landing = document.getElementById('landingPage');
+  var app = document.getElementById('applicationPage');
+  if (landing) landing.classList.add('hidden');
+  if (app) app.classList.remove('hidden');
+  refreshAppUI(); 
+  updateStats(); 
+  updateHeaderUser(); 
+  checkAllExpiredActivations();
+}
+
+function goToLandingPage() {
+  var app = document.getElementById('applicationPage');
+  var landing = document.getElementById('landingPage');
+  if (app) app.classList.add('hidden');
+  if (landing) landing.classList.remove('hidden');
+  refreshPackageDisplay();
+}
+
+function showLoginModal() { 
+  openModal('loginModal'); 
+}
+
+function showRegisterModal() { 
+  openModal('registerModal'); 
+}
+
+function showProfileModal() { 
+  openModal('profileModal'); 
+  loadProfileData(); 
+}
+
+function showActivationModal() { 
+  if(!getSession()) return showLoginModal(); 
+  openModal('activationModal'); 
+}
+
+// ============================================================
+// AUTH (DENGAN LOG KEAMANAN)
+// ============================================================
+function handleLogin() {
+  var u = document.getElementById('loginUsername');
+  var p = document.getElementById('loginPassword');
+  var err = document.getElementById('loginError');
+  if (!u || !p) return showToast('Form login tidak ditemukan.','error');
+  var username = u.value.trim();
+  var password = p.value;
+  if (err) err.classList.remove('show');
+  if(!username||!password){ 
+    if (err) { err.textContent='Isi semua field!'; err.classList.add('show'); }
+    return; 
+  }
+
+  // Super admin login
+  if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
+    saveSession(SUPER_ADMIN_DATA);
+    addSecurityLog('Super Admin login.');
+    closeModal('loginModal'); 
+    showToast('Login Super Admin berhasil!','success');
+    openApplication(); 
+    return;
+  }
+
+  var users = getAllUsers();
+  var user = null;
+  for (var i = 0; i < users.length; i++) {
+    if ((users[i].username === username || users[i].email === username) && password === decodePassword(users[i].password)) {
+      user = users[i]; 
+      break;
+    }
+  }
+  if (!user) { 
+    if (err) { err.textContent='Username/password salah!'; err.classList.add('show'); }
+    return; 
+  }
+  if (user.locked) { 
+    if (err) { err.textContent='Akun terkunci! Hubungi admin.'; err.classList.add('show'); }
+    return; 
+  }
+  saveSession(user);
+  addSecurityLog('User ' + user.username + ' login.');
+  closeModal('loginModal'); 
+  showToast('Login berhasil!','success');
+  openApplication();
+}
+
+function handleRegister() {
+  var n = document.getElementById('registerNama');
+  var e = document.getElementById('registerEmail');
+  var hp = document.getElementById('registerHp');
+  var un = document.getElementById('registerUsername');
+  var pw = document.getElementById('registerPassword');
+  var cp = document.getElementById('registerPasswordConfirm');
+  var err = document.getElementById('registerError'); 
+  var suc = document.getElementById('registerSuccess');
+  
+  if (!n || !e || !hp || !un || !pw || !cp) return showToast('Form tidak lengkap!','error');
+  
+  var nama = n.value.trim();
+  var email = e.value.trim();
+  var hpVal = hp.value.trim();
+  var username = un.value.trim();
+  var password = pw.value;
+  var confirm = cp.value;
+  
+  if (err) err.classList.remove('show'); 
+  if (suc) suc.classList.remove('show');
+  
+  if(!nama||!email||!hpVal||!username||!password||!confirm){ 
+    if (err) { err.textContent='Semua field wajib!'; err.classList.add('show'); }
+    return; 
+  }
+  if(password!==confirm){ 
+    if (err) { err.textContent='Password tidak cocok!'; err.classList.add('show'); }
+    return; 
+  }
+  if(password.length<6){ 
+    if (err) { err.textContent='Password minimal 6 karakter!'; err.classList.add('show'); }
+    return; 
+  }
+  
+  var users = getAllUsers();
+  if(users.find(function(x){return x.username===username;})){ 
+    if (err) { err.textContent='Username sudah dipakai!'; err.classList.add('show'); }
+    return; 
+  }
+  if(users.find(function(x){return x.email===email;})){ 
+    if (err) { err.textContent='Email sudah dipakai!'; err.classList.add('show'); }
+    return; 
+  }
+  
+  var newUser = { 
+    id: Date.now().toString(), 
+    nama: nama, 
+    email: email, 
+    hp: hpVal, 
+    username: username, 
+    password: encodePassword(password), 
+    role: 'user', 
+    premium: false, 
+    premiumExpiry: null, 
+    locked: false, 
+    createdAt: new Date().toISOString() 
+  };
+  
+  users.push(newUser); 
+  saveAllUsers(users);
+  
+  if (suc) {
+    suc.textContent='Pendaftaran berhasil! Silakan login.'; 
+    suc.classList.add('show');
+  }
+  
+  // Auto-create lacak data for new user
+  var all = getAllLacakData();
+  if (!all[newUser.id]) { 
+    all[newUser.id] = []; 
+    saveAllLacakData(all); 
+  }
+  
+  setTimeout(function(){ 
+    closeModal('registerModal'); 
+    showLoginModal(); 
+  }, 2000);
+}
+
+function handleLogout() {
+  var s = getSession();
+  if (s) { 
+    addSecurityLog('User ' + s.username + ' logout.'); 
+  }
+  clearSession(); 
+  goToLandingPage(); 
+  updateHeaderUser(); 
+  showToast('Logout berhasil.','info');
+}
+
+// ============================================================
+// PREMIUM ACTIVATION
+// ============================================================
+function activatePremiumFromModal() {
+  var code = document.getElementById('activationCodeInputMain');
+  if (!code) return;
+  activatePremium(code.value.trim(), 'activationModalError','activationModalSuccess');
+}
+
+function activatePremium(code, errId, sucId) {
+  var err = document.getElementById(errId); 
+  var suc = document.getElementById(sucId);
+  if (err) err.classList.remove('show'); 
+  if (suc) suc.classList.remove('show');
+  
+  if(!code){ 
+    if (err) { err.textContent='Masukkan kode aktivasi!'; err.classList.add('show'); }
+    return; 
+  }
+  
+  var session = getSession();
+  if(!session){ 
+    if (err) { err.textContent='Anda harus login!'; err.classList.add('show'); }
+    return; 
+  }
+  
+  var valid = getValidCodes();
+  var cd = valid[code];
+  if(!cd||cd.used){ 
+    if (err) { err.textContent='Kode tidak valid/sudah dipakai!'; err.classList.add('show'); }
+    return; 
+  }
+  
+  var users = getAllUsers();
+  var idx = users.findIndex(function(x){return x.id===session.id;});
+  if(idx===-1){ 
+    if (err) { err.textContent='User tidak ditemukan!'; err.classList.add('show'); }
+    return; 
+  }
+  
+  var pkgs = getPackages();
+  var pkg = pkgs.find(function(p){return p.id===cd.packageId;});
+  if(!pkg){ 
+    if (err) { err.textContent='Paket tidak valid!'; err.classList.add('show'); }
+    return; 
+  }
+  
+  var now = new Date();
+  var exp = new Date(now.getTime() + pkg.days*86400000);
+  users[idx].premium = true; 
+  users[idx].premiumExpiry = exp.toISOString(); 
+  saveAllUsers(users);
+  
+  cd.used = true; 
+  cd.usedBy = session.username; 
+  cd.usedAt = now.toISOString(); 
+  valid[code] = cd; 
+  saveValidCodes(valid);
+  
+  var newSess = Object.assign({}, users[idx]); 
+  saveSession(newSess);
+  
+  if (suc) {
+    suc.textContent = 'Aktivasi sukses! Premium hingga ' + exp.toLocaleDateString(); 
+    suc.classList.add('show');
+  }
+  
+  updateHeaderUser();
+  if (!document.getElementById('applicationPage').classList.contains('hidden')) { 
+    refreshAppUI(); 
+    updateStats(); 
+  }
+  
+  setTimeout(function(){ 
+    if(document.getElementById('activationModal') && document.getElementById('activationModal').classList.contains('show')) 
+      closeModal('activationModal'); 
+  }, 2000);
+}
+
+// ============================================================
+// SECURITY LOGS
+// ============================================================
+function addSecurityLog(msg) {
+  var logs = getSecurityLogs(); 
+  logs.push({time:new Date().toISOString(), msg:msg}); 
+  saveSecurityLogs(logs);
+}
+
+// ============================================================
+// UPDATE HEADER USER
+// ============================================================
+function updateHeaderUser() {
+  var s = getSession();
+  var badge = document.getElementById('userBadge');
+  var prof = document.getElementById('profileButton');
+  var adm = document.getElementById('adminButton');
+  var logout = document.getElementById('logoutButton');
+  var act = document.getElementById('activationToolbarButton');
+  var chatAdminBtn = document.getElementById('chatButton');
+  var chatUserBtn = document.getElementById('chatUserButton');
+
+  if(s){
+    if (badge) {
+      badge.style.display='flex'; 
+      var avatar = document.getElementById('userAvatar');
+      var nameDisplay = document.getElementById('userNameDisplay');
+      if (avatar) avatar.textContent = s.nama.charAt(0).toUpperCase();
+      if (nameDisplay) nameDisplay.textContent = s.nama;
+    }
+    if (prof) prof.classList.remove('hidden');
+    if (logout) logout.classList.remove('hidden');
+    if (adm) adm.classList.toggle('hidden', s.role!=='superadmin');
+    if (act) act.style.display = (s.role=='user'&&!s.premium) ? 'inline-flex' : 'none';
+
+    if (s.role === 'superadmin') {
+      if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
+      if (chatUserBtn) chatUserBtn.classList.remove('hidden');
+    } else {
+      if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
+      if (chatUserBtn) chatUserBtn.classList.add('hidden');
+    }
+  }else{
+    if (badge) badge.style.display='none';
+    if (prof) prof.classList.add('hidden');
+    if (adm) adm.classList.add('hidden');
+    if (logout) logout.classList.add('hidden');
+    if (act) act.style.display='none';
+    if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
+    if (chatUserBtn) chatUserBtn.classList.add('hidden');
+  }
+}
+
+// ============================================================
+// UPDATE STATS (akan ditimpa oleh Blok 9)
+// ============================================================
+function updateStats() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('updateStats() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// REFRESH APP UI (akan ditimpa oleh Blok 9)
+// ============================================================
+function refreshAppUI() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('refreshAppUI() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// FORGOT PASSWORD (akan ditimpa oleh Blok 9)
+// ============================================================
+function handleForgotPassword() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('handleForgotPassword() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// LOAD PROFILE DATA (akan ditimpa oleh Blok 9)
+// ============================================================
+function loadProfileData() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('loadProfileData() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// SAVE PROFILE (akan ditimpa oleh Blok 9)
+// ============================================================
+function saveProfile() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('saveProfile() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// DELETE ACCOUNT (akan ditimpa oleh Blok 9)
+// ============================================================
+function deleteAccount() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('deleteAccount() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// CHECK EXPIRED ACTIVATIONS (akan ditimpa oleh Blok 9)
+// ============================================================
+function checkAllExpiredActivations() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('checkAllExpiredActivations() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// REFRESH PACKAGE DISPLAY (akan ditimpa oleh Blok 11)
+// ============================================================
+function refreshPackageDisplay() {
+  // Fungsi ini akan ditimpa oleh Blok 11
+  console.log('refreshPackageDisplay() akan di-override oleh Blok 11');
+}
+
+// ============================================================
+// RENDER LANDING AD (akan ditimpa oleh Blok 11)
+// ============================================================
+function renderLandingAd() {
+  // Fungsi ini akan ditimpa oleh Blok 11
+  console.log('renderLandingAd() akan di-override oleh Blok 11');
+}
+
+// ============================================================
+// HUBUNGI ADMIN LANDING (akan ditimpa oleh Blok 11)
+// ============================================================
+function hubungiAdminLanding() {
+  // Fungsi ini akan ditimpa oleh Blok 11
+  console.log('hubungiAdminLanding() akan di-override oleh Blok 11');
+}
+
+// ============================================================
+// SHOW CHAT MODAL (akan ditimpa oleh Blok 11)
+// ============================================================
+function showChatModal() {
+  // Fungsi ini akan ditimpa oleh Blok 11
+  console.log('showChatModal() akan di-override oleh Blok 11');
+}
+
+// ============================================================
+// SHOW USER CHAT MODAL (akan ditimpa oleh Blok 11)
+// ============================================================
+function showUserChatModal() {
+  // Fungsi ini akan ditimpa oleh Blok 11
+  console.log('showUserChatModal() akan di-override oleh Blok 11');
+}
+
+// ============================================================
+// DOWNLOAD FOR OFFLINE (akan ditimpa oleh Blok 11)
+// ============================================================
+function downloadForOffline() {
+  // Fungsi ini akan ditimpa oleh Blok 11
+  console.log('downloadForOffline() akan di-override oleh Blok 11');
+}
+
+// ============================================================
+// BACKUP SEBELUM UPGRADE (akan ditimpa oleh Blok 9)
+// ============================================================
+function backupSebelumUpgrade() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('backupSebelumUpgrade() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// SAVE TO GOOGLE DRIVE (akan ditimpa oleh Blok 10)
+// ============================================================
+function saveToGoogleDrive() {
+  // Fungsi ini akan ditimpa oleh Blok 10
+  console.log('saveToGoogleDrive() akan di-override oleh Blok 10');
+}
+
+// ============================================================
+// EXPORT ALL DATA (akan ditimpa oleh Blok 9)
+// ============================================================
+function exportAllData() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('exportAllData() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// IMPORT ALL DATA (akan ditimpa oleh Blok 9)
+// ============================================================
+function importAllData() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('importAllData() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// BACKUP USER DATA (akan ditimpa oleh Blok 9)
+// ============================================================
+function backupUserData() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('backupUserData() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// RESTORE USER DATA (akan ditimpa oleh Blok 9)
+// ============================================================
+function restoreUserData() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('restoreUserData() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// SHOW LACAK MODAL (akan ditimpa oleh Blok 9)
+// ============================================================
+function showLacakModal() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('showLacakModal() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// SHOW LINK TRACKER MODAL (akan ditimpa oleh Blok 9)
+// ============================================================
+function showLinkTrackerModal() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('showLinkTrackerModal() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// SHOW TRACKER CLICKS (akan ditimpa oleh Blok 9)
+// ============================================================
+function showTrackerClicks() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('showTrackerClicks() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// TOGGLE SEARCH (akan ditimpa oleh Blok 9)
+// ============================================================
+function toggleSearch() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('toggleSearch() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// PERFORM SEARCH (akan ditimpa oleh Blok 9)
+// ============================================================
+function performSearch() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('performSearch() akan di-override oleh Blok 9');
+}
+
+// ============================================================
+// CLEAR SEARCH (akan ditimpa oleh Blok 9)
+// ============================================================
+function clearSearch() {
+  // Fungsi ini akan ditimpa oleh Blok 9
+  console.log('clearSearch() akan di-override oleh Blok 9');
+}
+
+console.log('✅ Blok 7 R1 – JS Core 1 TraceID siap digunakan.');
+console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, dan 11.');
+</script>
+
+<!-- ============================================================
+     AKHIR BLOK 7 R1
+     Blok 8 akan melanjutkan: JS Core 2 (Lacak, Riwayat, Tracker, dll)
+     ============================================================ -->
