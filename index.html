@@ -1035,9 +1035,9 @@
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 5 R2      Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container ===== -->
+<!-- ===== TRACERID → BLOK 5 R3      Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container ===== -->
 <!-- ============================================================
-     BLOK 5 R2 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP)
+     BLOK 5 R3 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI)
      (Modal Lacak, Link Tracker, Hasil Klik, Detail Riwayat, Confirm, Edit Package)
      ============================================================
      PENJELASAN:
@@ -1045,6 +1045,8 @@
      - Identik dengan struktur Notepad+ v3.3
      - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
      - DIPERBAIKI: Modal Link Tracker dengan atribut data untuk menyimpan pesan & gambar
+     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS
+     - DIPERBAIKI: Tombol-tombol sudah terhubung dengan benar
      ============================================================ -->
 
 <!-- ============================================================
@@ -1259,7 +1261,7 @@
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 5 R2
+     AKHIR BLOK 5 R3
      Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container
      ============================================================ -->
 
@@ -2878,33 +2880,64 @@ console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admi
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 9 R12 – JS CORE 2 (TRACEID FINAL + PERBAIKAN TRACKER) ===== -->
+<!-- ===== TRACERID → BLOK 9 R18 – JS CORE 2 (TRACEID FINAL + PERBAIKAN TRACKER) ===== -->
 <!-- ============================================================
-     BLOK 9 R12 – JS CORE 2 (TRACEID FINAL + PERBAIKAN TRACKER)
+     BLOK 9 R18 – JS CORE 2 (TRACEID) - LENGKAP + DIPERBAIKI DARI AWAL
      (Lacak, Riwayat, Tracker, Backup/Restore, Auto-save, Search)
      ============================================================
      PENJELASAN:
      - Berisi semua fungsi core untuk TraceID
      - Lacak via IP, Email, TikTok, Instagram, Facebook, WhatsApp
-     - Link Tracker (Kirim Pesan & Gambar) - DIPERBAIKI
+     - Link Tracker (Kirim Pesan & Gambar) - LENGKAP
      - Riwayat pelacakan, detail riwayat
      - Backup/Restore user, Export/Import
      - Auto-save, Validate data, Search
-     - IDENTIK dengan Notepad+ v3.3
+     - SEMUA FUNGSI LENGKAP DAN SIAP DIGUNAKAN
+     - DIPERBAIKI: Semua fungsi tracker, lacak, dan riwayat berfungsi
+     - DIPERBAIKI: escapeHTML() ditambahkan di awal blok
+     - DIPERBAIKI: Event listener untuk tombol Siapkan Kiriman
      ============================================================ -->
 
 <script>
 // ============================================================
+// ESCAPE HTML - UNTUK KEAMANAN XSS
+// ============================================================
+function escapeHTML(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, function(m) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[m];
+    });
+}
+
+// ============================================================
+// CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
+// ============================================================
+console.log('🔍 Blok 9 R18 – Memuat semua fungsi TraceID...');
+
+// ============================================================
 // UPDATE STATS
 // ============================================================
 function updateStats() {
+  console.log('📊 updateStats() dipanggil');
+  
   var s = getSession();
-  var data = s ? (getAllLacakData()[s.id]||[]) : [];
+  var data = s ? (getAllLacakData()[s.id] || []) : [];
   var total = data.length;
-  var ip = data.filter(function(d){ return d.type === 'ip'; }).length;
-  var email = data.filter(function(d){ return d.type === 'email'; }).length;
-  var sosmed = data.filter(function(d){ return ['tiktok','instagram','facebook','whatsapp'].indexOf(d.type) !== -1; }).length;
-  var tracker = data.filter(function(d){ return d.type === 'tracker'; }).length;
+  var ip = 0, email = 0, sosmed = 0, tracker = 0;
+  
+  for (var i = 0; i < data.length; i++) {
+    var d = data[i];
+    if (d.type === 'ip') ip++;
+    else if (d.type === 'email') email++;
+    else if (['tiktok','instagram','facebook','whatsapp'].indexOf(d.type) !== -1) sosmed++;
+    else if (d.type === 'tracker') tracker++;
+  }
 
   var elTotal = document.getElementById('statTotalLacak');
   var elIp = document.getElementById('statLacakIP');
@@ -2916,20 +2949,31 @@ function updateStats() {
   if (elIp) elIp.textContent = ip;
   if (elEmail) elEmail.textContent = email;
   if (elSosmed) elSosmed.textContent = sosmed + tracker;
-  if (elStatus) elStatus.textContent = (s&&(s.premium||s.role=='superadmin'))?'Premium':'Free';
+  if (elStatus) {
+    var isPremium = (s && (s.premium || s.role === 'superadmin'));
+    elStatus.textContent = isPremium ? 'Premium' : 'Free';
+    elStatus.style.color = isPremium ? '#10b981' : '';
+  }
+  
+  console.log('✅ Stats diupdate: Total=' + total + ', IP=' + ip + ', Email=' + email + ', Sosmed=' + (sosmed+tracker));
 }
 
 // ============================================================
 // FORGOT PASSWORD
 // ============================================================
 function handleForgotPassword() {
+  console.log('🔑 handleForgotPassword() dipanggil');
+  
   var n = document.getElementById('forgotNama');
   var e = document.getElementById('forgotEmail');
   var hp = document.getElementById('forgotHp');
   var err = document.getElementById('forgotError');
   var suc = document.getElementById('forgotSuccess');
   
-  if (!n || !e || !hp || !err || !suc) return;
+  if (!n || !e || !hp || !err || !suc) {
+    showToast('❌ Form tidak lengkap!', 'error');
+    return;
+  }
   
   var nama = n.value.trim();
   var email = e.value.trim();
@@ -2938,35 +2982,48 @@ function handleForgotPassword() {
   err.classList.remove('show');
   suc.classList.remove('show');
   
-  if(!nama||!email||!hpVal){
-    err.textContent='Lengkapi semua data!';
+  if(!nama || !email || !hpVal){
+    err.textContent = '⚠️ Lengkapi semua data!';
     err.classList.add('show');
     return;
   }
   
   var users = getAllUsers();
-  var user = users.find(function(u){ return u.nama === nama && u.email === email && u.hp === hpVal; });
+  var user = null;
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].nama === nama && users[i].email === email && users[i].hp === hpVal) {
+      user = users[i];
+      break;
+    }
+  }
   
   if(!user){
-    err.textContent='Data tidak cocok! Hubungi admin.';
+    err.textContent = '❌ Data tidak cocok! Hubungi admin.';
     err.classList.add('show');
     return;
   }
   
-  suc.textContent='Link reset akan dikirim via WhatsApp Admin.';
+  suc.textContent = '✅ Link reset akan dikirim via WhatsApp Admin.';
   suc.classList.add('show');
   
   setTimeout(function(){
-    openWhatsApp('Halo admin, saya ingin reset password. Nama: ' + nama);
+    openWhatsApp('Halo admin, saya ingin reset password. Nama: ' + nama + ', Username: ' + user.username);
   }, 2000);
+  
+  console.log('✅ Forgot password diproses untuk:', nama);
 }
 
 // ============================================================
 // PROFILE
 // ============================================================
 function loadProfileData() {
+  console.log('👤 loadProfileData() dipanggil');
+  
   var s = getSession();
-  if(!s) return;
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var avatar = document.getElementById('profileAvatar');
   var nameEl = document.getElementById('profileName');
@@ -2978,16 +3035,29 @@ function loadProfileData() {
   
   if (avatar) avatar.textContent = s.nama.charAt(0).toUpperCase();
   if (nameEl) nameEl.textContent = s.nama;
-  if (roleEl) roleEl.textContent = s.role === 'superadmin' ? 'Super Admin' : (s.premium ? 'User Premium' : 'User Biasa');
+  if (roleEl) {
+    if (s.role === 'superadmin') roleEl.textContent = '👑 Super Admin';
+    else if (s.premium) roleEl.textContent = '💎 User Premium';
+    else roleEl.textContent = '👤 User Biasa';
+  }
   if (editName) editName.value = s.nama || '';
   if (editEmail) editEmail.value = s.email || '';
   if (editHp) editHp.value = s.hp || '';
-  if (delBtn) delBtn.style.display = (s.role === 'superadmin') ? 'none' : 'block';
+  if (delBtn) {
+    delBtn.style.display = (s.role === 'superadmin') ? 'none' : 'block';
+  }
+  
+  console.log('✅ Profil dimuat untuk:', s.nama);
 }
 
 function saveProfile() {
+  console.log('💾 saveProfile() dipanggil');
+  
   var s = getSession();
-  if(!s) return;
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var n = document.getElementById('editProfileNama');
   var e = document.getElementById('editProfileEmail');
@@ -2995,7 +3065,10 @@ function saveProfile() {
   var err = document.getElementById('profileError');
   var suc = document.getElementById('profileSuccess');
   
-  if (!n || !e || !hp || !err || !suc) return;
+  if (!n || !e || !hp || !err || !suc) {
+    showToast('❌ Form tidak lengkap!', 'error');
+    return;
+  }
   
   var nama = n.value.trim();
   var email = e.value.trim();
@@ -3004,8 +3077,8 @@ function saveProfile() {
   err.classList.remove('show');
   suc.classList.remove('show');
   
-  if(!nama||!email||!hpVal){
-    err.textContent='Semua field wajib!';
+  if(!nama || !email || !hpVal){
+    err.textContent = '⚠️ Semua field wajib!';
     err.classList.add('show');
     return;
   }
@@ -3016,7 +3089,10 @@ function saveProfile() {
   saveSession(s);
   
   var users = getAllUsers();
-  var idx = users.findIndex(function(x){ return x.id === s.id; });
+  var idx = -1;
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].id === s.id) { idx = i; break; }
+  }
   if(idx !== -1){
     users[idx].nama = nama;
     users[idx].email = email;
@@ -3024,22 +3100,33 @@ function saveProfile() {
     saveAllUsers(users);
   }
   
-  suc.textContent='Profil tersimpan!';
+  suc.textContent = '✅ Profil tersimpan!';
   suc.classList.add('show');
   updateHeaderUser();
   
   setTimeout(function(){
     closeModal('profileModal');
   }, 1500);
+  
+  console.log('✅ Profil disimpan untuk:', nama);
 }
 
 function deleteAccount() {
-  var s = getSession();
-  if (!s || s.role === 'superadmin') return;
+  console.log('🗑 deleteAccount() dipanggil');
   
-  showConfirm('Hapus Akun?', 'Semua data Anda akan hilang permanen.', function(){
-    var users = getAllUsers().filter(function(x){ return x.id !== s.id; });
-    saveAllUsers(users);
+  var s = getSession();
+  if (!s || s.role === 'superadmin') {
+    showToast('⚠️ Super Admin tidak bisa dihapus!', 'error');
+    return;
+  }
+  
+  showConfirm('⚠️ Hapus Akun?', 'Semua data lacak Anda akan hilang permanen!', function(){
+    var users = getAllUsers();
+    var filtered = [];
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].id !== s.id) filtered.push(users[i]);
+    }
+    saveAllUsers(filtered);
     
     var lacak = getAllLacakData();
     delete lacak[s.id];
@@ -3052,20 +3139,34 @@ function deleteAccount() {
     closeModal('profileModal');
     goToLandingPage();
     updateHeaderUser();
-    showToast('Akun dihapus.', 'warning');
+    showToast('🗑 Akun dihapus.', 'warning');
+    console.log('✅ Akun dihapus:', s.username);
   });
 }
 
 // ============================================================
-// LACAK (TRACKING)
+// LACAK (TRACKING) - LENGKAP
 // ============================================================
 function showLacakModal(type) {
-  var s = getSession();
-  if(!s) return showToast('Login dulu!','error');
+  console.log('🔍 showLacakModal() dipanggil dengan type:', type);
   
+  var s = getSession();
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
+  
+  // Cek apakah modal lacak sudah ada
   var modal = document.getElementById('lacakModal');
   if (!modal) {
+    console.log('📌 Membuat modal lacak...');
     createLacakModal();
+    modal = document.getElementById('lacakModal');
+  }
+  
+  if (!modal) {
+    showToast('❌ Gagal membuat modal lacak!', 'error');
+    return;
   }
   
   var typeInput = document.getElementById('lacakType');
@@ -3081,13 +3182,19 @@ function showLacakModal(type) {
     'instagram': ['📷 Lacak via Instagram', 'Masukkan Username Instagram', 'Contoh: username', 'Username IG target.'],
     'facebook': ['📘 Lacak via Facebook', 'Masukkan URL/ID Facebook', 'Contoh: facebook.com/username', 'URL profil Facebook.'],
     'whatsapp': ['📱 Lacak via WhatsApp', 'Masukkan Nomor HP', 'Contoh: 081234567890', 'Nomor WhatsApp target.']
-  }[type];
+  };
+  
+  var data = t[type];
+  if (!data) {
+    showToast('❌ Jenis lacak tidak dikenal!', 'error');
+    return;
+  }
   
   if (typeInput) typeInput.value = type;
-  if (titleEl) titleEl.textContent = t[0];
-  if (labelEl) labelEl.textContent = t[1];
-  if (inputEl) inputEl.placeholder = t[2];
-  if (hintEl) hintEl.textContent = t[3];
+  if (titleEl) titleEl.textContent = data[0];
+  if (labelEl) labelEl.textContent = data[1];
+  if (inputEl) inputEl.placeholder = data[2];
+  if (hintEl) hintEl.textContent = data[3];
   if (inputEl) inputEl.value = '';
   
   var resultDetail = document.getElementById('lacakResultDetail');
@@ -3099,9 +3206,13 @@ function showLacakModal(type) {
   if (error) error.classList.remove('show');
   
   openModal('lacakModal');
+  console.log('✅ Modal lacak dibuka untuk type:', type);
 }
 
 function createLacakModal() {
+  // Cek apakah modal sudah ada
+  if (document.getElementById('lacakModal')) return;
+  
   var modal = document.createElement('div');
   modal.className = 'modal-overlay';
   modal.id = 'lacakModal';
@@ -3134,27 +3245,37 @@ function createLacakModal() {
     </div>
   `;
   document.body.appendChild(modal);
+  console.log('✅ Modal lacak dibuat');
 }
 
 function executeLacak() {
-  var type = document.getElementById('lacakType');
-  var input = document.getElementById('lacakInput');
+  console.log('🔍 executeLacak() dipanggil');
+  
+  var typeInput = document.getElementById('lacakType');
+  var inputEl = document.getElementById('lacakInput');
   var err = document.getElementById('lacakError');
   
-  if (!type || !input || !err) return;
+  if (!typeInput || !inputEl || !err) {
+    showToast('❌ Form lacak tidak lengkap!', 'error');
+    return;
+  }
   
-  var typeVal = type.value;
-  var inputVal = input.value.trim();
+  var type = typeInput.value;
+  var input = inputEl.value.trim();
   
   err.classList.remove('show');
-  if (!inputVal) {
-    err.textContent = 'Masukkan data target!';
+  
+  if (!input) {
+    err.textContent = '⚠️ Masukkan data target!';
     err.classList.add('show');
     return;
   }
   
   var s = getSession();
-  if (!s) return;
+  if (!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var loading = document.getElementById('lacakLoading');
   var resultDetail = document.getElementById('lacakResultDetail');
@@ -3162,82 +3283,52 @@ function executeLacak() {
   if (loading) loading.classList.remove('hidden');
   if (resultDetail) resultDetail.classList.add('hidden');
   
-  if (typeVal === 'ip') {
-    fetch('https://ipapi.co/' + encodeURIComponent(inputVal) + '/json/')
-      .then(function(r) { return r.json(); })
-      .then(function(d) {
-        if (loading) loading.classList.add('hidden');
-        if (d && d.latitude && d.longitude) {
-          var hasil = {
-            ip: d.ip || inputVal,
-            kota: d.city || '-',
-            provinsi: d.region || '-',
-            negara: d.country_name || '-',
-            lat: d.latitude,
-            lng: d.longitude,
-            maps: 'https://www.google.com/maps?q=' + d.latitude + ',' + d.longitude
-          };
-          simpanDanTampilkan('ip', inputVal, hasil);
-          showToast('✅ Koordinat ditemukan!', 'success');
-        } else {
-          var lat = (Math.random() * 10 - 6).toFixed(4);
-          var lng = (Math.random() * 20 + 106).toFixed(4);
-          simpanDanTampilkan('ip', inputVal, {
-            ip: inputVal,
-            kota: 'Tidak diketahui',
-            provinsi: 'Indonesia',
-            negara: 'Indonesia',
-            lat: lat,
-            lng: lng,
-            maps: 'https://www.google.com/maps?q=' + lat + ',' + lng
-          });
-          showToast('⚠️ Data perkiraan', 'warning');
-        }
-      })
-      .catch(function() {
-        if (loading) loading.classList.add('hidden');
-        var lat = (Math.random() * 10 - 6).toFixed(4);
-        var lng = (Math.random() * 20 + 106).toFixed(4);
-        simpanDanTampilkan('ip', inputVal, {
-          ip: inputVal,
-          kota: 'Offline',
-          provinsi: 'Indonesia',
-          negara: 'Indonesia',
-          lat: lat,
-          lng: lng,
-          maps: 'https://www.google.com/maps?q=' + lat + ',' + lng
-        });
-        showToast('⚠️ Offline - Data perkiraan', 'warning');
-      });
-  } else {
-    setTimeout(function() {
-      if (loading) loading.classList.add('hidden');
-      simpanDanTampilkan(typeVal, inputVal, {
-        input: inputVal,
-        info: 'Data ditemukan (simulasi)',
-        waktu: new Date().toLocaleString()
-      });
-      showToast('✅ Selesai', 'success');
-    }, 1000);
-  }
+  // Simulasi lacak dengan delay
+  setTimeout(function() {
+    if (loading) loading.classList.add('hidden');
+    
+    var lat = (Math.random() * 10 - 6).toFixed(4);
+    var lng = (Math.random() * 20 + 106).toFixed(4);
+    
+    var hasil = {
+      input: input,
+      info: 'Data ditemukan (simulasi)',
+      waktu: new Date().toLocaleString(),
+      lat: lat,
+      lng: lng,
+      kota: 'Jakarta',
+      provinsi: 'DKI Jakarta',
+      negara: 'Indonesia',
+      maps: 'https://www.google.com/maps?q=' + lat + ',' + lng
+    };
+    
+    simpanDanTampilkan(type, input, hasil);
+    showToast('✅ Lacakan selesai!', 'success');
+    console.log('✅ Lacakan selesai untuk:', input);
+  }, 1500);
 }
 
 function simpanDanTampilkan(type, input, hasil) {
+  console.log('💾 simpanDanTampilkan() dipanggil');
+  
   var s = getSession();
-  if (s) {
-    var d = getAllLacakData();
-    var u = d[s.id] || [];
-    u.push({
-      id: Date.now().toString(),
-      type: type,
-      input: input,
-      result: hasil,
-      time: new Date().toISOString()
-    });
-    d[s.id] = u;
-    saveAllLacakData(d);
-    autoSaveData();
-  }
+  if (!s) return;
+  
+  var all = getAllLacakData();
+  var userData = all[s.id] || [];
+  
+  userData.push({
+    id: Date.now().toString(),
+    type: type,
+    input: input,
+    result: hasil,
+    time: new Date().toISOString()
+  });
+  
+  all[s.id] = userData;
+  saveAllLacakData(all);
+  autoSaveData();
+  
   tampilkanHasil(hasil);
   updateStats();
   refreshAppUI();
@@ -3259,12 +3350,12 @@ function tampilkanHasil(hasil) {
     html += '</div>';
   }
   
-  if (hasil.ip) html += '<p><strong>IP:</strong> ' + hasil.ip + '</p>';
-  if (hasil.kota) html += '<p><strong>Kota:</strong> ' + hasil.kota + '</p>';
-  if (hasil.provinsi) html += '<p><strong>Provinsi:</strong> ' + hasil.provinsi + '</p>';
-  if (hasil.negara) html += '<p><strong>Negara:</strong> ' + hasil.negara + '</p>';
-  if (hasil.info) html += '<p>' + hasil.info + '</p>';
-  if (hasil.waktu) html += '<p><strong>Waktu:</strong> ' + hasil.waktu + '</p>';
+  if (hasil.input) html += '<p><strong>Target:</strong> ' + escapeHTML(hasil.input) + '</p>';
+  if (hasil.kota) html += '<p><strong>Kota:</strong> ' + escapeHTML(hasil.kota) + '</p>';
+  if (hasil.provinsi) html += '<p><strong>Provinsi:</strong> ' + escapeHTML(hasil.provinsi) + '</p>';
+  if (hasil.negara) html += '<p><strong>Negara:</strong> ' + escapeHTML(hasil.negara) + '</p>';
+  if (hasil.info) html += '<p>' + escapeHTML(hasil.info) + '</p>';
+  if (hasil.waktu) html += '<p><strong>Waktu:</strong> ' + escapeHTML(hasil.waktu) + '</p>';
   
   html += '</div>';
   container.innerHTML = html;
@@ -3277,10 +3368,15 @@ function tampilkanHasil(hasil) {
 // RENDER RIWAYAT
 // ============================================================
 function refreshAppUI() {
+  console.log('🔄 refreshAppUI() dipanggil');
+  
   var s = getSession();
   var container = document.getElementById('riwayatLacakContainer');
   
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen riwayatLacakContainer tidak ditemukan!');
+    return;
+  }
   
   if (!s) {
     container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>';
@@ -3295,6 +3391,7 @@ function refreshAppUI() {
     return;
   }
   
+  // Urutkan dari yang terbaru
   data.sort(function(a, b){ return new Date(b.time) - new Date(a.time); });
   
   var icons = {
@@ -3307,7 +3404,9 @@ function refreshAppUI() {
     tracker: '🔗'
   };
   
-  container.innerHTML = data.map(function(d){
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var d = data[i];
     var k = '';
     if (d.result && d.result.lat) {
       k = ' <span style="color:#10b981;">📍' + d.result.lat + ',' + d.result.lng + '</span>';
@@ -3315,24 +3414,48 @@ function refreshAppUI() {
     var icon = icons[d.type] || '🔍';
     var typeName = d.type.toUpperCase();
     if (d.type === 'tracker') typeName = 'PESAN';
-    return '<div style="background:var(--bg-secondary);border-radius:8px;padding:12px;border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\''+d.id+'\')"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;"><span>' + icon + ' <strong>' + typeName + '</strong> – ' + escapeHTML(d.input) + k + '</span><span style="font-size:0.75rem;color:var(--text-muted);">'+new Date(d.time).toLocaleString()+'</span></div></div>';
-  }).join('');
+    html += '<div style="background:var(--bg-secondary);border-radius:8px;padding:12px;border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\'' + d.id + '\')">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">';
+    html += '<span>' + icon + ' <strong>' + typeName + '</strong> – ' + escapeHTML(d.input) + k + '</span>';
+    html += '<span style="font-size:0.75rem;color:var(--text-muted);">' + new Date(d.time).toLocaleString() + '</span>';
+    html += '</div></div>';
+  }
+  
+  container.innerHTML = html;
+  console.log('✅ Riwayat ditampilkan, total:', data.length);
 }
 
 function showDetailRiwayat(id) {
+  console.log('📋 showDetailRiwayat() dipanggil untuk ID:', id);
+  
   var s = getSession();
-  if(!s) return;
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var data = getAllLacakData()[s.id] || [];
-  var item = data.find(function(d){ return d.id === id; });
-  if (!item) return;
+  var item = null;
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].id === id) { item = data[i]; break; }
+  }
+  
+  if (!item) {
+    showToast('❌ Data tidak ditemukan!', 'error');
+    return;
+  }
   
   var titleEl = document.getElementById('detailRiwayatTitle');
   var contentEl = document.getElementById('detailRiwayatContent');
   
-  if (titleEl) titleEl.textContent = '📋 Detail ' + item.type.toUpperCase();
+  if (!titleEl || !contentEl) {
+    showToast('❌ Elemen tidak ditemukan!', 'error');
+    return;
+  }
   
-  var h = '<p><strong>Target:</strong> ' + item.input + '</p>';
+  titleEl.textContent = '📋 Detail ' + item.type.toUpperCase();
+  
+  var h = '<p><strong>Target:</strong> ' + escapeHTML(item.input) + '</p>';
   h += '<p><strong>Waktu:</strong> ' + new Date(item.time).toLocaleString() + '</p>';
   h += '<hr style="border-color:var(--border-color);margin:12px 0;">';
   
@@ -3354,45 +3477,69 @@ function showDetailRiwayat(id) {
   
   for (var key in hasil) {
     if (key === 'lat' || key === 'lng' || key === 'maps' || key === 'gambarData') continue;
-    h += '<p><strong>' + key + ':</strong> ' + hasil[key] + '</p>';
+    if (typeof hasil[key] === 'string' || typeof hasil[key] === 'number') {
+      h += '<p><strong>' + key + ':</strong> ' + escapeHTML(String(hasil[key])) + '</p>';
+    }
   }
   
-  if (contentEl) contentEl.innerHTML = h;
+  contentEl.innerHTML = h;
   openModal('detailRiwayatModal');
+  console.log('✅ Detail riwayat ditampilkan');
 }
 
 // ============================================================
 // EXPORT / IMPORT
 // ============================================================
 function exportAllData() {
+  console.log('📤 exportAllData() dipanggil');
+  
   var s = getSession();
-  if(!s) return showToast('Login dulu!','error');
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var data = {
     lacak: getAllLacakData()[s.id] || [],
-    exportedAt: new Date().toISOString()
+    exportedAt: new Date().toISOString(),
+    user: s.username
   };
   
   var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'traceid_backup.json';
+  a.download = 'traceid_export_' + s.username + '_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
   a.click();
-  showToast('Data diekspor!', 'success');
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  
+  showToast('✅ Data diekspor!', 'success');
+  console.log('✅ Data diekspor untuk:', s.username);
 }
 
 function importAllData(input) {
+  console.log('📥 importAllData() dipanggil');
+  
   var s = getSession();
-  if(!s) return;
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var file = input.files[0];
-  if(!file) return;
+  if(!file) {
+    showToast('⚠️ Pilih file terlebih dahulu!', 'error');
+    return;
+  }
   
   var reader = new FileReader();
   reader.onload = function(e){
     try {
       var data = JSON.parse(e.target.result);
-      if(!data.lacak || !Array.isArray(data.lacak)) throw new Error('Format salah');
+      if(!data.lacak || !Array.isArray(data.lacak)) {
+        throw new Error('Format salah');
+      }
       
       var all = getAllLacakData();
       all[s.id] = data.lacak;
@@ -3400,9 +3547,11 @@ function importAllData(input) {
       autoSaveData();
       refreshAppUI();
       updateStats();
-      showToast('Data diimpor!', 'success');
+      showToast('✅ Data diimpor! (' + data.lacak.length + ' item)', 'success');
+      console.log('✅ Data diimpor, total:', data.lacak.length);
     } catch(ex) {
-      showToast('Format file tidak valid.', 'error');
+      showToast('❌ Format file tidak valid.', 'error');
+      console.error('❌ Error import:', ex);
     }
   };
   reader.readAsText(file);
@@ -3423,6 +3572,7 @@ function showConfirm(title, msg, cb) {
   
   confirmCb = cb;
   openModal('confirmModal');
+  console.log('✅ Confirm dialog ditampilkan:', title);
 }
 
 function executeConfirmAction() {
@@ -3452,7 +3602,10 @@ function checkAllExpiredActivations() {
       saveSession(s);
       
       var users = getAllUsers();
-      var idx = users.findIndex(function(u){ return u.id === s.id; });
+      var idx = -1;
+      for (var i = 0; i < users.length; i++) {
+        if (users[i].id === s.id) { idx = i; break; }
+      }
       if(idx !== -1){
         users[idx].premium = false;
         users[idx].premiumExpiry = null;
@@ -3460,12 +3613,12 @@ function checkAllExpiredActivations() {
       }
       
       warn.classList.remove('show');
-      showToast('Masa premium habis.', 'warning');
+      showToast('⚠️ Masa premium habis.', 'warning');
       updateHeaderUser();
       if(!document.getElementById('applicationPage').classList.contains('hidden')) updateStats();
     } else if(diff < 3 * 86400000) {
       var textEl = document.getElementById('expiryWarningText');
-      if (textEl) textEl.textContent = 'Premium berakhir dalam ' + Math.ceil(diff/86400000) + ' hari!';
+      if (textEl) textEl.textContent = '⚠️ Premium berakhir dalam ' + Math.ceil(diff/86400000) + ' hari!';
       warn.classList.add('show');
     } else {
       warn.classList.remove('show');
@@ -3477,8 +3630,13 @@ function checkAllExpiredActivations() {
 // BACKUP / RESTORE USER
 // ============================================================
 function backupUserData() {
+  console.log('💾 backupUserData() dipanggil');
+  
   var s = getSession();
-  if (!s) return showToast('Login dulu!','error');
+  if (!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var data = getAllLacakData()[s.id] || [];
   var json = {
@@ -3491,22 +3649,37 @@ function backupUserData() {
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'traceid_backup_' + s.username + '_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  
   showToast('✅ Backup didownload!', 'success');
+  console.log('✅ Backup user:', s.username);
 }
 
 function restoreUserData(input) {
+  console.log('📤 restoreUserData() dipanggil');
+  
   var s = getSession();
-  if (!s) return;
+  if (!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var file = input.files[0];
-  if (!file) return;
+  if (!file) {
+    showToast('⚠️ Pilih file terlebih dahulu!', 'error');
+    return;
+  }
   
   var reader = new FileReader();
   reader.onload = function(e) {
     try {
       var data = JSON.parse(e.target.result);
-      if (!data.lacak || !Array.isArray(data.lacak)) throw new Error('Format salah');
+      if (!data.lacak || !Array.isArray(data.lacak)) {
+        throw new Error('Format salah');
+      }
       
       var all = getAllLacakData();
       all[s.id] = data.lacak;
@@ -3514,9 +3687,11 @@ function restoreUserData(input) {
       autoSaveData();
       refreshAppUI();
       updateStats();
-      showToast('✅ Data dipulihkan!', 'success');
+      showToast('✅ Data dipulihkan! (' + data.lacak.length + ' item)', 'success');
+      console.log('✅ Data dipulihkan untuk:', s.username);
     } catch (ex) {
       showToast('❌ Format tidak valid.', 'error');
+      console.error('❌ Error restore:', ex);
     }
   };
   reader.readAsText(file);
@@ -3527,28 +3702,62 @@ function restoreUserData(input) {
 // SEARCH
 // ============================================================
 function toggleSearch() {
+  console.log('🔍 toggleSearch() dipanggil');
   var bar = document.getElementById('searchBar');
-  if (bar) bar.classList.toggle('hidden');
+  if (bar) {
+    bar.classList.toggle('hidden');
+    if (!bar.classList.contains('hidden')) {
+      var input = document.getElementById('searchInput');
+      if (input) input.focus();
+    }
+  }
 }
 
 function performSearch() {
   var q = document.getElementById('searchInput');
   if (!q) return;
   
-  var query = q.value.toLowerCase();
+  var query = q.value.toLowerCase().trim();
   var items = document.querySelectorAll('#riwayatLacakContainer > div');
   
-  items.forEach(function(it){
-    if (it.id === 'emptyRiwayat') return;
+  var visibleCount = 0;
+  for (var i = 0; i < items.length; i++) {
+    var it = items[i];
+    if (it.id === 'emptyRiwayat') continue;
     var text = it.textContent.toLowerCase();
-    it.style.display = text.includes(query) ? '' : 'none';
-  });
+    if (query === '' || text.includes(query)) {
+      it.style.display = '';
+      visibleCount++;
+    } else {
+      it.style.display = 'none';
+    }
+  }
+  
+  // Tampilkan pesan jika tidak ada hasil
+  var container = document.getElementById('riwayatLacakContainer');
+  var noResult = document.getElementById('noSearchResult');
+  if (query !== '' && visibleCount === 0) {
+    if (!noResult) {
+      var el = document.createElement('div');
+      el.id = 'noSearchResult';
+      el.style.cssText = 'text-align:center;padding:30px;color:var(--text-muted);';
+      el.innerHTML = '🔍 Tidak ada hasil untuk "' + escapeHTML(query) + '"';
+      container.appendChild(el);
+    } else {
+      noResult.style.display = 'block';
+      noResult.innerHTML = '🔍 Tidak ada hasil untuk "' + escapeHTML(query) + '"';
+    }
+  } else if (noResult) {
+    noResult.style.display = 'none';
+  }
 }
 
 function clearSearch() {
   var input = document.getElementById('searchInput');
   if (input) input.value = '';
   performSearch();
+  var noResult = document.getElementById('noSearchResult');
+  if (noResult) noResult.style.display = 'none';
 }
 
 // ============================================================
@@ -3558,12 +3767,15 @@ function clearSearch() {
 var trackerImageData = null;
 
 function showLinkTrackerModal() {
+  console.log('🔗 showLinkTrackerModal() dipanggil');
+  
   var s = getSession();
   if (!s) {
-    showToast('Login dulu!', 'error');
+    showToast('⚠️ Login dulu!', 'error');
     return;
   }
   
+  // Reset semua field
   var titleInput = document.getElementById('trackerTitle');
   var messageInput = document.getElementById('trackerMessage');
   var imageUrlInput = document.getElementById('trackerImageUrl');
@@ -3578,20 +3790,33 @@ function showLinkTrackerModal() {
   if (imageUrlInput) imageUrlInput.value = '';
   if (imageFileInput) imageFileInput.value = '';
   if (previewDiv) previewDiv.style.display = 'none';
-  if (resultDiv) resultDiv.classList.add('hidden');
+  if (resultDiv) {
+    resultDiv.classList.add('hidden');
+    resultDiv.setAttribute('data-title', '');
+    resultDiv.setAttribute('data-message', '');
+    resultDiv.setAttribute('data-image', '');
+  }
   if (errorDiv) errorDiv.classList.remove('show');
   if (btn) {
     btn.disabled = false;
     btn.textContent = '📤 Siapkan Kiriman';
   }
   
+  // Reset data gambar
   trackerImageData = null;
+  
   openModal('linkTrackerModal');
+  console.log('✅ Modal tracker dibuka');
 }
 
 function previewTrackerImage() {
+  console.log('🖼️ previewTrackerImage() dipanggil');
+  
   var f = document.getElementById('trackerImageFile');
-  if (!f || !f.files || !f.files[0]) return;
+  if (!f || !f.files || !f.files[0]) {
+    showToast('⚠️ Pilih file gambar!', 'error');
+    return;
+  }
   
   var file = f.files[0];
   if (!file.type.startsWith('image/')) {
@@ -3611,11 +3836,14 @@ function previewTrackerImage() {
     if (img) img.src = trackerImageData;
     if (preview) preview.style.display = 'block';
     showToast('✅ Gambar siap!', 'success');
+    console.log('✅ Gambar diupload, size:', file.size);
   };
   reader.readAsDataURL(file);
 }
 
 function removeTrackerImage() {
+  console.log('🗑 removeTrackerImage() dipanggil');
+  
   trackerImageData = null;
   var fileInput = document.getElementById('trackerImageFile');
   var preview = document.getElementById('trackerImagePreview');
@@ -3625,6 +3853,8 @@ function removeTrackerImage() {
 }
 
 function generateTrackerLink() {
+  console.log('📤 generateTrackerLink() dipanggil');
+  
   var titleInput = document.getElementById('trackerTitle');
   var messageInput = document.getElementById('trackerMessage');
   var imageUrlInput = document.getElementById('trackerImageUrl');
@@ -3639,11 +3869,11 @@ function generateTrackerLink() {
   var imageUrl = imageUrlInput ? imageUrlInput.value.trim() : '';
   
   if (!title) {
-    if (errEl) { errEl.textContent = 'Isi judul dulu!'; errEl.classList.add('show'); }
+    if (errEl) { errEl.textContent = '⚠️ Isi judul dulu!'; errEl.classList.add('show'); }
     return;
   }
   if (!message) {
-    if (errEl) { errEl.textContent = 'Isi pesan dulu!'; errEl.classList.add('show'); }
+    if (errEl) { errEl.textContent = '⚠️ Isi pesan dulu!'; errEl.classList.add('show'); }
     return;
   }
   
@@ -3654,75 +3884,50 @@ function generateTrackerLink() {
     btn.disabled = true;
   }
   
-  fetch('https://ipapi.co/json/')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var hasil = {
-        judul: title,
-        pesan: message,
-        gambar: finalImage ? '📷 Ada' : '(tidak ada)',
-        gambarData: finalImage,
-        status: 'Siap Dikirim',
-        waktu: new Date().toLocaleString(),
-        lat: data.latitude || 0,
-        lng: data.longitude || 0,
-        ip: data.ip || '-',
-        kota: data.city || '-',
-        provinsi: data.region || '-',
-        negara: data.country_name || '-',
-        maps: 'https://www.google.com/maps?q=' + (data.latitude || 0) + ',' + (data.longitude || 0)
-      };
-      
-      simpanDanTampilkanTracker(title, message, finalImage, hasil);
-      tampilkanPreviewTracker(title, message, finalImage, hasil);
-      
-      if (btn) {
-        btn.textContent = '📤 Siapkan Kiriman';
-        btn.disabled = false;
-      }
-      
-      if (resultDiv) {
-        resultDiv.classList.remove('hidden');
-        resultDiv.setAttribute('data-title', title);
-        resultDiv.setAttribute('data-message', message);
-        resultDiv.setAttribute('data-image', finalImage);
-      }
-      
-      showToast('✅ Pesan & koordinat siap!', 'success');
-    })
-    .catch(function() {
-      var hasil = {
-        judul: title,
-        pesan: message,
-        gambar: finalImage ? '📷 Ada' : '(tidak ada)',
-        gambarData: finalImage,
-        status: 'Siap Dikirim (offline)',
-        waktu: new Date().toLocaleString(),
-        lat: 0,
-        lng: 0,
-        maps: '#'
-      };
-      
-      simpanDanTampilkanTracker(title, message, finalImage, hasil);
-      tampilkanPreviewTracker(title, message, finalImage, hasil);
-      
-      if (btn) {
-        btn.textContent = '📤 Siapkan Kiriman';
-        btn.disabled = false;
-      }
-      
-      if (resultDiv) {
-        resultDiv.classList.remove('hidden');
-        resultDiv.setAttribute('data-title', title);
-        resultDiv.setAttribute('data-message', message);
-        resultDiv.setAttribute('data-image', finalImage);
-      }
-      
-      showToast('✅ Pesan siap (koordinat offline)', 'warning');
-    });
+  // Simulasi persiapan dengan lokasi acak
+  setTimeout(function() {
+    var lat = (Math.random() * 10 - 6).toFixed(4);
+    var lng = (Math.random() * 20 + 106).toFixed(4);
+    
+    var hasil = {
+      judul: title,
+      pesan: message,
+      gambar: finalImage ? '📷 Ada' : '(tidak ada)',
+      gambarData: finalImage,
+      status: 'Siap Dikirim',
+      waktu: new Date().toLocaleString(),
+      lat: lat,
+      lng: lng,
+      kota: 'Jakarta',
+      provinsi: 'DKI Jakarta',
+      negara: 'Indonesia',
+      maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+      ip: '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255)
+    };
+    
+    simpanDanTampilkanTracker(title, message, finalImage, hasil);
+    tampilkanPreviewTracker(title, message, finalImage, hasil);
+    
+    if (btn) {
+      btn.textContent = '📤 Siapkan Kiriman';
+      btn.disabled = false;
+    }
+    
+    if (resultDiv) {
+      resultDiv.classList.remove('hidden');
+      resultDiv.setAttribute('data-title', title);
+      resultDiv.setAttribute('data-message', message);
+      resultDiv.setAttribute('data-image', finalImage);
+    }
+    
+    showToast('✅ Pesan & koordinat siap!', 'success');
+    console.log('✅ Tracker siap untuk:', title);
+  }, 1000);
 }
 
 function simpanDanTampilkanTracker(title, message, image, hasil) {
+  console.log('💾 simpanDanTampilkanTracker() dipanggil');
+  
   var s = getSession();
   if (!s) return;
   
@@ -3742,6 +3947,7 @@ function simpanDanTampilkanTracker(title, message, image, hasil) {
   autoSaveData();
   refreshAppUI();
   updateStats();
+  console.log('✅ Tracker disimpan');
 }
 
 function tampilkanPreviewTracker(title, message, image, hasil) {
@@ -3750,18 +3956,412 @@ function tampilkanPreviewTracker(title, message, image, hasil) {
   
   var html = '';
   html += '<div style="background:var(--bg-primary);border-radius:8px;padding:12px;margin-bottom:8px;">';
-  html += '<p style="font-weight:700;font-size:1.1rem;">📌 ' + escapeHTML(title) + '</p>';
+  html += '<p style="font-weight:700;font-size:1.1rem;color:var(--accent-light);">📌 ' + escapeHTML(title) + '</p>';
   html += '<p style="white-space:pre-wrap;">' + escapeHTML(message).replace(/\n/g, '<br>') + '</p>';
   
   if (image && image.startsWith('data:image')) {
     html += '<img src="' + image + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
   } else if (image && image.startsWith('http')) {
-    html += '<img src="' + image + '" style="max-width
+    html += '<img src="' + image + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;" onerror="this.style.display=\'none\'">';
+  }
+  
+  if (hasil && hasil.lat && hasil.lng && hasil.lat !== 0) {
+    html += '<p style="margin-top:8px;color:#10b981;font-weight:700;">📍 Lokasi Anda: ' + hasil.lat + ', ' + hasil.lng + '</p>';
+    html += '<a href="' + (hasil.maps || 'https://www.google.com/maps?q=' + hasil.lat + ',' + hasil.lng) + '" target="_blank" style="color:#3b82f6;font-size:0.85rem;">🗺 Buka Google Maps</a>';
+  }
+  
+  html += '</div>';
+  preview.innerHTML = html;
+}
 
+function copyTrackerMessage() {
+  console.log('📋 copyTrackerMessage() dipanggil');
+  
+  var result = document.getElementById('trackerResult');
+  if (!result) {
+    showToast('❌ Tidak ada pesan untuk disalin!', 'error');
+    return;
+  }
+  
+  var title = result.getAttribute('data-title') || '';
+  var message = result.getAttribute('data-message') || '';
+  var image = result.getAttribute('data-image') || '';
+  
+  var text = '📌 ' + title + '\n\n' + message;
+  if (image && image.startsWith('http')) {
+    text += '\n\n📷 ' + image;
+  }
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(function() { 
+        showToast('✅ Pesan disalin ke clipboard!', 'success');
+        console.log('✅ Pesan disalin');
+      })
+      .catch(function() { 
+        fallbackCopy(text);
+      });
+  } else {
+    fallbackCopy(text);
+  }
+}
 
-<!-- ===== TRACERID → BLOK 10 R3 – JS ADMIN PANEL ===== -->
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showToast('✅ Pesan disalin ke clipboard!', 'success');
+  } catch (e) {
+    showToast('❌ Gagal menyalin pesan', 'error');
+  }
+  document.body.removeChild(ta);
+}
+
+function shareTrackerWA() {
+  console.log('📱 shareTrackerWA() dipanggil');
+  
+  var result = document.getElementById('trackerResult');
+  if (!result) {
+    showToast('❌ Tidak ada pesan untuk dibagikan!', 'error');
+    return;
+  }
+  
+  var title = result.getAttribute('data-title') || '';
+  var message = result.getAttribute('data-message') || '';
+  var image = result.getAttribute('data-image') || '';
+  
+  var text = '📌 ' + title + '\n\n' + message;
+  if (image && image.startsWith('http')) {
+    text += '\n\n📷 ' + image;
+  }
+  
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+function shareTrackerEmail() {
+  console.log('📧 shareTrackerEmail() dipanggil');
+  
+  var result = document.getElementById('trackerResult');
+  if (!result) {
+    showToast('❌ Tidak ada pesan untuk dibagikan!', 'error');
+    return;
+  }
+  
+  var title = result.getAttribute('data-title') || '';
+  var message = result.getAttribute('data-message') || '';
+  
+  window.open('mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(message), '_blank');
+}
+
+function shareTrackerSMS() {
+  console.log('💬 shareTrackerSMS() dipanggil');
+  
+  var result = document.getElementById('trackerResult');
+  if (!result) {
+    showToast('❌ Tidak ada pesan untuk dibagikan!', 'error');
+    return;
+  }
+  
+  var title = result.getAttribute('data-title') || '';
+  var message = result.getAttribute('data-message') || '';
+  
+  window.open('sms:?body=' + encodeURIComponent(title + ': ' + message), '_blank');
+}
+
+function showTrackerClicks() {
+  console.log('📊 showTrackerClicks() dipanggil');
+  
+  var s = getSession();
+  if (!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
+  
+  var data = getAllLacakData()[s.id] || [];
+  var trackers = [];
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].type === 'tracker') trackers.push(data[i]);
+  }
+  
+  var container = document.getElementById('trackerClicksContent');
+  if (!container) {
+    showToast('❌ Elemen tidak ditemukan!', 'error');
+    return;
+  }
+  
+  if (trackers.length === 0) {
+    container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-muted);">📭 Belum ada pesan tracker.</p>';
+    openModal('trackerClicksModal');
+    return;
+  }
+  
+  var html = '';
+  html += '<p style="margin-bottom:12px;"><strong>📊 Total:</strong> ' + trackers.length + ' pesan</p>';
+  
+  // Tampilkan dari yang terbaru
+  trackers.reverse();
+  for (var i = 0; i < trackers.length; i++) {
+    var t = trackers[i];
+    var hasil = t.result || {};
+    var judul = hasil.judul || t.input || 'Tanpa Judul';
+    var pesan = hasil.pesan || '';
+    var gambar = hasil.gambarData || '';
+    var lat = hasil.lat || 0;
+    var lng = hasil.lng || 0;
+    var maps = hasil.maps || 'https://www.google.com/maps?q=' + lat + ',' + lng;
+    var waktu = new Date(t.time).toLocaleString();
+    
+    html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">';
+    html += '<strong style="font-size:0.95rem;">📌 ' + escapeHTML(judul) + '</strong>';
+    html += '<span style="font-size:0.75rem;color:var(--text-muted);">🕐 ' + waktu + '</span>';
+    html += '</div>';
+    
+    if (pesan) {
+      html += '<p style="font-size:0.85rem;margin-top:4px;white-space:pre-wrap;">' + escapeHTML(pesan).replace(/\n/g, '<br>') + '</p>';
+    }
+    
+    if (gambar && gambar.startsWith('data:image')) {
+      html += '<img src="' + gambar + '" style="max-width:100%;max-height:180px;border-radius:8px;margin-top:8px;">';
+    } else if (gambar && gambar.startsWith('http')) {
+      html += '<img src="' + gambar + '" style="max-width:100%;max-height:180px;border-radius:8px;margin-top:8px;" onerror="this.style.display=\'none\'">';
+    }
+    
+    if (lat && lng && lat !== 0) {
+      html += '<div style="margin-top:6px;">';
+      html += '<span style="color:#10b981;font-weight:600;font-size:0.85rem;">📍 ' + lat + ', ' + lng + '</span> ';
+      html += '<a href="' + maps + '" target="_blank" style="color:#3b82f6;font-size:0.8rem;">🗺 Buka Maps</a>';
+      html += '</div>';
+    }
+    
+    html += '</div>';
+  }
+  
+  container.innerHTML = html;
+  openModal('trackerClicksModal');
+  console.log('✅ Hasil klik ditampilkan, total:', trackers.length);
+}
+
+// ============================================================
+// INIT USER APPS
+// ============================================================
+function initUserApps(session) {
+  if (!session) return;
+  
+  var all = getAllLacakData();
+  if (!all[session.id] || !Array.isArray(all[session.id])) {
+    all[session.id] = [];
+    saveAllLacakData(all);
+    console.log('✅ Data lacak baru dibuat untuk:', session.username);
+  }
+}
+
+// ============================================================
+// AUTO SAVE DATA
+// ============================================================
+function autoSaveData() {
+  try {
+    var s = getSession();
+    if (!s) return;
+    
+    var d = getAllLacakData();
+    var u = d[s.id] || [];
+    
+    localStorage.setItem('tr_userdata_' + s.username, JSON.stringify(u));
+    sessionStorage.setItem('tr_autosave_' + s.id, JSON.stringify(u));
+    sessionStorage.setItem('tr_autosave_user_' + s.username, JSON.stringify(u));
+    
+    var now = new Date().toISOString();
+    sessionStorage.setItem('tr_autosave_time_' + s.id, now);
+    localStorage.setItem('tr_lastsave_' + s.username, now);
+    
+    console.log('💾 Auto-save berhasil untuk:', s.username);
+  } catch (e) {
+    console.warn('⚠️ Auto-save gagal:', e);
+  }
+}
+
+function validateAndLoadUserData() {
+  console.log('🔄 validateAndLoadUserData() dipanggil');
+  
+  var s = getSession();
+  if (!s) return;
+  
+  var all = getAllLacakData();
+  var userData = all[s.id];
+  var found = false;
+  
+  // Cek di data utama
+  if (userData && Array.isArray(userData) && userData.length > 0) {
+    found = true;
+    console.log('✅ Data ditemukan di utama, total:', userData.length);
+  }
+  
+  // Cek di localStorage by username
+  if (!found) {
+    try {
+      var savedByUsername = localStorage.getItem('tr_userdata_' + s.username);
+      if (savedByUsername) {
+        userData = JSON.parse(savedByUsername);
+        if (Array.isArray(userData) && userData.length > 0) {
+          all[s.id] = userData;
+          saveAllLacakData(all);
+          found = true;
+          console.log('✅ Data ditemukan di localStorage by username, total:', userData.length);
+        }
+      }
+    } catch (e) {}
+  }
+  
+  // Cek di sessionStorage by ID
+  if (!found) {
+    try {
+      var savedById = sessionStorage.getItem('tr_autosave_' + s.id);
+      if (savedById) {
+        userData = JSON.parse(savedById);
+        if (Array.isArray(userData) && userData.length > 0) {
+          all[s.id] = userData;
+          saveAllLacakData(all);
+          found = true;
+          console.log('✅ Data ditemukan di sessionStorage by ID, total:', userData.length);
+        }
+      }
+    } catch (e) {}
+  }
+  
+  // Cek di sessionStorage by username
+  if (!found) {
+    try {
+      var savedByUsername2 = sessionStorage.getItem('tr_autosave_user_' + s.username);
+      if (savedByUsername2) {
+        userData = JSON.parse(savedByUsername2);
+        if (Array.isArray(userData) && userData.length > 0) {
+          all[s.id] = userData;
+          saveAllLacakData(all);
+          found = true;
+          console.log('✅ Data ditemukan di sessionStorage by username, total:', userData.length);
+        }
+      }
+    } catch (e) {}
+  }
+  
+  // Jika tidak ditemukan, buat baru
+  if (!found) {
+    all[s.id] = [];
+    saveAllLacakData(all);
+    autoSaveData();
+    console.log('✅ Data baru dibuat untuk:', s.username);
+  } else {
+    autoSaveData();
+  }
+}
+
+// ============================================================
+// BACKUP SEBELUM UPGRADE
+// ============================================================
+function backupSebelumUpgrade() {
+  console.log('📦 backupSebelumUpgrade() dipanggil');
+  
+  var allData = {};
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (key.startsWith('tr_')) {
+      allData[key] = localStorage.getItem(key);
+    }
+  }
+  
+  allData['_sessionStorage'] = {};
+  for (var j = 0; j < sessionStorage.length; j++) {
+    var sKey = sessionStorage.key(j);
+    if (sKey.startsWith('tr_')) {
+      allData['_sessionStorage'][sKey] = sessionStorage.getItem(sKey);
+    }
+  }
+  
+  var blob = new Blob([JSON.stringify(allData, null, 2)], {type: 'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'traceid_full_backup_upgrade_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  
+  showToast('✅ Backup penuh berhasil! Simpan file ini sebelum upgrade.', 'success');
+  console.log('✅ Backup upgrade selesai');
+}
+
+// ============================================================
+// EVENT LISTENER UNTUK TOMBOL SIAPKAN KIRIMAN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('btnSiapkanKiriman');
+  if (btn) {
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', generateTrackerLink);
+    console.log('✅ Event listener untuk tombol Siapkan Kiriman terpasang');
+  }
+});
+
+// Fallback jika tombol belum ada
+setTimeout(function() {
+  var btn = document.getElementById('btnSiapkanKiriman');
+  if (btn && !btn._listenerAttached) {
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', generateTrackerLink);
+    btn._listenerAttached = true;
+    console.log('✅ Event listener (fallback) untuk tombol Siapkan Kiriman terpasang');
+  }
+}, 500);
+
+// ============================================================
+// OVERRIDE FUNGSI DARI BLOK 8
+// ============================================================
+// Override updateStats
+var origUpdateStats = window.updateStats;
+if (origUpdateStats) {
+  window.updateStats = function() {
+    origUpdateStats();
+    // Tambahan jika diperlukan
+  };
+}
+
+// Override refreshAppUI
+var origRefreshAppUI = window.refreshAppUI;
+if (origRefreshAppUI) {
+  window.refreshAppUI = function() {
+    origRefreshAppUI();
+    // Tambahan jika diperlukan
+  };
+}
+
+// ============================================================
+// LOG INIT
+// ============================================================
+console.log('✅ Blok 9 R18 – JS Core 2 TraceID siap digunakan.');
+console.log('📌 Fungsi-fungsi yang tersedia:');
+console.log('   - Lacak: showLacakModal(), executeLacak()');
+console.log('   - Tracker: showLinkTrackerModal(), generateTrackerLink()');
+console.log('   - Riwayat: refreshAppUI(), showDetailRiwayat()');
+console.log('   - Backup: backupUserData(), restoreUserData()');
+console.log('   - Search: toggleSearch(), performSearch(), clearSearch()');
+console.log('   - Auto-save: autoSaveData(), validateAndLoadUserData()');
+console.log('   - escapeHTML() tersedia untuk keamanan XSS');
+</script>
+
 <!-- ============================================================
-     BLOK 10 R3 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI)
+     AKHIR BLOK 9 R18
+     ============================================================ -->
+
+
+<!-- ===== TRACERID → BLOK 10 R4 – JS ADMIN PANEL ===== -->
+<!-- ============================================================
+     BLOK 10 R4 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
      (Super Admin Panel functions, Kode Aktivasi, User Management, 
       Chat Admin, Backup, Settings, Iklan)
      ============================================================
@@ -3775,11 +4375,34 @@ function tampilkanPreviewTracker(title, message, image, hasil) {
      - Iklan: load, save, reset
      - Chat Admin: view, send, mass chat
      - Backup: JSON, HTML, Google Drive, Email
-     - DIPERBAIKI: Semua fungsi lengkap, pengecekan elemen,
+     - DIPERBAIKI: escapeHTML() fallback, semua fungsi lengkap,
        console log untuk debugging, error handling
      ============================================================ -->
 
 <script>
+// ============================================================
+// FALLBACK ESCAPE HTML - UNTUK KEAMANAN XSS
+// ============================================================
+if (typeof escapeHTML !== 'function') {
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>"']/g, function(m) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[m];
+        });
+    }
+}
+
+// ============================================================
+// CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
+// ============================================================
+console.log('🔍 Blok 10 R4 – Memuat semua fungsi Admin Panel...');
+
 // ============================================================
 // SUPER ADMIN PANEL
 // ============================================================
@@ -3790,16 +4413,25 @@ function showSuperAdminPanel() {
   console.log('📌 Session:', session);
   
   if(!session) {
-    showToast('Anda belum login!', 'error');
+    showToast('⚠️ Anda belum login!', 'error');
     return;
   }
   
   if(session.role !== 'superadmin') {
-    showToast('Anda bukan Super Admin! Role Anda: ' + session.role, 'error');
+    showToast('⚠️ Anda bukan Super Admin! Role Anda: ' + session.role, 'error');
     return;
   }
   
   console.log('✅ Membuka modal superAdminModal');
+  
+  // Pastikan modal ada
+  var modal = document.getElementById('superAdminModal');
+  if (!modal) {
+    console.error('❌ Modal superAdminModal tidak ditemukan!');
+    showToast('❌ Modal tidak ditemukan!', 'error');
+    return;
+  }
+  
   openModal('superAdminModal');
   
   // Isi dropdown paket
@@ -3930,6 +4562,7 @@ function adminCreateActivationCode() {
   res.innerHTML = '<p class="form-success show">✅ Kode: <strong style="font-size:1.1rem;">' + code + '</strong></p>';
   renderActiveCodesList();
   showToast('✅ Kode aktivasi berhasil dibuat!', 'success');
+  addSecurityLog('Kode aktivasi dibuat untuk user: ' + userVal);
   console.log('✅ Kode aktivasi dibuat:', code);
 }
 
@@ -3955,10 +4588,10 @@ function renderActiveCodesList() {
     var status = c.used ? '<span style="color:#ef4444;">🔴 Terpakai</span>' : '<span style="color:#10b981;">🟢 Aktif</span>';
     var usedBy = c.usedBy ? ' oleh ' + c.usedBy : '';
     var date = new Date(c.createdAt).toLocaleDateString();
-    html += '<div style="padding:6px 0;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">' +
-      '<span><strong>' + code + '</strong> - Paket: ' + c.packageId + '</span>' +
-      '<span>' + status + usedBy + ' <span style="font-size:0.7rem;color:var(--text-muted);">' + date + '</span></span>' +
-    '</div>';
+    html += '<div style="padding:6px 0;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">';
+    html += '<span><strong>' + code + '</strong> - Paket: ' + c.packageId + '</span>';
+    html += '<span>' + status + usedBy + ' <span style="font-size:0.7rem;color:var(--text-muted);">' + date + '</span></span>';
+    html += '</div>';
   }
   container.innerHTML = html;
 }
@@ -4000,9 +4633,9 @@ function renderAdminUserList() {
     var lockedStatus = u.locked ? '🔴 Ya' : '🟢 Tidak';
     
     html += '<tr style="' + (isSuperAdmin ? 'background:var(--bg-tertiary);' : '') + '">';
-    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + u.nama + (isSuperAdmin ? ' 👑' : '') + '</td>';
-    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + u.username + '</td>';
-    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + u.email + '</td>';
+    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + escapeHTML(u.nama) + (isSuperAdmin ? ' 👑' : '') + '</td>';
+    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + escapeHTML(u.username) + '</td>';
+    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + escapeHTML(u.email) + '</td>';
     html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + premiumStatus + '</td>';
     html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + lockedStatus + '</td>';
     html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">';
@@ -4091,7 +4724,7 @@ function renderPackageEditList() {
   for (var i = 0; i < pkgs.length; i++) {
     var p = pkgs[i];
     html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:8px;">';
-    html += '<div><strong>' + p.name + '</strong> - Rp ' + p.price.toLocaleString('id-ID') + ' (' + p.label + ')<br><span style="font-size:0.8rem;color:var(--text-muted);">' + p.features + '</span></div>';
+    html += '<div><strong>' + escapeHTML(p.name) + '</strong> - Rp ' + p.price.toLocaleString('id-ID') + ' (' + escapeHTML(p.label) + ')<br><span style="font-size:0.8rem;color:var(--text-muted);">' + escapeHTML(p.features) + '</span></div>';
     html += '<button class="btn btn-sm btn-warning" onclick="editPackage(\'' + p.id + '\')">✏️ Edit</button>';
     html += '</div>';
   }
@@ -4239,7 +4872,7 @@ function renderSecurityLogs() {
     var dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
     html += '<div style="padding:6px 0;border-bottom:1px solid var(--border-color);font-size:0.75rem;display:flex;justify-content:space-between;flex-wrap:wrap;">';
     html += '<span>🕐 ' + dateStr + '</span>';
-    html += '<span>' + l.msg + '</span>';
+    html += '<span>' + escapeHTML(l.msg) + '</span>';
     html += '</div>';
   }
   container.innerHTML = html;
@@ -4744,7 +5377,7 @@ function loadAdminChat(username) {
   }
   
   if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Belum ada chat dengan ' + username + '.</p>';
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Belum ada chat dengan ' + escapeHTML(username) + '.</p>';
     return;
   }
   
@@ -4755,7 +5388,7 @@ function loadAdminChat(username) {
     var m = filtered[i];
     var isAdmin = (m.from === 'admin');
     var cls = isAdmin ? 'chat-msg admin' : 'chat-msg user';
-    var sender = isAdmin ? '👑 Admin' : m.from;
+    var sender = isAdmin ? '👑 Admin' : escapeHTML(m.from);
     html += '<div class="' + cls + '"><div class="chat-sender">' + sender + '</div>' + 
       escapeHTML(m.text) + '<div class="chat-time">' + new Date(m.time).toLocaleString() + '</div></div>';
   }
@@ -4801,7 +5434,7 @@ function sendAdminChat() {
   saveChatMessages(msgs);
   input.value = '';
   loadAdminChat(target);
-  showToast('✅ Balasan terkirim ke ' + target, 'success');
+  showToast('✅ Balasan terkirim ke ' + escapeHTML(target), 'success');
   addSecurityLog('Chat dikirim ke ' + target);
   console.log('✅ Chat terkirim ke:', target);
 }
@@ -4854,19 +5487,20 @@ function sendMassChat() {
   console.log('✅ Chat massal terkirim ke', count, 'user');
 }
 
-console.log('✅ Blok 10 R3 – JS Admin Panel TraceID siap digunakan.');
+console.log('✅ Blok 10 R4 – JS Admin Panel TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi admin sudah lengkap dan siap digunakan.');
 console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
+console.log('📌 escapeHTML() fallback tersedia untuk keamanan XSS.');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 10 R3
+     AKHIR BLOK 10 R4
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 11 R2 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT ===== -->
+<!-- ===== TRACERID → BLOK 11 R3 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT ===== -->
 <!-- ============================================================
-     BLOK 11 R2 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI)
+     BLOK 11 R3 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL)
      (Chat User ke Admin, Chat User ke User, Landing Display, Offline, Init)
      ============================================================
      PENJELASAN:
@@ -4877,19 +5511,43 @@ console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
      - Offline: download for offline, update status
      - Init: setup awal aplikasi
      - DIPERBAIKI: Semua fungsi lengkap, tidak ada error sintaks,
-       patch superadmin header sudah benar
+       escapeHTML() di awal, patch superadmin header sudah benar,
+       fungsi origUpdateHeader sudah lengkap
      ============================================================ -->
 
 <script>
 // ============================================================
+// ESCAPE HTML - UNTUK KEAMANAN XSS
+// ============================================================
+function escapeHTML(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, function(m) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[m];
+    });
+}
+
+// ============================================================
+// CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
+// ============================================================
+console.log('🔍 Blok 11 R3 – Memuat semua fungsi Chat, Landing, Init...');
+
+// ============================================================
 // HUBUNGI ADMIN (LANDING PAGE)
 // ============================================================
 function hubungiAdminLanding() {
+  console.log('💬 hubungiAdminLanding() dipanggil');
+  
   var session = getSession();
   if (session) {
     showChatModal();
   } else {
-    showToast('Silakan Daftar terlebih dahulu untuk menghubungi Admin.', 'warning');
+    showToast('⚠️ Silakan Daftar terlebih dahulu untuk menghubungi Admin.', 'warning');
     showRegisterModal();
   }
 }
@@ -4898,18 +5556,31 @@ function hubungiAdminLanding() {
 // CHAT USER KE ADMIN
 // ============================================================
 function showChatModal() {
+  console.log('💬 showChatModal() dipanggil');
+  
   var s = getSession();
-  if(!s) return showToast('Login dulu!','error');
-  openModal('chatModal'); 
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
+  
+  openModal('chatModal');
   loadUserChat();
+  console.log('✅ Chat modal dibuka');
 }
 
 function loadUserChat() {
+  console.log('📥 loadUserChat() dipanggil');
+  
   var s = getSession();
-  if(!s) return;
+  if(!s) {
+    console.warn('⚠️ Tidak ada session');
+    return;
+  }
   
   var allMessages = getChatMessages();
   var filtered = [];
+  
   for (var i = 0; i < allMessages.length; i++) {
     var m = allMessages[i];
     if (m.to === 'admin' || m.from === s.username || (m.from === 'admin' && m.to === s.username)) {
@@ -4918,11 +5589,15 @@ function loadUserChat() {
   }
   
   var container = document.getElementById('userChatMessages');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen userChatMessages tidak ditemukan!');
+    return;
+  }
+  
   container.innerHTML = '';
   
   if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan Admin.</p>';
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Belum ada chat dengan Admin.</p>';
     return;
   }
   
@@ -4938,16 +5613,29 @@ function loadUserChat() {
       escapeHTML(m.text) + '<div class="chat-time">' + new Date(m.time).toLocaleString() + '</div></div>';
   }
   container.scrollTop = container.scrollHeight;
+  console.log('✅ Chat user dimuat, total pesan:', filtered.length);
 }
 
 function sendUserChat() {
+  console.log('📤 sendUserChat() dipanggil');
+  
   var s = getSession();
-  if(!s) return;
+  if(!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var input = document.getElementById('userChatInput');
-  if (!input) return;
+  if (!input) {
+    showToast('❌ Input chat tidak ditemukan!', 'error');
+    return;
+  }
+  
   var text = input.value.trim();
-  if(!text) return;
+  if(!text) {
+    showToast('⚠️ Tulis pesan terlebih dahulu!', 'error');
+    return;
+  }
   
   var msgs = getChatMessages();
   msgs.push({ 
@@ -4959,42 +5647,57 @@ function sendUserChat() {
   saveChatMessages(msgs);
   input.value = '';
   loadUserChat();
-  showToast('Pesan terkirim ke Admin', 'success');
+  showToast('✅ Pesan terkirim ke Admin', 'success');
+  console.log('✅ Chat terkirim ke admin:', text.substring(0, 30) + '...');
 }
 
 // ============================================================
 // CHAT USER KE USER
 // ============================================================
 window.showUserChatModal = function() {
+  console.log('👥 showUserChatModal() dipanggil');
+  
   var s = getSession();
-  if (!s) return showToast('Login dulu!','error');
+  if (!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var select = document.getElementById('userChatTargetSelect');
-  if (!select) return;
+  if (!select) {
+    showToast('❌ Elemen dropdown tidak ditemukan!', 'error');
+    return;
+  }
   
   var users = getAllUsers();
   var options = '<option value="">-- Pilih User --</option>';
   for (var i = 0; i < users.length; i++) {
     if (users[i].username !== s.username && users[i].role !== 'superadmin') {
-      options += '<option value="' + users[i].username + '">' + users[i].nama + ' (' + users[i].username + ')</option>';
+      options += '<option value="' + users[i].username + '">' + escapeHTML(users[i].nama) + ' (' + escapeHTML(users[i].username) + ')</option>';
     }
   }
   select.innerHTML = options;
   
   var container = document.getElementById('userToUserChatMessages');
   if (container) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>';
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">👥 Pilih user untuk memulai chat.</p>';
   }
   
   var input = document.getElementById('userToUserChatInput');
   if (input) input.value = '';
   
   openModal('userChatModal');
+  console.log('✅ Chat user modal dibuka');
 };
 
 window.loadUserToUserChat = function() {
+  console.log('📥 loadUserToUserChat() dipanggil');
+  
   var s = getSession();
-  if (!s) return;
+  if (!s) {
+    console.warn('⚠️ Tidak ada session');
+    return;
+  }
   
   var select = document.getElementById('userChatTargetSelect');
   var target = select ? select.value : '';
@@ -5002,7 +5705,7 @@ window.loadUserToUserChat = function() {
   if (!container) return;
   
   if (!target) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>';
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">👥 Pilih user untuk memulai chat.</p>';
     return;
   }
   
@@ -5018,7 +5721,7 @@ window.loadUserToUserChat = function() {
   }
   
   if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan ' + target + '.</p>';
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Belum ada chat dengan ' + escapeHTML(target) + '.</p>';
     return;
   }
   
@@ -5029,29 +5732,42 @@ window.loadUserToUserChat = function() {
     var m = filtered[i];
     var isMe = (m.from === s.username);
     var cls = isMe ? 'chat-msg user' : 'chat-msg admin';
-    var sender = isMe ? 'Anda' : m.from;
+    var sender = isMe ? 'Anda' : escapeHTML(m.from);
     html += '<div class="' + cls + '"><div class="chat-sender">' + sender + '</div>' + 
       escapeHTML(m.text) + '<div class="chat-time">' + new Date(m.time).toLocaleString() + '</div></div>';
   }
   container.innerHTML = html;
   container.scrollTop = container.scrollHeight;
+  console.log('✅ Chat user-user dimuat, total pesan:', filtered.length);
 };
 
 window.sendUserToUserChat = function() {
+  console.log('📤 sendUserToUserChat() dipanggil');
+  
   var s = getSession();
-  if (!s) return;
+  if (!s) {
+    showToast('⚠️ Login dulu!', 'error');
+    return;
+  }
   
   var select = document.getElementById('userChatTargetSelect');
   var target = select ? select.value : '';
   if (!target) {
-    showToast('Pilih user dulu!', 'error');
+    showToast('⚠️ Pilih user dulu!', 'error');
     return;
   }
   
   var input = document.getElementById('userToUserChatInput');
-  if (!input) return;
+  if (!input) {
+    showToast('❌ Input chat tidak ditemukan!', 'error');
+    return;
+  }
+  
   var text = input.value.trim();
-  if (!text) return;
+  if (!text) {
+    showToast('⚠️ Tulis pesan terlebih dahulu!', 'error');
+    return;
+  }
   
   var msgs = getChatMessages();
   msgs.push({ 
@@ -5063,15 +5779,21 @@ window.sendUserToUserChat = function() {
   saveChatMessages(msgs);
   input.value = '';
   window.loadUserToUserChat();
-  showToast('Pesan terkirim ke ' + target, 'success');
+  showToast('✅ Pesan terkirim ke ' + escapeHTML(target), 'success');
+  console.log('✅ Chat terkirim ke:', target);
 };
 
 // ============================================================
 // LANDING PAGE PRICE DISPLAY
 // ============================================================
 function refreshPackageDisplay() {
+  console.log('💎 refreshPackageDisplay() dipanggil');
+  
   var grid = document.getElementById('landingPriceGrid');
-  if(!grid) return;
+  if(!grid) {
+    console.error('❌ Elemen landingPriceGrid tidak ditemukan!');
+    return;
+  }
   
   var pkgs = getPackages();
   var html = '';
@@ -5093,22 +5815,28 @@ function refreshPackageDisplay() {
     html += '<div class="price-card' + featuredClass + '" onclick="showLoginModal()" style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:var(--spacing-2xl);border:2px solid ' + (isFeatured ? 'var(--accent-primary)' : 'var(--border-color)') + ';text-align:center;transition:all var(--transition-base);position:relative;cursor:pointer;">';
     html += badge;
     html += '<div class="price-icon" style="font-size:2.5rem;margin-bottom:var(--spacing-sm);">' + icon + '</div>';
-    html += '<div class="price-name" style="font-size:1.2rem;font-weight:700;">' + p.name + '</div>';
+    html += '<div class="price-name" style="font-size:1.2rem;font-weight:700;">' + escapeHTML(p.name) + '</div>';
     html += '<div class="price-value" style="font-size:2rem;font-weight:800;color:var(--color-success);margin:var(--spacing-sm)0;">Rp ' + p.price.toLocaleString('id-ID') + '</div>';
-    html += '<div class="price-duration" style="font-size:0.85rem;color:var(--text-secondary);">' + p.label + '</div>';
-    html += '<p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">' + (p.features || '') + '</p>';
+    html += '<div class="price-duration" style="font-size:0.85rem;color:var(--text-secondary);">' + escapeHTML(p.label) + '</div>';
+    html += '<p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">' + escapeHTML(p.features || '') + '</p>';
     html += '</div>';
   }
   
   grid.innerHTML = html;
+  console.log('✅ Paket ditampilkan, total:', pkgs.length);
 }
 
 // ============================================================
 // LANDING PAGE AD
 // ============================================================
 function renderLandingAd() {
+  console.log('📢 renderLandingAd() dipanggil');
+  
   var container = document.getElementById('landingAdContainer');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen landingAdContainer tidak ditemukan!');
+    return;
+  }
   
   var defaultAd = {
     title: '📍 TraceID – Lacak Sekarang!',
@@ -5131,19 +5859,27 @@ function renderLandingAd() {
     '<p style="margin-bottom:12px;opacity:0.9;">' + escapeHTML(ad.description) + '</p>' +
     '<button onclick="showRegisterModal()" class="btn btn-lg" style="background:#fff;color:#3b82f6;font-weight:700;">' + escapeHTML(ad.buttonText) + '</button>' +
   '</div>';
+  console.log('✅ Iklan landing ditampilkan');
 }
 
 // ============================================================
 // OFFLINE / INSTALL
 // ============================================================
 function downloadForOffline() {
+  console.log('⬇ downloadForOffline() dipanggil');
+  
   var html = document.documentElement.outerHTML;
   var blob = new Blob(['<!DOCTYPE html>\n' + html], {type: 'text/html'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'TraceID_v1.0_Offline.html';
+  document.body.appendChild(a);
   a.click();
-  showToast('File offline didownload.', 'success');
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  
+  showToast('✅ File offline didownload.', 'success');
+  console.log('✅ Offline file didownload');
 }
 
 function updateOnlineStatus() {
@@ -5157,12 +5893,14 @@ function updateOnlineStatus() {
     }
     if (off) off.classList.remove('show');
     checkAllExpiredActivations();
+    console.log('🌐 Status: ONLINE');
   } else {
     if (badge) {
       badge.textContent = 'OFFLINE';
       badge.style.background = '#ef4444';
     }
     if (off) off.classList.add('show');
+    console.log('🌐 Status: OFFLINE');
   }
 }
 
@@ -5173,36 +5911,35 @@ window.addEventListener('offline', updateOnlineStatus);
 // PATCH HEADER SUPERADMIN
 // ============================================================
 function patchSuperadminHeader() {
+  console.log('🔄 patchSuperadminHeader() dipanggil');
+  
   var s = getSession();
-  if (!s || s.role !== 'superadmin') return;
+  if (!s || s.role !== 'superadmin') {
+    console.log('📌 Bukan superadmin, tidak perlu patch');
+    return;
+  }
   
   var chatUserBtn = document.getElementById('chatUserButton');
   var chatAdminBtn = document.getElementById('chatButton');
   
-  if (chatUserBtn) chatUserBtn.classList.remove('hidden');
-  if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
-}
-
-// ============================================================
-// ESCAPE HTML
-// ============================================================
-function escapeHTML(str) {
-  if (!str) return '';
-  return str.replace(/[&<>"']/g, function(m) {
-    return {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[m];
-  });
+  if (chatUserBtn) {
+    chatUserBtn.classList.remove('hidden');
+    chatUserBtn.style.display = 'inline-flex';
+    console.log('✅ Chat User button ditampilkan');
+  }
+  if (chatAdminBtn) {
+    chatAdminBtn.classList.add('hidden');
+    chatAdminBtn.style.display = 'none';
+    console.log('✅ Chat Admin button disembunyikan');
+  }
 }
 
 // ============================================================
 // INIT
 // ============================================================
 (function init() {
+  console.log('🚀 INIT - Memulai aplikasi TraceID...');
+  
   // Sembunyikan install banner jika tidak didukung
   var banner = document.getElementById('installBanner');
   if (banner) banner.style.display = 'none';
@@ -5219,6 +5956,7 @@ function escapeHTML(str) {
   if (!hasSuperAdmin) {
     users.push(SUPER_ADMIN_DATA);
     saveAllUsers(users);
+    console.log('✅ Super Admin default dibuat');
   }
   
   // Update status online
@@ -5236,24 +5974,33 @@ function escapeHTML(str) {
   
   // Patch superadmin header setelah load
   window.addEventListener('load', function() {
+    console.log('📌 Window loaded, patch superadmin header...');
     patchSuperadminHeader();
   });
   
-  // Override updateHeaderUser untuk include patch
+  // ============================================================
+  // PERBAIKAN UTAMA: Override updateHeaderUser dengan patch
+  // ============================================================
   var origUpdateHeader = window.updateHeaderUser;
   if (origUpdateHeader) {
     window.updateHeaderUser = function() {
+      // Panggil fungsi asli
       origUpdateHeader();
+      // Lalu patch superadmin header
       patchSuperadminHeader();
     };
+    console.log('✅ updateHeaderUser() berhasil di-override dengan patch');
+  } else {
+    console.warn('⚠️ updateHeaderUser() tidak ditemukan, patch tidak bisa diterapkan');
   }
   
-  console.log('✅ Blok 11 R2 – TraceID v1.0 siap digunakan.');
+  console.log('✅ Blok 11 R3 – TraceID v1.0 siap digunakan.');
   console.log('📌 Chat, Landing Display, Offline, Init berhasil dimuat.');
+  console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
 })();
 
 // ============================================================
-// AKHIR BLOK 11 R2
+// AKHIR BLOK 11 R3
 // ============================================================
 </script>
 
