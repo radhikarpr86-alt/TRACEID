@@ -492,9 +492,9 @@
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 2 R1 – APPLICATION PAGE ===== -->
+<!-- ===== TRACERID → BLOK 2 R2 – APPLICATION PAGE ===== -->
 <!-- ============================================================
-     BLOK 2 R1 – APPLICATION PAGE TraceID (LENGKAP + DIPERBAIKI)
+     BLOK 2 R2 – APPLICATION PAGE TraceID (LENGKAP + DIPERBAIKI)
      (Header, Stats Dashboard, Toolbar, Search Bar, Riwayat)
      ============================================================
      PENJELASAN:
@@ -503,7 +503,8 @@
        toolbar lengkap (lacak IP, email, sosmed, tracker, dll),
        search bar, dan riwayat pelacakan
      - Identik dengan struktur Notepad+ v3.3
-     - DIPERBAIKI: Tombol tracker menggunakan id yang benar
+     - DIPERBAIKI: Tombol Panel Admin menggunakan style display:none,
+       semua tombol sudah terhubung dengan benar
      ============================================================ -->
 
 <!-- APPLICATION PAGE -->
@@ -517,17 +518,17 @@
     </div>
     <div class="header-buttons">
       <button onclick="toggleTheme()" id="themeButton2" class="btn btn-gray btn-sm">🌙 Dark Mode</button>
-      <button onclick="showProfileModal()" id="profileButton" class="btn btn-outline btn-sm hidden">Profil</button>
-      <button onclick="showSuperAdminPanel()" id="adminButton" class="btn btn-warning btn-sm hidden">Panel Admin</button>
+      <button onclick="showProfileModal()" id="profileButton" class="btn btn-outline btn-sm hidden">👤 Profil</button>
+      <button onclick="showSuperAdminPanel()" id="adminButton" class="btn btn-warning btn-sm" style="display:none;">🛡 Panel Admin</button>
       
       <div class="user-badge" id="userBadge" style="display:none;">
         <div class="user-avatar" id="userAvatar">U</div>
         <span class="user-name" id="userNameDisplay">User</span>
       </div>
       
-      <button onclick="handleLogout()" id="logoutButton" class="btn btn-danger btn-sm hidden">Logout</button>
-      <button onclick="goToLandingPage()" class="btn btn-gray btn-sm">Halaman Utama</button>
-      <button onclick="downloadForOffline()" class="btn btn-blue btn-sm">Download Offline</button>
+      <button onclick="handleLogout()" id="logoutButton" class="btn btn-danger btn-sm hidden">🚪 Logout</button>
+      <button onclick="goToLandingPage()" class="btn btn-gray btn-sm">🏠 Halaman Utama</button>
+      <button onclick="downloadForOffline()" class="btn btn-blue btn-sm">⬇ Download Offline</button>
     </div>
   </header>
 
@@ -535,23 +536,23 @@
   <div class="stats-grid" id="dashboardStats">
     <div class="stat-card">
       <div class="stat-value" id="statTotalLacak">0</div>
-      <div class="stat-label">Total Lacak</div>
+      <div class="stat-label">📊 Total Lacak</div>
     </div>
     <div class="stat-card">
       <div class="stat-value" id="statLacakIP">0</div>
-      <div class="stat-label">Via IP</div>
+      <div class="stat-label">🌐 Via IP</div>
     </div>
     <div class="stat-card">
       <div class="stat-value" id="statLacakEmail">0</div>
-      <div class="stat-label">Via Email</div>
+      <div class="stat-label">📧 Via Email</div>
     </div>
     <div class="stat-card">
       <div class="stat-value" id="statLacakSosmed">0</div>
-      <div class="stat-label">Via Sosmed</div>
+      <div class="stat-label">📱 Via Sosmed</div>
     </div>
     <div class="stat-card" style="border-color:#3b82f6;">
       <div class="stat-value" id="statPremiumStatus">Free</div>
-      <div class="stat-label" id="statPremiumLabel">Status Akun</div>
+      <div class="stat-label" id="statPremiumLabel">💎 Status Akun</div>
     </div>
   </div>
 
@@ -579,7 +580,7 @@
     
     <!-- Tombol Chat -->
     <button onclick="showChatModal()" class="btn btn-blue" id="chatButton">💬 Chat Admin</button>
-    <button onclick="showUserChatModal()" class="btn btn-info hidden" id="chatUserButton">👥 Chat User</button>
+    <button onclick="showUserChatModal()" class="btn btn-info hidden" id="chatUserButton" style="display:none;">👥 Chat User</button>
     
     <!-- Tombol Backup & Restore -->
     <button onclick="backupUserData()" class="btn btn-success" style="background:#4285F4;">💾 Backup Data</button>
@@ -598,8 +599,8 @@
   <!-- ========== SEARCH BAR ========== -->
   <div id="searchBar" class="hidden" style="margin-bottom:20px;">
     <div style="display:flex;gap:8px;">
-      <input type="text" id="searchInput" placeholder="Cari riwayat lacak..." style="flex:2;" oninput="performSearch()">
-      <button onclick="clearSearch()" class="btn btn-gray btn-sm">Clear</button>
+      <input type="text" id="searchInput" placeholder="🔍 Cari riwayat lacak..." style="flex:2;" oninput="performSearch()">
+      <button onclick="clearSearch()" class="btn btn-gray btn-sm">✕ Clear</button>
     </div>
   </div>
 
@@ -619,7 +620,7 @@
 <!-- END APPLICATION PAGE -->
 
 <!-- ============================================================
-     AKHIR BLOK 2 R1
+     AKHIR BLOK 2 R2
      Blok 3 akan melanjutkan: Modal Auth (Login, Register, Forgot Password)
      ============================================================ -->
 
@@ -2106,9 +2107,9 @@ console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, dan 11.');
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 8 R2 – JS CORE 1 ===== -->
+<!-- ===== TRACERID → BLOK 8 R3 – JS CORE 1 ===== -->
 <!-- ============================================================
-     BLOK 8 R2 – JS CORE 1 (TRACEID)
+     BLOK 8 R3 – JS CORE 1 (TRACEID) - LENGKAP + DIPERBAIKI
      (PWA, Service Worker, Storage, Auth, Theme, Navigation, Premium)
      ============================================================
      PENJELASAN:
@@ -2118,8 +2119,8 @@ console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, dan 11.');
      - Auth: Login, Register, Logout
      - Theme toggle, Navigation, Premium Activation
      - WhatsApp formatter, Toast, Modal helpers
-     - IDENTIK dengan Notepad+ v3.3
-     - DIPERBAIKI: Semua fungsi sudah lengkap dan siap digunakan
+     - DIPERBAIKI: updateHeaderUser() menampilkan Panel Admin dengan benar,
+       semua fungsi sudah lengkap dan siap digunakan
      ============================================================ -->
 
 <script>
@@ -2563,7 +2564,7 @@ function addSecurityLog(msg) {
 }
 
 // ============================================================
-// UPDATE HEADER USER
+// UPDATE HEADER USER - DIPERBAIKI
 // ============================================================
 function updateHeaderUser() {
   var s = getSession();
@@ -2576,33 +2577,77 @@ function updateHeaderUser() {
   var chatUserBtn = document.getElementById('chatUserButton');
 
   if(s){
+    // Tampilkan badge user
     if (badge) {
-      badge.style.display='flex'; 
+      badge.style.display = 'flex'; 
       var avatar = document.getElementById('userAvatar');
       var nameDisplay = document.getElementById('userNameDisplay');
       if (avatar) avatar.textContent = s.nama.charAt(0).toUpperCase();
       if (nameDisplay) nameDisplay.textContent = s.nama;
     }
+    
+    // Tampilkan profil dan logout
     if (prof) prof.classList.remove('hidden');
     if (logout) logout.classList.remove('hidden');
-    if (adm) adm.classList.toggle('hidden', s.role!=='superadmin');
-    if (act) act.style.display = (s.role=='user'&&!s.premium) ? 'inline-flex' : 'none';
-
-    if (s.role === 'superadmin') {
-      if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
-      if (chatUserBtn) chatUserBtn.classList.remove('hidden');
-    } else {
-      if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-      if (chatUserBtn) chatUserBtn.classList.add('hidden');
+    
+    // ============================================================
+    // ⭐ PERBAIKAN UTAMA: TAMPILKAN PANEL ADMIN JIKA SUPERADMIN
+    // ============================================================
+    if (adm) {
+      if (s.role === 'superadmin') {
+        adm.style.display = 'inline-flex'; // Tampilkan
+        adm.classList.remove('hidden');
+        console.log('✅ Panel Admin ditampilkan untuk Super Admin');
+      } else {
+        adm.style.display = 'none'; // Sembunyikan
+        adm.classList.add('hidden');
+      }
     }
-  }else{
-    if (badge) badge.style.display='none';
-    if (prof) prof.classList.add('hidden');
-    if (adm) adm.classList.add('hidden');
-    if (logout) logout.classList.add('hidden');
-    if (act) act.style.display='none';
-    if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-    if (chatUserBtn) chatUserBtn.classList.add('hidden');
+    
+    // Tampilkan tombol premium jika user biasa belum premium
+    if (act) {
+      act.style.display = (s.role === 'user' && !s.premium) ? 'inline-flex' : 'none';
+    }
+
+    // ============================================================
+    // ATUR TOMBOL CHAT
+    // ============================================================
+    if (s.role === 'superadmin') {
+      // Super Admin: sembunyikan Chat Admin, tampilkan Chat User
+      if (chatAdminBtn) {
+        chatAdminBtn.classList.add('hidden');
+        chatAdminBtn.style.display = 'none';
+      }
+      if (chatUserBtn) {
+        chatUserBtn.classList.remove('hidden');
+        chatUserBtn.style.display = 'inline-flex';
+      }
+    } else {
+      // User biasa: tampilkan Chat Admin, sembunyikan Chat User
+      if (chatAdminBtn) {
+        chatAdminBtn.classList.remove('hidden');
+        chatAdminBtn.style.display = 'inline-flex';
+      }
+      if (chatUserBtn) {
+        chatUserBtn.classList.add('hidden');
+        chatUserBtn.style.display = 'none';
+      }
+    }
+  } else {
+    // Jika tidak login
+    if (badge) { badge.style.display = 'none'; }
+    if (prof) { prof.classList.add('hidden'); prof.style.display = 'none'; }
+    if (adm) { adm.classList.add('hidden'); adm.style.display = 'none'; }
+    if (logout) { logout.classList.add('hidden'); logout.style.display = 'none'; }
+    if (act) { act.style.display = 'none'; }
+    if (chatAdminBtn) { 
+      chatAdminBtn.classList.remove('hidden'); 
+      chatAdminBtn.style.display = 'inline-flex'; 
+    }
+    if (chatUserBtn) { 
+      chatUserBtn.classList.add('hidden'); 
+      chatUserBtn.style.display = 'none'; 
+    }
   }
 }
 
@@ -2822,12 +2867,13 @@ function autoSaveData() {
   console.log('autoSaveData() akan di-override oleh Blok 9');
 }
 
-console.log('✅ Blok 8 R2 – JS Core 1 TraceID siap digunakan.');
+console.log('✅ Blok 8 R3 – JS Core 1 TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, dan 11.');
+console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admin.');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 8 R2
+     AKHIR BLOK 8 R3
      Blok 9 akan melanjutkan: JS Core 2 (Lacak, Riwayat, Tracker, dll)
      ============================================================ -->
 
@@ -3713,9 +3759,9 @@ function tampilkanPreviewTracker(title, message, image, hasil) {
     html += '<img src="' + image + '" style="max-width
 
 
-<!-- ===== TRACERID → BLOK 10 R2 – JS ADMIN PANEL ===== -->
+<!-- ===== TRACERID → BLOK 10 R3 – JS ADMIN PANEL ===== -->
 <!-- ============================================================
-     BLOK 10 R2 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI)
+     BLOK 10 R3 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI)
      (Super Admin Panel functions, Kode Aktivasi, User Management, 
       Chat Admin, Backup, Settings, Iklan)
      ============================================================
@@ -3729,9 +3775,8 @@ function tampilkanPreviewTracker(title, message, image, hasil) {
      - Iklan: load, save, reset
      - Chat Admin: view, send, mass chat
      - Backup: JSON, HTML, Google Drive, Email
-     - IDENTIK dengan Notepad+ v3.3
-     - DIPERBAIKI: Semua fungsi lengkap, tidak ada error,
-       pengecekan elemen sudah ditambahkan
+     - DIPERBAIKI: Semua fungsi lengkap, pengecekan elemen,
+       console log untuk debugging, error handling
      ============================================================ -->
 
 <script>
@@ -3739,12 +3784,25 @@ function tampilkanPreviewTracker(title, message, image, hasil) {
 // SUPER ADMIN PANEL
 // ============================================================
 function showSuperAdminPanel() {
-  if(!getSession() || getSession().role !== 'superadmin') {
-    showToast('Anda bukan Super Admin!', 'error');
+  console.log('🔍 showSuperAdminPanel() dipanggil');
+  
+  var session = getSession();
+  console.log('📌 Session:', session);
+  
+  if(!session) {
+    showToast('Anda belum login!', 'error');
     return;
   }
+  
+  if(session.role !== 'superadmin') {
+    showToast('Anda bukan Super Admin! Role Anda: ' + session.role, 'error');
+    return;
+  }
+  
+  console.log('✅ Membuka modal superAdminModal');
   openModal('superAdminModal');
   
+  // Isi dropdown paket
   var sel = document.getElementById('adminActivationPackage');
   if (sel) {
     sel.innerHTML = '<option value="">-- Pilih Paket --</option>';
@@ -3752,11 +3810,16 @@ function showSuperAdminPanel() {
     for (var i = 0; i < pkgs.length; i++) {
       sel.innerHTML += '<option value="' + pkgs[i].id + '">' + pkgs[i].name + ' - Rp ' + pkgs[i].price + ' (' + pkgs[i].label + ')</option>';
     }
+    console.log('✅ Dropdown paket diisi');
+  } else {
+    console.error('❌ Elemen adminActivationPackage tidak ditemukan!');
   }
   
   renderAdminUserSelect();
   switchAdminTab('codes');
   refreshAllAdminTabs();
+  
+  console.log('✅ Panel Admin selesai dimuat');
 }
 
 function refreshAllAdminTabs() { 
@@ -3764,23 +3827,35 @@ function refreshAllAdminTabs() {
 }
 
 function switchAdminTab(tab) {
+  console.log('🔄 Beralih ke tab:', tab);
+  
   // Sembunyikan semua tab content
-  document.querySelectorAll('.admin-tab-content').forEach(function(el){ 
-    el.classList.add('hidden'); 
-  });
+  var allTabs = document.querySelectorAll('.admin-tab-content');
+  for (var i = 0; i < allTabs.length; i++) {
+    allTabs[i].classList.add('hidden');
+  }
   
   // Tampilkan tab yang dipilih
   var tabId = 'adminTab' + tab.charAt(0).toUpperCase() + tab.slice(1);
   var tabEl = document.getElementById(tabId);
-  if (tabEl) tabEl.classList.remove('hidden');
+  if (tabEl) {
+    tabEl.classList.remove('hidden');
+    console.log('✅ Tab ditampilkan:', tabId);
+  } else {
+    console.error('❌ Tab tidak ditemukan:', tabId);
+  }
   
   // Update active class pada tab buttons
-  document.querySelectorAll('.admin-tab').forEach(function(b){ 
-    b.classList.remove('active'); 
-  });
+  var allButtons = document.querySelectorAll('.admin-tab');
+  for (var i = 0; i < allButtons.length; i++) {
+    allButtons[i].classList.remove('active');
+  }
   var btnId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
   var btnEl = document.getElementById(btnId);
-  if (btnEl) btnEl.classList.add('active');
+  if (btnEl) {
+    btnEl.classList.add('active');
+    console.log('✅ Button aktif:', btnId);
+  }
   
   // Refresh konten sesuai tab
   if(tab === 'users') renderAdminUserList();
@@ -3796,7 +3871,10 @@ function switchAdminTab(tab) {
 // ============================================================
 function renderAdminUserSelect() {
   var select = document.getElementById('adminActivationUserSelect');
-  if (!select) return;
+  if (!select) {
+    console.error('❌ Elemen adminActivationUserSelect tidak ditemukan!');
+    return;
+  }
   
   var users = getAllUsers();
   var filtered = [];
@@ -3809,17 +3887,24 @@ function renderAdminUserSelect() {
     var u = filtered[i];
     select.innerHTML += '<option value="' + u.username + '">' + u.nama + ' (' + u.username + ')</option>';
   }
+  console.log('✅ Dropdown user diisi, total:', filtered.length);
 }
 
 // ============================================================
 // KODE AKTIVASI
 // ============================================================
 function adminCreateActivationCode() {
+  console.log('🔑 Membuat kode aktivasi...');
+  
   var userField = document.getElementById('adminActivationUserSelect');
   var pkgField = document.getElementById('adminActivationPackage');
   var res = document.getElementById('adminCodeResult');
   
-  if (!userField || !pkgField || !res) return;
+  if (!userField || !pkgField || !res) {
+    console.error('❌ Elemen tidak ditemukan!');
+    showToast('Error: Elemen tidak ditemukan!', 'error');
+    return;
+  }
   
   var userVal = userField.value;
   var pkgVal = pkgField.value;
@@ -3827,7 +3912,8 @@ function adminCreateActivationCode() {
   res.innerHTML = '';
   
   if(!userVal || !pkgVal){ 
-    res.innerHTML = '<p class="form-error show">Pilih user dan paket!</p>'; 
+    res.innerHTML = '<p class="form-error show">⚠️ Pilih user dan paket!</p>'; 
+    console.warn('⚠️ User atau paket tidak dipilih');
     return; 
   }
   
@@ -3841,20 +3927,24 @@ function adminCreateActivationCode() {
   };
   saveValidCodes(valid);
   
-  res.innerHTML = '<p class="form-success show">✅ Kode: <strong>' + code + '</strong></p>';
+  res.innerHTML = '<p class="form-success show">✅ Kode: <strong style="font-size:1.1rem;">' + code + '</strong></p>';
   renderActiveCodesList();
-  showToast('Kode aktivasi berhasil dibuat!', 'success');
+  showToast('✅ Kode aktivasi berhasil dibuat!', 'success');
+  console.log('✅ Kode aktivasi dibuat:', code);
 }
 
 function renderActiveCodesList() {
   var container = document.getElementById('activeCodesList');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen activeCodesList tidak ditemukan!');
+    return;
+  }
   
   var valid = getValidCodes();
   var keys = Object.keys(valid);
   
   if (keys.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-muted);">Belum ada kode.</p>';
+    container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:10px;">Belum ada kode.</p>';
     return;
   }
   
@@ -3862,10 +3952,12 @@ function renderActiveCodesList() {
   for (var i = 0; i < keys.length; i++) {
     var code = keys[i];
     var c = valid[code];
-    var status = c.used ? '<span style="color:red;">Terpakai</span>' : '<span style="color:green;">Aktif</span>';
+    var status = c.used ? '<span style="color:#ef4444;">🔴 Terpakai</span>' : '<span style="color:#10b981;">🟢 Aktif</span>';
     var usedBy = c.usedBy ? ' oleh ' + c.usedBy : '';
-    html += '<div style="padding:4px 0;border-bottom:1px solid var(--border-color);">' +
-      '<strong>' + code + '</strong> - Paket: ' + c.packageId + ' - ' + status + usedBy +
+    var date = new Date(c.createdAt).toLocaleDateString();
+    html += '<div style="padding:6px 0;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">' +
+      '<span><strong>' + code + '</strong> - Paket: ' + c.packageId + '</span>' +
+      '<span>' + status + usedBy + ' <span style="font-size:0.7rem;color:var(--text-muted);">' + date + '</span></span>' +
     '</div>';
   }
   container.innerHTML = html;
@@ -3875,67 +3967,93 @@ function renderActiveCodesList() {
 // ADMIN USER LIST
 // ============================================================
 function renderAdminUserList() {
+  console.log('👥 renderAdminUserList() dipanggil');
+  
   var container = document.getElementById('adminUserList');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen adminUserList tidak ditemukan!');
+    return;
+  }
   
   var users = getAllUsers();
+  console.log('📌 Total user:', users.length);
   
   if (users.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-muted);">Belum ada user.</p>';
+    container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Belum ada user.</p>';
     return;
   }
   
   var html = '<table class="admin-table" style="width:100%;border-collapse:collapse;font-size:0.8rem;">';
-  html += '<tr style="background:var(--bg-hover);">';
-  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Nama</th>';
-  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Username</th>';
-  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Email</th>';
-  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Premium</th>';
-  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Terkunci</th>';
-  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">Aksi</th>';
-  html += '</tr>';
+  html += '<thead><tr style="background:var(--bg-hover);">';
+  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">👤 Nama</th>';
+  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">🔑 Username</th>';
+  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">📧 Email</th>';
+  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">💎 Premium</th>';
+  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">🔒 Terkunci</th>';
+  html += '<th style="padding:8px 10px;border:1px solid var(--border-color);text-align:left;">⚡ Aksi</th>';
+  html += '</tr></thead><tbody>';
   
   for (var i = 0; i < users.length; i++) {
     var u = users[i];
-    html += '<tr>';
-    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + u.nama + '</td>';
+    var isSuperAdmin = (u.role === 'superadmin');
+    var premiumStatus = u.premium ? '🟢 Ya' : '⚪ Tidak';
+    var lockedStatus = u.locked ? '🔴 Ya' : '🟢 Tidak';
+    
+    html += '<tr style="' + (isSuperAdmin ? 'background:var(--bg-tertiary);' : '') + '">';
+    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + u.nama + (isSuperAdmin ? ' 👑' : '') + '</td>';
     html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + u.username + '</td>';
     html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + u.email + '</td>';
-    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + (u.premium ? 'Ya' : 'Tidak') + '</td>';
-    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + (u.locked ? 'Ya' : 'Tidak') + '</td>';
+    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + premiumStatus + '</td>';
+    html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">' + lockedStatus + '</td>';
     html += '<td style="padding:8px 10px;border:1px solid var(--border-color);">';
-    html += '<button class="btn btn-sm btn-warning" onclick="toggleLockUser(\'' + u.id + '\')">' + (u.locked ? 'Buka' : 'Kunci') + '</button>';
-    if (u.role !== 'superadmin') {
-      html += ' <button class="btn btn-sm btn-danger" onclick="deleteUser(\'' + u.id + '\')">Hapus</button>';
+    if (!isSuperAdmin) {
+      html += '<button class="btn btn-sm btn-warning" onclick="toggleLockUser(\'' + u.id + '\')" style="margin-right:4px;">' + (u.locked ? '🔓 Buka' : '🔒 Kunci') + '</button>';
+      html += '<button class="btn btn-sm btn-danger" onclick="deleteUser(\'' + u.id + '\')">🗑 Hapus</button>';
+    } else {
+      html += '<span style="color:var(--text-muted);font-size:0.7rem;">Super Admin</span>';
     }
     html += '</td>';
     html += '</tr>';
   }
   
-  html += '</table>';
+  html += '</tbody></table>';
   container.innerHTML = html;
+  console.log('✅ Daftar user selesai dirender');
 }
 
 function toggleLockUser(id) {
+  console.log('🔒 toggleLockUser() dipanggil untuk ID:', id);
+  
   var users = getAllUsers();
   var u = null;
   for (var i = 0; i < users.length; i++) {
     if (users[i].id === id) { u = users[i]; break; }
   }
-  if (!u) return;
+  if (!u) {
+    showToast('User tidak ditemukan!', 'error');
+    return;
+  }
   
   u.locked = !u.locked;
   saveAllUsers(users);
-  showToast(u.locked ? 'User dikunci.' : 'User dibuka.', 'warning');
+  showToast(u.locked ? '🔒 User dikunci.' : '🔓 User dibuka.', 'warning');
   renderAdminUserList();
+  addSecurityLog('User ' + u.username + ' ' + (u.locked ? 'dikunci' : 'dibuka'));
 }
 
 function deleteUser(id) {
-  showConfirm('Hapus User?', 'Data user akan hilang.', function(){
+  console.log('🗑 deleteUser() dipanggil untuk ID:', id);
+  
+  showConfirm('⚠️ Hapus User?', 'Semua data lacak user akan hilang permanen!', function(){
     var users = getAllUsers();
     var filtered = [];
+    var deletedUser = null;
     for (var i = 0; i < users.length; i++) {
-      if (users[i].id !== id) filtered.push(users[i]);
+      if (users[i].id !== id) {
+        filtered.push(users[i]);
+      } else {
+        deletedUser = users[i];
+      }
     }
     saveAllUsers(filtered);
     
@@ -3943,8 +4061,9 @@ function deleteUser(id) {
     delete lacak[id];
     saveAllLacakData(lacak);
     
-    showToast('User dihapus.', 'warning');
+    showToast('🗑 User ' + deletedUser.username + ' dihapus.', 'warning');
     renderAdminUserList();
+    addSecurityLog('User ' + deletedUser.username + ' dihapus');
   });
 }
 
@@ -3952,34 +4071,46 @@ function deleteUser(id) {
 // PACKAGE MANAGEMENT
 // ============================================================
 function renderPackageEditList() {
+  console.log('💎 renderPackageEditList() dipanggil');
+  
   var container = document.getElementById('packageEditList');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen packageEditList tidak ditemukan!');
+    return;
+  }
   
   var pkgs = getPackages();
+  console.log('📌 Total paket:', pkgs.length);
   
   if (pkgs.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-muted);">Belum ada paket.</p>';
+    container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Belum ada paket.</p>';
     return;
   }
   
   var html = '';
   for (var i = 0; i < pkgs.length; i++) {
     var p = pkgs[i];
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);">';
-    html += '<span>' + p.name + ' - Rp ' + p.price + ' (' + p.label + ') – ' + p.features + '</span>';
-    html += '<button class="btn btn-sm btn-warning" onclick="editPackage(\'' + p.id + '\')">Edit</button>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:8px;">';
+    html += '<div><strong>' + p.name + '</strong> - Rp ' + p.price.toLocaleString('id-ID') + ' (' + p.label + ')<br><span style="font-size:0.8rem;color:var(--text-muted);">' + p.features + '</span></div>';
+    html += '<button class="btn btn-sm btn-warning" onclick="editPackage(\'' + p.id + '\')">✏️ Edit</button>';
     html += '</div>';
   }
   container.innerHTML = html;
+  console.log('✅ Daftar paket selesai dirender');
 }
 
 function editPackage(id) {
+  console.log('✏️ editPackage() dipanggil untuk ID:', id);
+  
   var pkgs = getPackages();
   var p = null;
   for (var i = 0; i < pkgs.length; i++) {
     if (pkgs[i].id === id) { p = pkgs[i]; break; }
   }
-  if (!p) return;
+  if (!p) {
+    showToast('Paket tidak ditemukan!', 'error');
+    return;
+  }
   
   var idField = document.getElementById('editPackageId');
   var nameField = document.getElementById('editPackageName');
@@ -3989,18 +4120,26 @@ function editPackage(id) {
   var featuresField = document.getElementById('editPackageFeatures');
   var titleEl = document.getElementById('editPackageTitle');
   
-  if (idField) idField.value = p.id;
-  if (nameField) nameField.value = p.name;
-  if (priceField) priceField.value = p.price;
-  if (daysField) daysField.value = p.days;
-  if (labelField) labelField.value = p.label;
+  if (!idField || !nameField || !priceField || !daysField || !labelField) {
+    showToast('Error: Elemen form tidak lengkap!', 'error');
+    return;
+  }
+  
+  idField.value = p.id;
+  nameField.value = p.name;
+  priceField.value = p.price;
+  daysField.value = p.days;
+  labelField.value = p.label;
   if (featuresField) featuresField.value = p.features || '';
-  if (titleEl) titleEl.textContent = 'Edit Paket ' + p.name;
+  if (titleEl) titleEl.textContent = '✏️ Edit Paket ' + p.name;
   
   openModal('editPackageModal');
+  console.log('✅ Modal edit paket dibuka');
 }
 
 function savePackageChanges() {
+  console.log('💾 savePackageChanges() dipanggil');
+  
   var idField = document.getElementById('editPackageId');
   var nameField = document.getElementById('editPackageName');
   var priceField = document.getElementById('editPackagePrice');
@@ -4009,7 +4148,10 @@ function savePackageChanges() {
   var featuresField = document.getElementById('editPackageFeatures');
   var err = document.getElementById('editPackageError');
   
-  if (!idField || !nameField || !priceField || !daysField || !labelField) return;
+  if (!idField || !nameField || !priceField || !daysField || !labelField) {
+    showToast('Error: Elemen form tidak lengkap!', 'error');
+    return;
+  }
   
   var id = idField.value;
   var name = nameField.value.trim();
@@ -4021,7 +4163,26 @@ function savePackageChanges() {
   if (err) err.classList.remove('show');
   
   if(!name || !price || !days || !label){
-    if (err) { err.textContent = 'Semua field wajib!'; err.classList.add('show'); }
+    if (err) { 
+      err.textContent = '⚠️ Semua field wajib diisi!'; 
+      err.classList.add('show'); 
+    }
+    return;
+  }
+  
+  if (price < 0) {
+    if (err) { 
+      err.textContent = '⚠️ Harga tidak boleh negatif!'; 
+      err.classList.add('show'); 
+    }
+    return;
+  }
+  
+  if (days < 1) {
+    if (err) { 
+      err.textContent = '⚠️ Durasi minimal 1 hari!'; 
+      err.classList.add('show'); 
+    }
     return;
   }
   
@@ -4030,7 +4191,10 @@ function savePackageChanges() {
   for (var i = 0; i < pkgs.length; i++) {
     if (pkgs[i].id === id) { p = pkgs[i]; break; }
   }
-  if (!p) return;
+  if (!p) {
+    showToast('Paket tidak ditemukan!', 'error');
+    return;
+  }
   
   p.name = name;
   p.price = price;
@@ -4042,20 +4206,28 @@ function savePackageChanges() {
   closeModal('editPackageModal');
   renderPackageEditList();
   refreshPackageDisplay();
-  showToast('Paket diperbarui!', 'success');
+  showToast('✅ Paket "' + name + '" berhasil diperbarui!', 'success');
+  addSecurityLog('Paket ' + name + ' diperbarui');
+  console.log('✅ Paket diperbarui:', p);
 }
 
 // ============================================================
 // SECURITY LOGS
 // ============================================================
 function renderSecurityLogs() {
+  console.log('🛡 renderSecurityLogs() dipanggil');
+  
   var container = document.getElementById('securityLogList');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen securityLogList tidak ditemukan!');
+    return;
+  }
   
   var logs = getSecurityLogs();
+  console.log('📌 Total log:', logs.length);
   
   if (logs.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-muted);">Tidak ada log.</p>';
+    container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Tidak ada log keamanan.</p>';
     return;
   }
   
@@ -4063,81 +4235,138 @@ function renderSecurityLogs() {
   var start = Math.max(0, logs.length - 50);
   for (var i = logs.length - 1; i >= start; i--) {
     var l = logs[i];
-    html += '<div style="padding:4px 0;font-size:0.75rem;">[' + new Date(l.time).toLocaleString() + '] ' + l.msg + '</div>';
+    var date = new Date(l.time);
+    var dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    html += '<div style="padding:6px 0;border-bottom:1px solid var(--border-color);font-size:0.75rem;display:flex;justify-content:space-between;flex-wrap:wrap;">';
+    html += '<span>🕐 ' + dateStr + '</span>';
+    html += '<span>' + l.msg + '</span>';
+    html += '</div>';
   }
   container.innerHTML = html;
+  console.log('✅ Log keamanan selesai dirender');
 }
 
 function addSecurityLog(msg) {
   var logs = getSecurityLogs();
   logs.push({time: new Date().toISOString(), msg: msg});
   saveSecurityLogs(logs);
+  console.log('📝 Log ditambahkan:', msg);
 }
 
 function clearAllSecurityLogs() {
-  saveSecurityLogs([]);
-  renderSecurityLogs();
-  showToast('Log dibersihkan.', 'warning');
+  console.log('🗑 clearAllSecurityLogs() dipanggil');
+  
+  showConfirm('⚠️ Bersihkan Log?', 'Semua log keamanan akan dihapus permanen!', function(){
+    saveSecurityLogs([]);
+    renderSecurityLogs();
+    showToast('🗑 Log keamanan dibersihkan.', 'warning');
+    addSecurityLog('Log keamanan dibersihkan');
+  });
 }
 
 function lockAllUsers() {
-  var users = getAllUsers();
-  for (var i = 0; i < users.length; i++) {
-    users[i].locked = true;
-  }
-  saveAllUsers(users);
-  showToast('Semua user dikunci.', 'warning');
-  renderAdminUserList();
-  addSecurityLog('Semua user dikunci.');
+  console.log('🔒 lockAllUsers() dipanggil');
+  
+  showConfirm('⚠️ Kunci Semua User?', 'Semua user akan terkunci dan tidak bisa login!', function(){
+    var users = getAllUsers();
+    var count = 0;
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].role !== 'superadmin') {
+        users[i].locked = true;
+        count++;
+      }
+    }
+    saveAllUsers(users);
+    showToast('🔒 ' + count + ' user dikunci.', 'warning');
+    renderAdminUserList();
+    addSecurityLog('Semua user (' + count + ' user) dikunci');
+  });
 }
 
 function unlockAllUsers() {
-  var users = getAllUsers();
-  for (var i = 0; i < users.length; i++) {
-    users[i].locked = false;
-  }
-  saveAllUsers(users);
-  showToast('Semua user dibuka.', 'success');
-  renderAdminUserList();
-  addSecurityLog('Semua user dibuka.');
+  console.log('🔓 unlockAllUsers() dipanggil');
+  
+  showConfirm('⚠️ Buka Semua User?', 'Semua user akan dibuka dan bisa login kembali!', function(){
+    var users = getAllUsers();
+    var count = 0;
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].role !== 'superadmin') {
+        users[i].locked = false;
+        count++;
+      }
+    }
+    saveAllUsers(users);
+    showToast('🔓 ' + count + ' user dibuka.', 'success');
+    renderAdminUserList();
+    addSecurityLog('Semua user (' + count + ' user) dibuka');
+  });
 }
 
 // ============================================================
 // SETTINGS
 // ============================================================
 function saveAdminWhatsapp() {
+  console.log('💾 saveAdminWhatsapp() dipanggil');
+  
   var input = document.getElementById('adminWhatsappInput');
-  if (!input) return;
+  if (!input) {
+    showToast('Error: Elemen tidak ditemukan!', 'error');
+    return;
+  }
   
   var val = input.value.trim();
-  if(!val) { showToast('Masukkan nomor WhatsApp!', 'error'); return; }
+  if(!val) { 
+    showToast('⚠️ Masukkan nomor WhatsApp!', 'error'); 
+    return; 
+  }
   
   saveWhatsapp(val);
   updateAllWaDisplays();
-  showToast('Nomor WhatsApp admin disimpan.', 'success');
-  addSecurityLog('Nomor WA admin diubah.');
+  showToast('✅ Nomor WhatsApp admin disimpan: ' + formatWa(val), 'success');
+  addSecurityLog('Nomor WA admin diubah menjadi ' + val);
+  console.log('✅ WhatsApp admin disimpan:', val);
 }
 
 function changeAdminPassword() {
+  console.log('🔑 changeAdminPassword() dipanggil');
+  
   var input = document.getElementById('adminNewPassword');
-  if (!input) return;
+  if (!input) {
+    showToast('Error: Elemen tidak ditemukan!', 'error');
+    return;
+  }
   
   var pw = input.value.trim();
-  if(!pw) { showToast('Isi password baru!', 'error'); return; }
-  if(pw.length < 6) { showToast('Password minimal 6 karakter!', 'error'); return; }
+  if(!pw) { 
+    showToast('⚠️ Isi password baru!', 'error'); 
+    return; 
+  }
+  if(pw.length < 6) { 
+    showToast('⚠️ Password minimal 6 karakter!', 'error'); 
+    return; 
+  }
   
   SUPER_ADMIN_DATA.password = encodePassword(pw);
-  showToast('Password Super Admin diubah.', 'success');
-  addSecurityLog('Password super admin diubah.');
+  showToast('✅ Password Super Admin diubah!', 'success');
+  addSecurityLog('Password super admin diubah');
   input.value = '';
+  console.log('✅ Password super admin diubah');
 }
 
 function changeAdminName() {
+  console.log('✏️ changeAdminName() dipanggil');
+  
   var input = document.getElementById('adminNewName');
-  if (!input) return;
+  if (!input) {
+    showToast('Error: Elemen tidak ditemukan!', 'error');
+    return;
+  }
   
   var nm = input.value.trim();
-  if(!nm) { showToast('Isi nama baru!', 'error'); return; }
+  if(!nm) { 
+    showToast('⚠️ Isi nama baru!', 'error'); 
+    return; 
+  }
   
   SUPER_ADMIN_DATA.nama = nm;
   var s = getSession();
@@ -4145,13 +4374,17 @@ function changeAdminName() {
     s.nama = nm;
     saveSession(s);
   }
-  showToast('Nama Super Admin diubah.', 'success');
-  addSecurityLog('Nama super admin diubah.');
+  showToast('✅ Nama Super Admin diubah: ' + nm, 'success');
+  addSecurityLog('Nama super admin diubah menjadi ' + nm);
   input.value = '';
+  updateHeaderUser();
+  console.log('✅ Nama super admin diubah:', nm);
 }
 
 function resetAllApplicationData() {
-  showConfirm('RESET SEMUA DATA?', 'Semua user, data lacak, pengaturan akan terhapus permanen!', function(){
+  console.log('⚠️ resetAllApplicationData() dipanggil');
+  
+  showConfirm('⚠️ RESET SEMUA DATA?', 'Semua user, data lacak, dan pengaturan akan TERHAPUS PERMANEN!', function(){
     localStorage.clear();
     
     saveAllUsers([SUPER_ADMIN_DATA]);
@@ -4163,8 +4396,8 @@ function resetAllApplicationData() {
     saveWhatsapp(DEFAULT_WHATSAPP);
     
     updateAllWaDisplays();
-    showToast('Semua data telah direset!', 'warning');
-    addSecurityLog('RESET SEMUA DATA dilakukan.');
+    showToast('⚠️ Semua data telah direset!', 'warning');
+    addSecurityLog('RESET SEMUA DATA dilakukan');
     
     var s = getSession();
     if(s && s.role === 'superadmin') saveSession(SUPER_ADMIN_DATA);
@@ -4173,10 +4406,14 @@ function resetAllApplicationData() {
     refreshAppUI();
     updateStats();
     updateHeaderUser();
+    
+    console.log('⚠️ Semua data direset');
   });
 }
 
 function restartApplication() {
+  console.log('🔄 restartApplication() dipanggil');
+  
   if (confirm('🔄 Restart aplikasi? Halaman akan dimuat ulang.')) {
     location.reload();
   }
@@ -4186,11 +4423,16 @@ function restartApplication() {
 // IKLAN
 // ============================================================
 function loadAdSettings() {
+  console.log('📢 loadAdSettings() dipanggil');
+  
   var titleEl = document.getElementById('adTitle');
   var descEl = document.getElementById('adDescription');
   var btnEl = document.getElementById('adButtonText');
   
-  if (!titleEl || !descEl || !btnEl) return;
+  if (!titleEl || !descEl || !btnEl) {
+    console.error('❌ Elemen iklan tidak ditemukan!');
+    return;
+  }
   
   var defaultAd = {
     title: '📍 TraceID – Lacak Sekarang!',
@@ -4211,22 +4453,28 @@ function loadAdSettings() {
   titleEl.value = ad.title || '';
   descEl.value = ad.description || '';
   btnEl.value = ad.buttonText || '';
+  console.log('✅ Iklan dimuat');
 }
 
 function saveAdSettings() {
+  console.log('💾 saveAdSettings() dipanggil');
+  
   var titleEl = document.getElementById('adTitle');
   var descEl = document.getElementById('adDescription');
   var btnEl = document.getElementById('adButtonText');
   var resultEl = document.getElementById('adSaveResult');
   
-  if (!titleEl || !descEl || !btnEl || !resultEl) return;
+  if (!titleEl || !descEl || !btnEl || !resultEl) {
+    showToast('Error: Elemen tidak ditemukan!', 'error');
+    return;
+  }
   
   var title = titleEl.value.trim();
   var desc = descEl.value.trim();
   var btn = btnEl.value.trim();
   
   if (!title || !desc || !btn) {
-    resultEl.innerHTML = '<p class="form-error show">Semua field wajib diisi!</p>';
+    resultEl.innerHTML = '<p class="form-error show">⚠️ Semua field wajib diisi!</p>';
     return;
   }
   
@@ -4235,11 +4483,15 @@ function saveAdSettings() {
   
   resultEl.innerHTML = '<p class="form-success show">✅ Iklan berhasil disimpan!</p>';
   renderLandingAd();
-  showToast('Iklan diperbarui!', 'success');
+  showToast('✅ Iklan diperbarui!', 'success');
+  addSecurityLog('Iklan landing page diperbarui');
+  console.log('✅ Iklan disimpan');
 }
 
 function resetAdSettings() {
-  if (confirm('Reset iklan ke default?')) {
+  console.log('🔄 resetAdSettings() dipanggil');
+  
+  if (confirm('⚠️ Reset iklan ke default?')) {
     localStorage.removeItem('tr_adSettings');
     var resultEl = document.getElementById('adSaveResult');
     if (resultEl) {
@@ -4247,7 +4499,8 @@ function resetAdSettings() {
     }
     loadAdSettings();
     renderLandingAd();
-    showToast('Iklan direset.', 'warning');
+    showToast('🔄 Iklan direset ke default.', 'warning');
+    console.log('✅ Iklan direset');
   }
 }
 
@@ -4255,6 +4508,8 @@ function resetAdSettings() {
 // BACKUP & RESTORE
 // ============================================================
 function backupAllDataJSON() {
+  console.log('💾 backupAllDataJSON() dipanggil');
+  
   var allData = {};
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
@@ -4265,15 +4520,29 @@ function backupAllDataJSON() {
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'traceid_full_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  
   showToast('✅ Backup JSON berhasil!', 'success');
+  addSecurityLog('Backup JSON dilakukan');
+  console.log('✅ Backup JSON berhasil');
 }
 
 function restoreAllDataJSON(input) {
-  var file = input.files[0];
-  if (!file) return;
+  console.log('📤 restoreAllDataJSON() dipanggil');
   
-  if (!confirm('⚠️ SEMUA data saat ini akan ditimpa. Lanjutkan?')) return;
+  var file = input.files[0];
+  if (!file) {
+    showToast('⚠️ Pilih file terlebih dahulu!', 'error');
+    return;
+  }
+  
+  if (!confirm('⚠️ SEMUA data saat ini akan ditimpa. Lanjutkan?')) {
+    input.value = '';
+    return;
+  }
   
   var reader = new FileReader();
   reader.onload = function(e) {
@@ -4283,10 +4552,12 @@ function restoreAllDataJSON(input) {
       for (var key in data) {
         localStorage.setItem(key, data[key]);
       }
-      showToast('✅ Data JSON berhasil di-restore! Refresh...', 'success');
+      showToast('✅ Data JSON berhasil di-restore! Halaman akan direfresh...', 'success');
+      addSecurityLog('Restore data JSON dilakukan');
       setTimeout(function(){ location.reload(); }, 2000);
     } catch (err) {
       showToast('❌ File JSON tidak valid.', 'error');
+      console.error('❌ Error parsing JSON:', err);
     }
   };
   reader.readAsText(file);
@@ -4294,41 +4565,59 @@ function restoreAllDataJSON(input) {
 }
 
 function downloadOfflineHTML() {
+  console.log('⬇ downloadOfflineHTML() dipanggil');
+  
   var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
   var blob = new Blob([html], {type: 'text/html'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'traceid_offline_' + new Date().toISOString().slice(0,10) + '.html';
+  document.body.appendChild(a);
   a.click();
-  showToast('⬇ HTML berhasil didownload!', 'success');
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  
+  showToast('⬇ HTML offline berhasil didownload!', 'success');
+  console.log('✅ HTML offline didownload');
 }
 
 function restoreFromHTML(input) {
-  var file = input.files[0];
-  if (!file) return;
+  console.log('📤 restoreFromHTML() dipanggil');
   
-  if (!confirm('⚠️ Halaman akan diganti dengan file HTML ini. Lanjutkan?')) return;
+  var file = input.files[0];
+  if (!file) {
+    showToast('⚠️ Pilih file terlebih dahulu!', 'error');
+    return;
+  }
+  
+  if (!confirm('⚠️ Halaman akan diganti dengan file HTML ini. Lanjutkan?')) {
+    input.value = '';
+    return;
+  }
   
   var reader = new FileReader();
   reader.onload = function(e) {
     var match = e.target.result.match(/<html[^>]*>([\s\S]*)<\/html>/i);
     if (match) {
       document.documentElement.innerHTML = match[1];
-      showToast('✅ Halaman dipulihkan! Refresh...', 'success');
+      showToast('✅ Halaman dipulihkan! Halaman akan direfresh...', 'success');
       setTimeout(function(){ location.reload(); }, 1500);
     } else {
       document.open();
       document.write(e.target.result);
       document.close();
-      showToast('✅ Halaman dipulihkan! Refresh...', 'success');
+      showToast('✅ Halaman dipulihkan! Halaman akan direfresh...', 'success');
       setTimeout(function(){ location.reload(); }, 1500);
     }
+    console.log('✅ HTML restore berhasil');
   };
   reader.readAsText(file);
   input.value = '';
 }
 
 function saveToGoogleDrive() {
+  console.log('☁️ saveToGoogleDrive() dipanggil');
+  
   var allData = {};
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
@@ -4347,8 +4636,10 @@ function saveToGoogleDrive() {
     })
     .then(function() {
       showToast('✅ File berhasil dibagikan! Pilih Google Drive untuk menyimpan.', 'success');
+      console.log('✅ File dibagikan via share API');
     })
     .catch(function(err) {
+      console.warn('⚠️ Share dibatalkan atau error:', err);
       downloadBackupFile(blob);
     });
   } else {
@@ -4360,11 +4651,17 @@ function downloadBackupFile(blob) {
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
   showToast('⬇ File backup didownload. Simpan ke Google Drive secara manual.', 'success');
+  console.log('✅ Backup file didownload');
 }
 
 function emailBackup() {
+  console.log('📧 emailBackup() dipanggil');
+  
   var allData = {};
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
@@ -4376,14 +4673,22 @@ function emailBackup() {
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'traceid_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+  
   showToast('📧 File backup telah didownload. Silakan lampirkan ke email Anda.', 'success');
+  addSecurityLog('Backup via email dilakukan');
+  console.log('✅ Backup email siap');
 }
 
 // ============================================================
 // CHAT ADMIN
 // ============================================================
 function renderAdminChat() {
+  console.log('💬 renderAdminChat() dipanggil');
+  
   var allMessages = getChatMessages();
   var userList = [];
   
@@ -4404,20 +4709,24 @@ function renderAdminChat() {
         select.innerHTML += '<option value="' + users[i].username + '">' + users[i].nama + ' (' + users[i].username + ')</option>';
       }
     }
+    console.log('✅ Dropdown chat user diisi, total:', userList.length);
   }
   
   var container = document.getElementById('adminChatMessages');
   if (container) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk melihat chat.</p>';
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Pilih user untuk melihat chat.</p>';
   }
 }
 
 function setAdminChatTarget(username) {
+  console.log('🎯 setAdminChatTarget() dipanggil untuk:', username);
   if (!username) return;
   loadAdminChat(username);
 }
 
 function loadAdminChat(username) {
+  console.log('📥 loadAdminChat() dipanggil untuk:', username);
+  
   var allMessages = getChatMessages();
   var filtered = [];
   
@@ -4429,10 +4738,13 @@ function loadAdminChat(username) {
   }
   
   var container = document.getElementById('adminChatMessages');
-  if (!container) return;
+  if (!container) {
+    console.error('❌ Elemen adminChatMessages tidak ditemukan!');
+    return;
+  }
   
   if (filtered.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada chat dengan ' + username + '.</p>';
+    container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Belum ada chat dengan ' + username + '.</p>';
     return;
   }
   
@@ -4443,26 +4755,41 @@ function loadAdminChat(username) {
     var m = filtered[i];
     var isAdmin = (m.from === 'admin');
     var cls = isAdmin ? 'chat-msg admin' : 'chat-msg user';
-    var sender = isAdmin ? 'Admin' : m.from;
+    var sender = isAdmin ? '👑 Admin' : m.from;
     html += '<div class="' + cls + '"><div class="chat-sender">' + sender + '</div>' + 
       escapeHTML(m.text) + '<div class="chat-time">' + new Date(m.time).toLocaleString() + '</div></div>';
   }
   container.innerHTML = html;
   container.scrollTop = container.scrollHeight;
+  console.log('✅ Chat dengan ' + username + ' dimuat, total pesan:', filtered.length);
 }
 
 function sendAdminChat() {
+  console.log('📤 sendAdminChat() dipanggil');
+  
   var select = document.getElementById('adminChatUserSelect');
-  if (!select) { showToast('Dropdown user tidak ditemukan!', 'error'); return; }
+  if (!select) { 
+    showToast('Error: Dropdown user tidak ditemukan!', 'error'); 
+    return; 
+  }
   
   var target = select.value;
-  if (!target) { showToast('Pilih user!', 'error'); return; }
+  if (!target) { 
+    showToast('⚠️ Pilih user terlebih dahulu!', 'error'); 
+    return; 
+  }
   
   var input = document.getElementById('adminChatInput');
-  if (!input) return;
+  if (!input) {
+    showToast('Error: Input chat tidak ditemukan!', 'error');
+    return;
+  }
   
   var text = input.value.trim();
-  if (!text) return;
+  if (!text) {
+    showToast('⚠️ Tulis pesan terlebih dahulu!', 'error');
+    return;
+  }
   
   var msgs = getChatMessages();
   msgs.push({ 
@@ -4474,15 +4801,29 @@ function sendAdminChat() {
   saveChatMessages(msgs);
   input.value = '';
   loadAdminChat(target);
-  showToast('Balasan terkirim ke ' + target, 'success');
+  showToast('✅ Balasan terkirim ke ' + target, 'success');
+  addSecurityLog('Chat dikirim ke ' + target);
+  console.log('✅ Chat terkirim ke:', target);
 }
 
 function sendMassChat() {
+  console.log('📢 sendMassChat() dipanggil');
+  
   var textarea = document.getElementById('massChatMessage');
-  if (!textarea) return;
+  if (!textarea) {
+    showToast('Error: Textarea tidak ditemukan!', 'error');
+    return;
+  }
   
   var text = textarea.value.trim();
-  if (!text) { showToast('Tulis pesan!', 'error'); return; }
+  if (!text) { 
+    showToast('⚠️ Tulis pesan terlebih dahulu!', 'error'); 
+    return; 
+  }
+  
+  if (!confirm('⚠️ Kirim pesan ini ke SEMUA user? (' + text.substring(0, 30) + '...)')) {
+    return;
+  }
   
   var users = getAllUsers();
   var msgs = getChatMessages();
@@ -4508,15 +4849,18 @@ function sendMassChat() {
   });
   saveChatMessages(msgs);
   textarea.value = '';
-  showToast('Pesan massal terkirim ke ' + count + ' user!', 'success');
+  showToast('📢 Pesan massal terkirim ke ' + count + ' user!', 'success');
+  addSecurityLog('Chat massal dikirim ke ' + count + ' user');
+  console.log('✅ Chat massal terkirim ke', count, 'user');
 }
 
-console.log('✅ Blok 10 R2 – JS Admin Panel TraceID siap digunakan.');
+console.log('✅ Blok 10 R3 – JS Admin Panel TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi admin sudah lengkap dan siap digunakan.');
+console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 10 R2
+     AKHIR BLOK 10 R3
      ============================================================ -->
 
 
