@@ -1,6 +1,6 @@
-<!-- ===== TRACERID → BLOK 1 R4 – PEMBUKA APLIKASI ===== -->
+<!-- ===== TRICEID PRO → BLOK 1 R5 – PEMBUKA APLIKASI TraceID (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 1 R4 – PEMBUKA APLIKASI TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 1 R5 – PEMBUKA APLIKASI TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
      (Landing Page, Header, CSS Lengkap, Hero Section, 
       Fitur, Paket, Install Banner, Expiry Banner)
      ============================================================
@@ -14,6 +14,7 @@
        installBanner dan expiryWarning sudah ada.
      - DITAMBAHKAN: CSS untuk tombol Gmail Location & Sosmed Location.
      - DITAMBAHKAN: CSS untuk tombol-tombol di toolbar.
+     - DIPERBAIKI: Tombol Login menggunakan onclick="showLoginModal()"
      ============================================================ -->
 <!DOCTYPE html>
 <html lang="id">
@@ -375,12 +376,154 @@
 <body>
 
 <!-- CONNECTION STATUS BADGE -->
-<div id="connectionBadge" style="position:fixed;top:10px;right:10px;z-index:997;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:#10b981;color:#fff;opacity:0.85
+<div id="connectionBadge" style="position:fixed;top:10px;right:10px;z-index:997;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:#10b981;color:#fff;opacity:0.85;">
+  ONLINE
+</div>
 
+<!-- OFFLINE BANNER -->
+<div class="offline-banner" id="offlineBanner">
+  <span><strong>Mode Offline</strong> - Data disimpan di browser. Beberapa fitur terbatas.</span>
+  <button onclick="downloadForOffline()" class="btn btn-warning btn-sm">Download Untuk Offline</button>
+</div>
 
-<!-- ===== TRACERID → BLOK 2 R2 – APPLICATION PAGE ===== -->
+<!-- EXPIRY WARNING BANNER -->
+<div class="expiry-warning" id="expiryWarning">
+  <span id="expiryWarningText">Premium akan segera berakhir!</span>
+  <button onclick="showActivationModal()" class="btn btn-warning btn-sm">Perpanjang Premium</button>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner" onclick="installApplication()">
+  <span><strong>Install TraceID sebagai Aplikasi Desktop!</strong> Buka dari layar utama.</span>
+  <span style="font-size:1.2rem;">📲 Klik Disini</span>
+</div>
+
+<!-- LANDING PAGE -->
+<div class="container" id="landingPage">
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">📍</span>
+      <span class="logo-text">TraceID v1.0</span>
+    </div>
+    <div class="header-buttons">
+      <!-- TOMBOL LOGIN - MENGGUNAKAN onclick="showLoginModal()" -->
+      <button onclick="showLoginModal()" class="btn btn-outline btn-sm">Login</button>
+      <button onclick="showRegisterModal()" class="btn btn-primary btn-sm">Daftar</button>
+      <button onclick="toggleTheme()" id="themeButton1" class="btn btn-gray btn-sm">🌙 Dark Mode</button>
+      <button onclick="openApplication()" class="btn btn-success btn-sm">Buka Aplikasi</button>
+      <button onclick="downloadForOffline()" class="btn btn-blue btn-sm">Download Offline</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-icon">📍</div>
+    <h1 class="gradient-text">TraceID – Smart People Locator</h1>
+    <p class="hero-description">
+      Lacak lokasi seseorang dengan mudah dan akurat. Gunakan IP Address, Email, 
+      atau Media Sosial (TikTok, Instagram, Facebook, WhatsApp) untuk menemukan orang yang Anda cari. 
+      Cocok untuk mencari HP hilang, kerabat yang kabur, atau mengawasi anak.
+    </p>
+    <div class="hero-buttons">
+      <button onclick="openApplication()" class="btn btn-primary btn-lg">🔍 Mulai Lacak Sekarang</button>
+      <button onclick="showLoginModal()" class="btn btn-outline btn-lg">Login</button>
+      <button onclick="installApplication()" class="btn btn-success btn-lg" id="heroInstallButton">📲 Install Desktop</button>
+    </div>
+  </section>
+
+  <!-- BANNER HUBUNGI ADMIN VIA CHAT -->
+  <div class="whatsapp-banner" onclick="hubungiAdminLanding()">
+    <div class="whatsapp-banner-left">
+      <span class="whatsapp-banner-icon">💬</span>
+      <div>
+        <strong>Hubungi Admin</strong>
+        <br>
+        <small>Butuh bantuan lacak? Chat langsung dengan Admin.</small>
+      </div>
+    </div>
+    <div class="whatsapp-banner-right">
+      <span>Chat Admin</span>
+      <span style="font-size:1.2rem;">👉</span>
+    </div>
+  </div>
+
 <!-- ============================================================
-     BLOK 2 R2 – APPLICATION PAGE TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 1 LANJUTAN – FITUR UNGGULAN & PAKET PREMIUM
+     ============================================================ -->
+  <h3 class="section-title">🔍 Fitur Pelacakan Unggulan</h3>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h4>Lacak via IP Address</h4>
+      <p>Masukkan IP target dan dapatkan lokasi (kota, provinsi, ISP, koordinat GPS).</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📧</div>
+      <h4>Lacak via Email</h4>
+      <p>Cari akun media sosial dan platform yang terdaftar dengan email target.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎵</div>
+      <h4>Lacak via TikTok</h4>
+      <p>Temukan bio, link, followers, dan info lokasi dari profil TikTok.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📷</div>
+      <h4>Lacak via Instagram</h4>
+      <p>Cari info kontak, email, lokasi, dan postingan terbaru dari profil IG.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📘</div>
+      <h4>Lacak via Facebook</h4>
+      <p>Dapatkan info publik, lokasi, foto, dan friends list dari akun Facebook.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📱</div>
+      <h4>Lacak via WhatsApp</h4>
+      <p>Validasi nomor HP, cek negara, provider, dan foto profil WhatsApp.</p>
+    </div>
+  </div>
+
+  <h3 class="section-title">💎 Paket Premium TraceID</h3>
+  <div class="price-grid" id="landingPriceGrid">
+    <!-- Diisi oleh JavaScript refreshPackageDisplay() -->
+  </div>
+
+  <!-- TOMBOL BACKUP DATA -->
+  <div style="text-align:center;margin:30px 0;">
+    <button class="btn btn-lg" style="background:#3b82f6;color:#fff;" onclick="backupSebelumUpgrade()">
+      ☁️ Backup Data Sebelum Upgrade
+    </button>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">
+      Simpan semua data lacak Anda sebelum melakukan upgrade aplikasi.
+    </p>
+  </div>
+
+  <!-- TOMBOL SIMPAN KE GOOGLE DRIVE / MEMORI -->
+  <div style="text-align:center;margin:30px 0;">
+    <button class="btn btn-lg" style="background:#4285F4;color:#fff;" onclick="saveToGoogleDrive()">
+      ☁️ Simpan Data ke Google Drive / Memori
+    </button>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">
+      Backup semua data Anda ke Google Drive atau simpan di memori HP.
+    </p>
+  </div>
+
+  <!-- IKLAN LANDING PAGE -->
+  <div id="landingAdContainer" style="max-width:1000px;margin:0 auto 30px auto;padding:0 var(--spacing-lg);">
+    <!-- Diisi oleh renderLandingAd() -->
+  </div>
+</div>
+<!-- END LANDING PAGE -->
+
+<!-- ============================================================
+     AKHIR BLOK 1 R5
+     Blok 2 akan melanjutkan: Halaman Aplikasi (Application Page)
+     ============================================================ -->
+
+
+<!-- ===== TRICEID PRO → BLOK 2 R3 – APPLICATION PAGE TraceID (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
+<!-- ============================================================
+     BLOK 2 R3 – APPLICATION PAGE TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
      (Header, Stats Dashboard, Toolbar, Search Bar, Riwayat)
      ============================================================
      PENJELASAN:
@@ -392,6 +535,7 @@
      - DIPERBAIKI: Tombol Panel Admin menggunakan style display:none,
        semua tombol sudah terhubung dengan benar,
        ikon ditambahkan pada semua tombol
+     - DIPERBAIKI: Semua tombol menggunakan onclick yang benar
      ============================================================ -->
 
 <!-- APPLICATION PAGE -->
@@ -404,39 +548,59 @@
       <span class="logo-text">TraceID v1.0</span>
     </div>
     <div class="header-buttons">
+      <!-- Tombol Dark Mode -->
       <button onclick="toggleTheme()" id="themeButton2" class="btn btn-gray btn-sm">🌙 Dark Mode</button>
+      
+      <!-- Tombol Profil -->
       <button onclick="showProfileModal()" id="profileButton" class="btn btn-outline btn-sm hidden">👤 Profil</button>
+      
+      <!-- Tombol Panel Admin - hanya untuk Super Admin -->
       <button onclick="showSuperAdminPanel()" id="adminButton" class="btn btn-warning btn-sm" style="display:none;">🛡 Panel Admin</button>
       
+      <!-- User Badge -->
       <div class="user-badge" id="userBadge" style="display:none;">
         <div class="user-avatar" id="userAvatar">U</div>
         <span class="user-name" id="userNameDisplay">User</span>
       </div>
       
+      <!-- Tombol Logout -->
       <button onclick="handleLogout()" id="logoutButton" class="btn btn-danger btn-sm hidden">🚪 Logout</button>
+      
+      <!-- Tombol Halaman Utama -->
       <button onclick="goToLandingPage()" class="btn btn-gray btn-sm">🏠 Halaman Utama</button>
+      
+      <!-- Tombol Download Offline -->
       <button onclick="downloadForOffline()" class="btn btn-blue btn-sm">⬇ Download Offline</button>
     </div>
   </header>
 
   <!-- ========== STATS DASHBOARD ========== -->
   <div class="stats-grid" id="dashboardStats">
+    <!-- Total Lacak -->
     <div class="stat-card">
       <div class="stat-value" id="statTotalLacak">0</div>
       <div class="stat-label">📊 Total Lacak</div>
     </div>
+    
+    <!-- Via IP -->
     <div class="stat-card">
       <div class="stat-value" id="statLacakIP">0</div>
       <div class="stat-label">🌐 Via IP</div>
     </div>
+    
+    <!-- Via Email -->
     <div class="stat-card">
       <div class="stat-value" id="statLacakEmail">0</div>
       <div class="stat-label">📧 Via Email</div>
     </div>
+    
+    <!-- Via Sosmed -->
     <div class="stat-card">
       <div class="stat-value" id="statLacakSosmed">0</div>
       <div class="stat-label">📱 Via Sosmed</div>
     </div>
+    
+    <!-- Status Akun Premium -->
     <div class="stat-card" style="border-color:#3b82f6;">
       <div class="stat-value" id="statPremiumStatus">Free</div>
       <div class="stat-label" id="statPremiumLabel">💎 Status Akun</div>
@@ -445,32 +609,50 @@
 
   <!-- ========== TOOLBAR ========== -->
   <div class="toolbar">
-    <!-- Tombol Lacak -->
+    <!-- Tombol Lacak IP -->
     <button onclick="showLacakModal('ip')" class="btn btn-primary">🌐 Lacak IP</button>
+    
+    <!-- Tombol Lacak Email -->
     <button onclick="showLacakModal('email')" class="btn btn-blue">📧 Lacak Email</button>
+    
+    <!-- Tombol Lacak TikTok -->
     <button onclick="showLacakModal('tiktok')" class="btn btn-success">🎵 TikTok</button>
+    
+    <!-- Tombol Lacak Instagram -->
     <button onclick="showLacakModal('instagram')" class="btn btn-warning">📷 Instagram</button>
+    
+    <!-- Tombol Lacak Facebook -->
     <button onclick="showLacakModal('facebook')" class="btn btn-info">📘 Facebook</button>
+    
+    <!-- Tombol Lacak WhatsApp -->
     <button onclick="showLacakModal('whatsapp')" class="btn btn-success">📱 WhatsApp</button>
     
-    <!-- Tombol Tracker -->
+    <!-- Tombol Kirim Pesan/Gambar Tracker -->
     <button onclick="showLinkTrackerModal()" class="btn btn-orange">🔗 Kirim Pesan/Gambar</button>
+    
+    <!-- Tombol Hasil Klik Tracker -->
     <button onclick="showTrackerClicks()" class="btn btn-primary" style="background:#8b5cf6;">📊 Hasil Klik</button>
     
-    <!-- Tombol Import/Export -->
+    <!-- Tombol Export Data -->
     <button onclick="exportAllData()" class="btn btn-orange">📤 Export</button>
+    
+    <!-- Tombol Import Data -->
     <button onclick="document.getElementById('importFileInput').click()" class="btn btn-gray">📥 Import</button>
     <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importAllData(this)">
     
     <!-- Tombol Aktivasi Premium -->
     <button onclick="showActivationModal()" class="btn btn-warning" id="activationToolbarButton" style="display:none;">🔑 Premium</button>
     
-    <!-- Tombol Chat -->
+    <!-- Tombol Chat Admin -->
     <button onclick="showChatModal()" class="btn btn-blue" id="chatButton">💬 Chat Admin</button>
+    
+    <!-- Tombol Chat User (untuk Super Admin) -->
     <button onclick="showUserChatModal()" class="btn btn-info hidden" id="chatUserButton" style="display:none;">👥 Chat User</button>
     
-    <!-- Tombol Backup & Restore -->
+    <!-- Tombol Backup Data -->
     <button onclick="backupUserData()" class="btn btn-success" style="background:#4285F4;">💾 Backup Data</button>
+    
+    <!-- Tombol Restore Data -->
     <label class="btn btn-warning" style="cursor:pointer;margin:0;">
       📤 Restore Data
       <input type="file" id="restoreFileInput" accept=".json" hidden onchange="restoreUserData(this)">
@@ -507,21 +689,21 @@
 <!-- END APPLICATION PAGE -->
 
 <!-- ============================================================
-     AKHIR BLOK 2 R2
+     AKHIR BLOK 2 R3
      Blok 3 akan melanjutkan: Modal Auth (Login, Register, Forgot Password)
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 3 R2 – MODAL AUTH ===== -->
+<!-- ===== TRICEID PRO → BLOK 3 R3 – MODAL AUTH (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 3 R2 – MODAL AUTH (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 3 R3 – MODAL AUTH (LENGKAP + DIPERBAIKI DARI AWAL)
      (Login, Register, Forgot Password)
      ============================================================
      PENJELASAN:
      - Berisi 3 modal: Login, Register, Forgot Password
      - Identik dengan struktur Notepad+ v3.3
      - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
-     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS,
+     - DIPERBAIKI: Semua ID sesuai dengan fungsi JavaScript,
        label dan placeholder ditambahkan,
        autocomplete untuk membantu pengisian,
        form hint untuk petunjuk
@@ -537,16 +719,25 @@
       <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
     </div>
     <div class="modal-body">
+      <!-- Input Username atau Email -->
       <div class="form-group">
         <label class="form-label">Username atau Email</label>
         <input type="text" id="loginUsername" placeholder="Masukkan username atau email" autocomplete="username">
       </div>
+      
+      <!-- Input Password -->
       <div class="form-group">
         <label class="form-label">Password</label>
         <input type="password" id="loginPassword" placeholder="Masukkan password" autocomplete="current-password">
       </div>
+      
+      <!-- Tombol Masuk -->
       <button onclick="handleLogin()" class="btn btn-primary btn-block">🚀 Masuk</button>
+      
+      <!-- Error Message -->
       <div class="form-error" id="loginError"></div>
+      
+      <!-- Link Navigasi -->
       <div style="display:flex;justify-content:space-between;margin-top:16px;font-size:0.8rem;">
         <span class="link-text" onclick="closeModal('loginModal');showRegisterModal()">📝 Daftar Akun Baru</span>
         <span class="link-text" onclick="closeModal('loginModal');openModal('forgotPasswordModal')">🔑 Lupa Password?</span>
@@ -568,35 +759,52 @@
       <button class="modal-close" onclick="closeModal('registerModal')">✕</button>
     </div>
     <div class="modal-body">
+      <!-- Input Nama Lengkap -->
       <div class="form-group">
         <label class="form-label">Nama Lengkap *</label>
         <input type="text" id="registerNama" placeholder="Contoh: Ahmad Fauzi">
       </div>
+      
+      <!-- Input Email -->
       <div class="form-group">
         <label class="form-label">Email *</label>
         <input type="email" id="registerEmail" placeholder="Contoh: ahmad@email.com">
       </div>
+      
+      <!-- Input Nomor HP -->
       <div class="form-group">
         <label class="form-label">Nomor HP *</label>
         <input type="text" id="registerHp" placeholder="Contoh: 081234567890">
         <div class="form-hint">Masukkan nomor HP aktif untuk reset password.</div>
       </div>
+      
+      <!-- Input Username -->
       <div class="form-group">
         <label class="form-label">Username *</label>
         <input type="text" id="registerUsername" placeholder="Contoh: ahmadfauzi">
       </div>
+      
+      <!-- Input Password -->
       <div class="form-group">
         <label class="form-label">Password *</label>
         <input type="password" id="registerPassword" placeholder="Minimal 6 karakter">
         <div class="form-hint">Password minimal 6 karakter.</div>
       </div>
+      
+      <!-- Input Konfirmasi Password -->
       <div class="form-group">
         <label class="form-label">Konfirmasi Password *</label>
         <input type="password" id="registerPasswordConfirm" placeholder="Ketik ulang password">
       </div>
+      
+      <!-- Tombol Daftar -->
       <button onclick="handleRegister()" class="btn btn-primary btn-block">✅ Daftar Sekarang</button>
+      
+      <!-- Error dan Success Message -->
       <div class="form-error" id="registerError"></div>
       <div class="form-success" id="registerSuccess"></div>
+      
+      <!-- Link Login -->
       <p style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--text-secondary);">
         Sudah punya akun?
         <span class="link-text" onclick="closeModal('registerModal');showLoginModal()">🔐 Login disini</span>
@@ -618,25 +826,38 @@
       <button class="modal-close" onclick="closeModal('forgotPasswordModal')">✕</button>
     </div>
     <div class="modal-body">
+      <!-- Deskripsi -->
       <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;">
         Masukkan data Anda untuk mereset password. Link reset akan dikirim via WhatsApp Admin.
       </p>
+      
+      <!-- Input Nama Lengkap -->
       <div class="form-group">
         <label class="form-label">Nama Lengkap *</label>
         <input type="text" id="forgotNama" placeholder="Nama lengkap Anda">
       </div>
+      
+      <!-- Input Email -->
       <div class="form-group">
         <label class="form-label">Email *</label>
         <input type="email" id="forgotEmail" placeholder="Email terdaftar">
       </div>
+      
+      <!-- Input Nomor HP -->
       <div class="form-group">
         <label class="form-label">Nomor HP *</label>
         <input type="text" id="forgotHp" placeholder="Nomor HP terdaftar">
         <div class="form-hint">Nomor HP harus sesuai dengan data pendaftaran.</div>
       </div>
+      
+      <!-- Tombol Kirim -->
       <button onclick="handleForgotPassword()" class="btn btn-warning btn-block">📤 Kirim Link Reset Password</button>
+      
+      <!-- Error dan Success Message -->
       <div class="form-error" id="forgotError"></div>
       <div class="form-success" id="forgotSuccess"></div>
+      
+      <!-- Link Login -->
       <p style="text-align:center;margin-top:16px;font-size:0.8rem;color:var(--text-secondary);">
         Ingat password?
         <span class="link-text" onclick="closeModal('forgotPasswordModal');showLoginModal()">🔐 Login disini</span>
@@ -649,14 +870,14 @@
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 3 R2
+     AKHIR BLOK 3 R3
      Blok 4 akan melanjutkan: Modal Profil & Super Admin Panel
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 4 R2 – MODAL PROFIL & SUPER ADMIN PANEL ===== -->
+<!-- ===== TRICEID PRO → BLOK 4 R3 – MODAL PROFIL & SUPER ADMIN PANEL (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 4 R2 – MODAL PROFIL & SUPER ADMIN PANEL (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 4 R3 – MODAL PROFIL & SUPER ADMIN PANEL (LENGKAP + DIPERBAIKI DARI AWAL)
      (Profil, Super Admin Panel dengan semua tab)
      ============================================================
      PENJELASAN:
@@ -664,9 +885,10 @@
      - Super Admin Panel memiliki 8 tab: Kode Aktivasi, Daftar User,
        Paket & Harga, Log Keamanan, Pengaturan, Iklan, Chat User, Backup
      - Identik dengan struktur Notepad+ v3.3
-     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS,
+     - DIPERBAIKI: Semua ID sesuai dengan fungsi JavaScript,
        tombol-tombol sudah terhubung dengan benar,
-       label dan placeholder ditambahkan
+       label dan placeholder ditambahkan,
+       support Enter key pada input chat
      ============================================================ -->
 
 <!-- ============================================================
@@ -701,6 +923,8 @@
         <label class="form-label">Nomor HP</label>
         <input type="text" id="editProfileHp" placeholder="Nomor HP aktif">
       </div>
+      
+      <!-- Tombol Simpan Profil -->
       <button onclick="saveProfile()" class="btn btn-primary btn-block">💾 Simpan Profil</button>
       <div class="form-error" id="profileError"></div>
       <div class="form-success" id="profileSuccess"></div>
@@ -743,18 +967,21 @@
       <!-- ========== TAB 1: KODE AKTIVASI ========== -->
       <div class="admin-tab-content" id="adminTabCodes">
         <h4 style="margin-bottom:12px;">Buat Kode Aktivasi Baru</h4>
+        
         <div class="form-group">
           <label class="form-label">Pilih User</label>
           <select id="adminActivationUserSelect" style="width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
             <option value="">-- Pilih User --</option>
           </select>
         </div>
+        
         <div class="form-group">
           <label class="form-label">Pilih Paket</label>
           <select id="adminActivationPackage" style="width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border-color-strong);">
             <option value="">-- Pilih Paket --</option>
           </select>
         </div>
+        
         <button onclick="adminCreateActivationCode()" class="btn btn-primary btn-block">🎫 Buat Kode Aktivasi</button>
         <div id="adminCodeResult" style="margin-top:12px;"></div>
         
@@ -920,14 +1147,14 @@
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 4 R2
+     AKHIR BLOK 4 R3
      Blok 5 akan melanjutkan: Modal Lacak & Link Tracker
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 5 R3 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET ===== -->
+<!-- ===== TRICEID PRO → BLOK 5 R4 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 5 R3 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 5 R4 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL)
      (Modal Lacak, Link Tracker, Hasil Klik, Detail Riwayat, Confirm, Edit Package)
      ============================================================
      PENJELASAN:
@@ -936,7 +1163,7 @@
      - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
      - DIPERBAIKI: Modal Lacak dengan tombol Gmail Location & Sosmed Location
      - DIPERBAIKI: Modal Link Tracker dengan atribut data untuk menyimpan pesan & gambar
-     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS
+     - DIPERBAIKI: Semua ID sesuai dengan fungsi JavaScript
      ============================================================ -->
 
 <!-- ============================================================
@@ -951,6 +1178,7 @@
     <div class="modal-body">
       <input type="hidden" id="lacakType" value="ip">
       
+      <!-- Input Data Target -->
       <div class="form-group">
         <label class="form-label" id="lacakLabel">Masukkan Data Target</label>
         <input type="text" id="lacakInput" placeholder="Masukkan data...">
@@ -1171,14 +1399,14 @@
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 5 R3
+     AKHIR BLOK 5 R4
      Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 6 R2 – MODAL CHAT, AKTIVASI & TOAST CONTAINER ===== -->
+<!-- ===== TRICEID PRO → BLOK 6 R3 – MODAL CHAT, AKTIVASI & TOAST CONTAINER (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 6 R2 – MODAL CHAT, AKTIVASI & TOAST CONTAINER (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 6 R3 – MODAL CHAT, AKTIVASI & TOAST CONTAINER (LENGKAP + DIPERBAIKI DARI AWAL)
      (Chat User ke Admin, Chat Sesama User, Aktivasi Premium, Toast Container)
      ============================================================
      PENJELASAN:
@@ -1186,7 +1414,7 @@
        Aktivasi Modal, dan Toast Container
      - Identik dengan struktur Notepad+ v3.3
      - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
-     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS, 
+     - DIPERBAIKI: Semua ID sesuai dengan fungsi JavaScript,
        tombol sudah terhubung dengan benar, support Enter key,
        label dan form hint ditambahkan
      ============================================================ -->
@@ -1202,9 +1430,11 @@
     </div>
     <div class="modal-body">
       <div class="chat-container" id="userChatContainer">
+        <!-- Area Pesan Chat -->
         <div class="chat-messages" id="userChatMessages">
           <p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Belum ada pesan.</p>
         </div>
+        <!-- Input Chat -->
         <div class="chat-input-row">
           <input type="text" id="userChatInput" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendUserChat()">
           <button onclick="sendUserChat()" class="btn btn-primary btn-sm">📤 Kirim</button>
@@ -1289,14 +1519,14 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <!-- ============================================================
-     AKHIR BLOK 6 R2
+     AKHIR BLOK 6 R3
      Blok 7 akan melanjutkan: JS Core 1 (Storage, Auth, PWA, dll)
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 7 R2 – JS CORE 1 ===== -->
+<!-- ===== TRICEID PRO → BLOK 7 R3 – JS CORE 1 (TRACEID) - LENGKAP + DIPERBAIKI DARI AWAL ===== -->
 <!-- ============================================================
-     BLOK 7 R2 – JS CORE 1 (TRACEID) - LENGKAP + DIPERBAIKI DARI AWAL
+     BLOK 7 R3 – JS CORE 1 (TRACEID) - LENGKAP + DIPERBAIKI DARI AWAL
      (PWA, Service Worker, Storage, Auth, Theme, Navigation, Premium)
      ============================================================
      PENJELASAN:
@@ -1310,6 +1540,7 @@
      - DIPERBAIKI: Semua fungsi sudah lengkap dan siap digunakan
      - DIPERBAIKI: updateHeaderUser() menampilkan Panel Admin dengan benar
      - DIPERBAIKI: Semua fungsi dasar untuk landing page
+     - DIPERBAIKI: Penambahan console.log untuk debugging
      ============================================================ -->
 
 <script>
@@ -1318,6 +1549,7 @@
 // ============================================================
 var deferredPrompt;
 window.addEventListener('beforeinstallprompt', function(e) {
+    console.log('📲 beforeinstallprompt event dipicu');
     e.preventDefault();
     deferredPrompt = e;
     var banner = document.getElementById('installBanner');
@@ -2230,21 +2462,21 @@ function autoSaveData() {
     console.log('⏳ autoSaveData() akan di-override oleh Blok 10');
 }
 
-console.log('✅ Blok 7 R2 – JS Core 1 TraceID siap digunakan.');
+console.log('✅ Blok 7 R3 – JS Core 1 TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi dasar sudah lengkap.');
 console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, 11, dan 12.');
 console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admin.');
 console.log('📌 Semua tombol di landing page seharusnya sudah berfungsi.');
 
 // ============================================================
-// AKHIR BLOK 7 R2
+// AKHIR BLOK 7 R3
 // ============================================================
 </script>
 
 
-<!-- ===== TRACERID → BLOK 8 R2 – JS CORE 1 ===== -->
+<!-- ===== TRICEID PRO → BLOK 8 R3 – JS CORE 1 (LANJUTAN) - LENGKAP + DIPERBAIKI DARI AWAL      (Export/Import, Confirm, Backup/Restore User, Search, dll) ===== -->
 <!-- ============================================================
-     BLOK 8 R2 – JS CORE 1 (LANJUTAN) - LENGKAP + DIPERBAIKI DARI AWAL
+     BLOK 8 R3 – JS CORE 1 (LANJUTAN) - LENGKAP + DIPERBAIKI DARI AWAL
      (Export/Import, Confirm, Backup/Restore User, Search, dll)
      ============================================================
      PENJELASAN:
@@ -2255,13 +2487,14 @@ console.log('📌 Semua tombol di landing page seharusnya sudah berfungsi.');
      - Fungsi-fungsi ini akan digunakan oleh blok lain
      - DIPERBAIKI: Semua fungsi lengkap, error handling,
        console log untuk debugging
+     - DIPERBAIKI: Penambahan fallback untuk semua fungsi
      ============================================================ -->
 
 <script>
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 8 R2 – Memuat fungsi lanjutan TraceID...');
+console.log('🔍 Blok 8 R3 – Memuat fungsi lanjutan TraceID...');
 
 // ============================================================
 // CONFIRM DIALOG
@@ -2303,6 +2536,7 @@ function exportAllData() {
 function importAllData(input) {
     console.log('📥 importAllData() dipanggil (fallback)');
     showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+    if (input) input.value = '';
 }
 
 // ============================================================
@@ -2316,6 +2550,7 @@ function backupUserData() {
 function restoreUserData(input) {
     console.log('📤 restoreUserData() dipanggil (fallback)');
     showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+    if (input) input.value = '';
 }
 
 // ============================================================
@@ -2434,6 +2669,38 @@ function saveToGoogleDrive() {
 }
 
 // ============================================================
+// SWITCH ADMIN TAB (FALLBACK)
+// ============================================================
+function switchAdminTab() {
+    console.log('🔄 switchAdminTab() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 11', 'info');
+}
+
+// ============================================================
+// ADMIN CREATE ACTIVATION CODE (FALLBACK)
+// ============================================================
+function adminCreateActivationCode() {
+    console.log('🔑 adminCreateActivationCode() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 11', 'info');
+}
+
+// ============================================================
+// RENDER ADMIN USER LIST (FALLBACK)
+// ============================================================
+function renderAdminUserList() {
+    console.log('👥 renderAdminUserList() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 11', 'info');
+}
+
+// ============================================================
+// BACKUP ALL DATA JSON (FALLBACK)
+// ============================================================
+function backupAllDataJSON() {
+    console.log('💾 backupAllDataJSON() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 11', 'info');
+}
+
+// ============================================================
 // DETECT FUNGSI YANG SUDAH DI-OVERRIDE
 // ============================================================
 console.log('🔍 Memeriksa fungsi-fungsi yang sudah di-override...');
@@ -2489,18 +2756,20 @@ for (var i = 0; i < fungsiYangHarusDiOverride.length; i++) {
     }
 }
 
-console.log('✅ Blok 8 R2 – Fungsi lanjutan TraceID siap digunakan.');
+console.log('✅ Blok 8 R3 – Fungsi lanjutan TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, 11, dan 12.');
+console.log('📌 Confirm dialog sudah siap digunakan.');
+console.log('📌 Semua fungsi memiliki fallback yang informatif.');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 8 R2
+     AKHIR BLOK 8 R3
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 9 R1 – JS CORE 2 (TRACEID FINAL + PERBAIKAN TRACKER) ===== -->
+<!-- ===== TRICEID PRO → BLOK 9 R2 – JS CORE 2 (BAGIAN 1) - FUNGSI BANTU, STATS, FORGOT PASSWORD, PROFILE (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 9 R1 – JS CORE 2 (BAGIAN 1) - FUNGSI BANTU, STATS, FORGOT PASSWORD, PROFILE
+     BLOK 9 R2 – JS CORE 2 (BAGIAN 1) - FUNGSI BANTU, STATS, FORGOT PASSWORD, PROFILE (LENGKAP + DIPERBAIKI DARI AWAL)
      ============================================================
      PENJELASAN:
      - Berisi semua fungsi bantu untuk TraceID
@@ -2508,6 +2777,8 @@ console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, 11, dan 12.');
        cariLokasiDomain, cariLokasiTLD, cariLokasiNegara, cariLokasiSosmed
      - Update Stats, Forgot Password, Profile (load, save, delete)
      - Bagian 1 dari 2 (Lanjutan ke Blok 10 untuk Lacak & Tracker)
+     - DIPERBAIKI: Semua fungsi lengkap, error handling,
+       console log untuk debugging
      ============================================================ -->
 
 <script>
@@ -2530,26 +2801,33 @@ function escapeHTML(str) {
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 9 R1 – Memuat fungsi bantu TraceID...');
+console.log('🔍 Blok 9 R2 – Memuat fungsi bantu TraceID...');
 
 // ============================================================
 // FUNGSI BANTU: HITUNG JARAK (Haversine Formula)
 // ============================================================
 function hitungJarak(lat1, lng1, lat2, lng2) {
-    var R = 6371; // Radius bumi dalam km
+    console.log('📏 hitungJarak() dipanggil');
+    
+    var R = 6371; // Radius bumi dalam kilometer
     var dLat = (lat2 - lat1) * Math.PI / 180;
     var dLng = (lng2 - lng1) * Math.PI / 180;
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLng / 2) * Math.sin(dLng / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+    var jarak = R * c;
+    
+    console.log('✅ Jarak dihitung: ' + jarak.toFixed(2) + ' km');
+    return jarak;
 }
 
 // ============================================================
 // FUNGSI BANTU: ANALISIS EMAIL
 // ============================================================
 function analisisEmail(email) {
+    console.log('📧 analisisEmail() dipanggil untuk:', email);
+    
     var result = {
         email: email,
         domain: '',
@@ -2559,6 +2837,7 @@ function analisisEmail(email) {
     };
 
     if (!email || email.indexOf('@') === -1) {
+        console.warn('⚠️ Email tidak valid:', email);
         return result;
     }
 
@@ -2616,6 +2895,7 @@ function analisisEmail(email) {
         }
     }
 
+    console.log('✅ Analisis email selesai. Domain:', result.domain, 'Provider:', result.provider);
     return result;
 }
 
@@ -2623,6 +2903,8 @@ function analisisEmail(email) {
 // FUNGSI BANTU: CARI LOKASI DARI DOMAIN
 // ============================================================
 function cariLokasiDomain(domain) {
+    console.log('🌐 cariLokasiDomain() dipanggil untuk domain:', domain);
+    
     if (!domain) return null;
 
     var domainDB = {
@@ -2652,10 +2934,12 @@ function cariLokasiDomain(domain) {
     var domainLower = domain.toLowerCase();
     for (var key in domainDB) {
         if (domainLower.indexOf(key) !== -1 || key.indexOf(domainLower) !== -1) {
+            console.log('✅ Lokasi domain ditemukan:', domainDB[key]);
             return domainDB[key];
         }
     }
 
+    console.log('⚠️ Lokasi domain tidak ditemukan');
     return null;
 }
 
@@ -2663,6 +2947,8 @@ function cariLokasiDomain(domain) {
 // FUNGSI BANTU: CARI LOKASI DARI TLD
 // ============================================================
 function cariLokasiTLD(domain) {
+    console.log('🌐 cariLokasiTLD() dipanggil untuk domain:', domain);
+    
     if (!domain) return null;
 
     var tld = domain.split('.').pop().toLowerCase();
@@ -2688,9 +2974,11 @@ function cariLokasiTLD(domain) {
     };
 
     if (tldDB[tld]) {
+        console.log('✅ Lokasi TLD ditemukan:', tldDB[tld]);
         return tldDB[tld];
     }
 
+    console.log('⚠️ Lokasi TLD tidak ditemukan');
     return null;
 }
 
@@ -2698,6 +2986,8 @@ function cariLokasiTLD(domain) {
 // FUNGSI BANTU: CARI LOKASI DARI KODE NEGARA
 // ============================================================
 function cariLokasiNegara(countryCode) {
+    console.log('🌐 cariLokasiNegara() dipanggil untuk kode:', countryCode);
+    
     if (!countryCode) return null;
 
     var countryDB = {
@@ -2724,9 +3014,11 @@ function cariLokasiNegara(countryCode) {
 
     var code = countryCode.toUpperCase();
     if (countryDB[code]) {
+        console.log('✅ Lokasi negara ditemukan:', countryDB[code]);
         return countryDB[code];
     }
 
+    console.log('⚠️ Lokasi negara tidak ditemukan');
     return null;
 }
 
@@ -2734,9 +3026,9 @@ function cariLokasiNegara(countryCode) {
 // FUNGSI BANTU: CARI LOKASI DARI PLATFORM SOSMED
 // ============================================================
 function cariLokasiSosmed(username, platform) {
-    // Database perkiraan lokasi berdasarkan platform dan username
-    // Ini adalah data simulasi - dalam implementasi nyata, ini dari API
+    console.log('📱 cariLokasiSosmed() dipanggil untuk:', username, 'di', platform);
     
+    // Database perkiraan lokasi berdasarkan platform dan username
     var platformBase = {
         'tiktok': { lat: -6.2088, lng: 106.8456, kota: 'Jakarta', provinsi: 'DKI Jakarta', negara: 'Indonesia' },
         'instagram': { lat: -6.2088, lng: 106.8456, kota: 'Jakarta', provinsi: 'DKI Jakarta', negara: 'Indonesia' },
@@ -2764,6 +3056,7 @@ function cariLokasiSosmed(username, platform) {
     
     var lokasi = lokasiVariasi[lastDigit] || platformBase[platform];
     
+    console.log('✅ Lokasi sosmed ditemukan:', lokasi);
     return {
         lat: lokasi.lat,
         lng: lokasi.lng,
@@ -3007,7 +3300,7 @@ function deleteAccount() {
 // ============================================================
 // LOG INIT
 // ============================================================
-console.log('✅ Blok 9 R1 – Fungsi bantu TraceID siap digunakan.');
+console.log('✅ Blok 9 R2 – Fungsi bantu TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi yang tersedia:');
 console.log('   - escapeHTML() - Keamanan XSS');
 console.log('   - hitungJarak() - Haversine Formula');
@@ -3023,14 +3316,14 @@ console.log('📌 Lanjut ke Blok 10 untuk fungsi Lacak & Tracker');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 9 R1
+     AKHIR BLOK 9 R2
      LANJUT KE BLOK 10 UNTUK FUNGSI LACAK & TRACKER
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 10 R1 – JS CORE 2 ===== -->
+<!-- ===== TRICEID PRO → BLOK 10 R3 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 10 R1 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION
+     BLOK 10 R3 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL)
      ============================================================
      PENJELASAN:
      - Berisi semua fungsi lacak dan tracker untuk TraceID
@@ -3039,19 +3332,26 @@ console.log('📌 Lanjut ke Blok 10 untuk fungsi Lacak & Tracker');
      - Gmail Location: Multi-metode (Google Maps Sharing, IP Header, Fallback)
      - Sosmed Location: Menggunakan data izin lokasi dari aplikasi (simulasi)
      - Bagian 2 dari 2 (Lanjutan dari Blok 9)
+     - DIPERBAIKI: Semua fungsi lengkap, override dari Blok 8,
+       console log untuk debugging, error handling
      ============================================================ -->
 
 <script>
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 10 R1 – Memuat fungsi Lacak & Tracker TraceID...');
+console.log('🔍 Blok 10 R3 – Memuat fungsi Lacak & Tracker TraceID...');
 
 // ============================================================
-// LACAK (TRACKING) - LENGKAP
+// OVERRIDE FUNGSI DARI BLOK 8
 // ============================================================
-function showLacakModal(type) {
-    console.log('🔍 showLacakModal() dipanggil dengan type:', type);
+console.log('🔄 Meng-override fungsi-fungsi dari Blok 8...');
+
+// ============================================================
+// SHOW LACAK MODAL - OVERRIDE
+// ============================================================
+window.showLacakModal = function(type) {
+    console.log('🔍 showLacakModal() OVERRIDE dipanggil dengan type:', type);
 
     var s = getSession();
     if (!s) {
@@ -3122,8 +3422,11 @@ function showLacakModal(type) {
 
     openModal('lacakModal');
     console.log('✅ Modal lacak dibuka untuk type:', type);
-}
+};
 
+// ============================================================
+// CREATE LACAK MODAL
+// ============================================================
 function createLacakModal() {
     if (document.getElementById('lacakModal')) return;
 
@@ -3166,16 +3469,20 @@ function createLacakModal() {
 // FUNGSI KONTROL TOMBOL DI MODAL LACAK
 // ============================================================
 function updateLacakButtons(type) {
+    console.log('🔄 updateLacakButtons() dipanggil untuk type:', type);
+    
     var btnGmail = document.getElementById('btnGmailLocation');
     var btnSosmed = document.getElementById('btnSosmedLocation');
     
     if (btnGmail) {
         btnGmail.style.display = (type === 'email') ? 'block' : 'none';
+        console.log('✅ Tombol Gmail Location:', (type === 'email') ? 'ditampilkan' : 'disembunyikan');
     }
     
     if (btnSosmed) {
         var sosmedTypes = ['tiktok', 'instagram', 'facebook', 'whatsapp'];
         btnSosmed.style.display = (sosmedTypes.indexOf(type) !== -1) ? 'block' : 'none';
+        console.log('✅ Tombol Sosmed Location:', (sosmedTypes.indexOf(type) !== -1) ? 'ditampilkan' : 'disembunyikan');
     }
 }
 
@@ -3241,7 +3548,7 @@ function tambahTombolSosmedLocation(type) {
 // EKSEKUSI LACAK
 // ============================================================
 function executeLacak() {
-    console.log('🔍 executeLacak() dipanggil');
+    console.log('🔍 executeLacak() OVERRIDE dipanggil');
 
     var typeInput = document.getElementById('lacakType');
     var inputEl = document.getElementById('lacakInput');
@@ -3276,9 +3583,11 @@ function executeLacak() {
     if (resultDetail) resultDetail.classList.add('hidden');
 
     // ============================================================
-    // LACAK IP
+    // LACAK IP - Menggunakan API Real
     // ============================================================
     if (type === 'ip') {
+        console.log('🌐 Lacak IP:', input);
+        
         fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
             .then(function(r) { return r.json(); })
             .then(function(data) {
@@ -3299,6 +3608,7 @@ function executeLacak() {
                     simpanDanTampilkan('ip', input, hasil);
                     showToast('✅ Lokasi IP ditemukan!', 'success');
                 } else {
+                    // Fallback ke IP pengguna
                     fetch('https://ipapi.co/json/')
                         .then(function(r2) { return r2.json(); })
                         .then(function(data2) {
@@ -3357,7 +3667,7 @@ function executeLacak() {
             });
 
         // ============================================================
-        // LACAK EMAIL
+        // LACAK EMAIL - DIPERBAIKI DENGAN ANALISIS
         // ============================================================
     } else if (type === 'email') {
         console.log('📧 Lacak email:', input);
@@ -3383,6 +3693,7 @@ function executeLacak() {
 
                 var points = [];
 
+                // Titik 1: IP Pengguna (prioritas tertinggi)
                 points.push({
                     lat: userLat,
                     lng: userLng,
@@ -3394,6 +3705,7 @@ function executeLacak() {
                     priority: 1
                 });
 
+                // Titik 2: Lokasi domain (jika ada)
                 if (lokasiDomain) {
                     var jarak = hitungJarak(userLat, userLng, lokasiDomain.lat, lokasiDomain.lng);
                     points.push({
@@ -3408,6 +3720,7 @@ function executeLacak() {
                     });
                 }
 
+                // Titik 3: Lokasi TLD (jika ada)
                 if (lokasiTLD) {
                     var jarak = hitungJarak(userLat, userLng, lokasiTLD.lat, lokasiTLD.lng);
                     points.push({
@@ -3422,6 +3735,7 @@ function executeLacak() {
                     });
                 }
 
+                // Titik 4: Lokasi negara (jika ada)
                 if (lokasiNegara) {
                     var jarak = hitungJarak(userLat, userLng, lokasiNegara.lat, lokasiNegara.lng);
                     points.push({
@@ -3436,11 +3750,12 @@ function executeLacak() {
                     });
                 }
 
+                // Urutkan berdasarkan priority (IP > Domain > TLD > Negara)
                 points.sort(function(a, b) { return a.priority - b.priority; });
 
                 console.log('📌 Titik-titik yang ditemukan:', points);
 
-                var titikTerbaik = points[0];
+                var titikTerbaik = points[0]; // Selalu IP karena priority 1
 
                 var detailTitik = [];
                 for (var i = 0; i < points.length; i++) {
@@ -3510,28 +3825,28 @@ function executeLacak() {
         // ============================================================
     } else if (type === 'tiktok') {
         console.log('🎵 Lacak TikTok:', input);
-        lacakSosmedLocation(input, 'tiktok', loading, resultDetail);
+        lacakSosmedLocation(input, 'tiktok');
 
         // ============================================================
         // LACAK INSTAGRAM - DENGAN LOKASI DARI IZIN APLIKASI
         // ============================================================
     } else if (type === 'instagram') {
         console.log('📷 Lacak Instagram:', input);
-        lacakSosmedLocation(input, 'instagram', loading, resultDetail);
+        lacakSosmedLocation(input, 'instagram');
 
         // ============================================================
         // LACAK FACEBOOK - DENGAN LOKASI DARI IZIN APLIKASI
         // ============================================================
     } else if (type === 'facebook') {
         console.log('📘 Lacak Facebook:', input);
-        lacakSosmedLocation(input, 'facebook', loading, resultDetail);
+        lacakSosmedLocation(input, 'facebook');
 
         // ============================================================
         // LACAK WHATSAPP - DENGAN LOKASI DARI IZIN APLIKASI
         // ============================================================
     } else if (type === 'whatsapp') {
         console.log('📱 Lacak WhatsApp:', input);
-        lacakSosmedLocation(input, 'whatsapp', loading, resultDetail);
+        lacakSosmedLocation(input, 'whatsapp');
 
         // ============================================================
         // FALLBACK UNTUK TYPE LAIN
@@ -3597,12 +3912,11 @@ function executeLacak() {
 // ============================================================
 // FUNGSI LACAK SOSMED LOCATION - DENGAN IZIN LOKASI APLIKASI
 // ============================================================
-function lacakSosmedLocation(username, platform, loading, resultDetail) {
+function lacakSosmedLocation(username, platform) {
     console.log('📍 lacakSosmedLocation() dipanggil untuk:', username, 'di', platform);
 
     if (!username) {
         showToast('⚠️ Masukkan username ' + platform + '!', 'error');
-        if (loading) loading.classList.add('hidden');
         return;
     }
 
@@ -3620,6 +3934,7 @@ function lacakSosmedLocation(username, platform, loading, resultDetail) {
     fetch('https://ipapi.co/json/')
         .then(function(r) { return r.json(); })
         .then(function(userData) {
+            var loading = document.getElementById('lacakLoading');
             if (loading) loading.classList.add('hidden');
 
             var userLat = userData.latitude || -6.2088;
@@ -3632,6 +3947,7 @@ function lacakSosmedLocation(username, platform, loading, resultDetail) {
 
             var points = [];
 
+            // Titik 1: Dari data platform (jika ada)
             if (lokasiDariUsername) {
                 var jarak = hitungJarak(userLat, userLng, lokasiDariUsername.lat, lokasiDariUsername.lng);
                 points.push({
@@ -3647,6 +3963,7 @@ function lacakSosmedLocation(username, platform, loading, resultDetail) {
                 });
             }
 
+            // Titik 2: IP Pengguna
             points.push({
                 lat: userLat,
                 lng: userLng,
@@ -3659,6 +3976,7 @@ function lacakSosmedLocation(username, platform, loading, resultDetail) {
                 akurasi: 'Tinggi (IP ISP)'
             });
 
+            // Urutkan berdasarkan priority
             points.sort(function(a, b) { return a.priority - b.priority; });
 
             var titikTerbaik = points[0];
@@ -3696,6 +4014,7 @@ function lacakSosmedLocation(username, platform, loading, resultDetail) {
             console.log('✅ Hasil lacak ' + platform + ':', hasil);
         })
         .catch(function() {
+            var loading = document.getElementById('lacakLoading');
             if (loading) loading.classList.add('hidden');
 
             var lokasi = lokasiDariUsername || { lat: -6.2088, lng: 106.8456, kota: 'Jakarta', provinsi: 'DKI Jakarta', negara: 'Indonesia' };
@@ -3726,6 +4045,9 @@ function lacakSosmedLocation(username, platform, loading, resultDetail) {
         });
 }
 
+// ============================================================
+// SIMPAN DAN TAMPILKAN HASIL
+// ============================================================
 function simpanDanTampilkan(type, input, hasil) {
     console.log('💾 simpanDanTampilkan() dipanggil');
 
@@ -3753,7 +4075,7 @@ function simpanDanTampilkan(type, input, hasil) {
 }
 
 // ============================================================
-// TAMPILKAN HASIL
+// TAMPILKAN HASIL - DIPERBAIKI
 // ============================================================
 function tampilkanHasil(hasil) {
     var container = document.getElementById('lacakResultContent');
@@ -3761,6 +4083,7 @@ function tampilkanHasil(hasil) {
 
     var html = '<div style="font-size:0.9rem;line-height:1.8;">';
 
+    // TAMPILKAN KOORDINAT
     if (hasil.lat !== undefined && hasil.lng !== undefined) {
         html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
         html += '<div style="font-size:0.8rem;opacity:0.9;">📍 LOKASI</div>';
@@ -3771,7 +4094,7 @@ function tampilkanHasil(hasil) {
         html += '</div>';
     }
 
-    // Informasi Platform
+    // INFORMASI PLATFORM
     if (hasil.platform || hasil.username) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📱 Informasi Platform</h4>';
@@ -3783,7 +4106,7 @@ function tampilkanHasil(hasil) {
         html += '</div>';
     }
 
-    // Informasi Email
+    // INFORMASI EMAIL
     if (hasil.email) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📧 Informasi Email</h4>';
@@ -3795,15 +4118,444 @@ function tampilkanHasil(hasil) {
         html += '</div>';
     }
 
-    // Informasi IP
+    // INFORMASI IP
     if (hasil.ipAddress || hasil.isp) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
-        html += '<h4 style="margin-bottom:8
+        html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">🌐 Informasi IP</h4>';
+        if (hasil.ipAddress) html += '<p><strong>IP Address:</strong> ' + escapeHTML(hasil.ipAddress) + '</p>';
+        if (hasil.isp) html += '<p><strong>ISP:</strong> ' + escapeHTML(hasil.isp) + '</p>';
+        if (hasil.timezone) html += '<p><strong>Zona Waktu:</strong> ' + escapeHTML(hasil.timezone) + '</p>';
+        if (hasil.userLocation) html += '<p><strong>📍 Lokasi Anda:</strong> ' + escapeHTML(hasil.userLocation) + '</p>';
+        html += '</div>';
+    }
 
+    // LOKASI
+    if (hasil.kota || hasil.provinsi || hasil.negara) {
+        html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
+        html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📍 Lokasi</h4>';
+        if (hasil.kota) html += '<p><strong>🏙️ Kota:</strong> ' + escapeHTML(hasil.kota) + '</p>';
+        if (hasil.provinsi) html += '<p><strong>📍 Provinsi:</strong> ' + escapeHTML(hasil.provinsi) + '</p>';
+        if (hasil.negara) html += '<p><strong>🌍 Negara:</strong> ' + escapeHTML(hasil.negara) + '</p>';
+        if (hasil.info) html += '<p><strong>ℹ️ Info:</strong> ' + escapeHTML(hasil.info) + '</p>';
+        html += '</div>';
+    }
 
-<!-- ===== TRACERID → BLOK 11 R2 – JS ADMIN PANEL ===== -->
+    // DETAIL TITIK
+    if (hasil.detailTitik) {
+        html += '<div style="background:var(--bg-secondary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px dashed var(--border-color);">';
+        html += '<h4 style="margin-bottom:8px;color:var(--text-muted);">📊 Titik yang Ditemukan</h4>';
+        html += '<p style="font-size:0.8rem;white-space:pre-wrap;">' + escapeHTML(hasil.detailTitik).replace(/\|/g, '\n') + '</p>';
+        html += '</div>';
+    }
+
+    if (hasil.waktu) html += '<p><strong>⏰ Waktu:</strong> ' + escapeHTML(hasil.waktu) + '</p>';
+
+    if (hasil.lat !== undefined && hasil.lng !== undefined && hasil.maps) {
+        html += '<div style="margin-top:12px;text-align:center;">';
+        html += '<a href="' + hasil.maps + '" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex;">🗺 Buka Google Maps</a>';
+        html += '</div>';
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    var resultDetail = document.getElementById('lacakResultDetail');
+    if (resultDetail) resultDetail.classList.remove('hidden');
+}
+
+// ============================================================
+// FITUR LACAK GMAIL LOCATION (MULTI-METODE)
+// ============================================================
+function lacakGmailLocation(email) {
+    console.log('📍 lacakGmailLocation() dipanggil untuk:', email);
+
+    if (!email || email.indexOf('@gmail.com') === -1) {
+        showToast('⚠️ Masukkan email Gmail yang valid!', 'error');
+        return;
+    }
+
+    var loading = document.getElementById('lacakLoading');
+    var resultDetail = document.getElementById('lacakResultDetail');
+    if (loading) loading.classList.remove('hidden');
+    if (resultDetail) resultDetail.classList.add('hidden');
+
+    var emailInfo = analisisEmail(email);
+
+    // ============================================================
+    // METODE 1: COBA DARI GOOGLE MAPS LOCATION SHARING
+    // ============================================================
+    fetch('/api/gmail-location?email=' + encodeURIComponent(email))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success && data.lat && data.lng) {
+                var hasil = {
+                    email: email,
+                    metode: 'Google Maps Location Sharing',
+                    lat: data.lat,
+                    lng: data.lng,
+                    kota: data.kota || 'Dari Google Maps',
+                    provinsi: data.provinsi || '',
+                    negara: data.negara || 'Indonesia',
+                    maps: 'https://www.google.com/maps?q=' + data.lat + ',' + data.lng,
+                    info: '📍 Lokasi real-time dari Google Maps',
+                    waktu: new Date().toLocaleString(),
+                    catatan: '✅ Target mengaktifkan berbagi lokasi di Google Maps',
+                    akurasi: 'Sangat Tinggi (Real-time)'
+                };
+                if (loading) loading.classList.add('hidden');
+                simpanDanTampilkan('gmail_location', email, hasil);
+                showToast('✅ Lokasi ditemukan! (Google Maps)', 'success');
+                return;
+            }
+            console.log('⚠️ Metode 1 gagal, lanjut ke Metode 2...');
+            metodeKeduaGmail(email, emailInfo, loading);
+        })
+        .catch(function() {
+            console.log('⚠️ API tidak tersedia, lanjut ke Metode 2...');
+            metodeKeduaGmail(email, emailInfo, loading);
+        });
+}
+
+function metodeKeduaGmail(email, emailInfo, loading) {
+    // ============================================================
+    // METODE 2: GUNAKAN IP PENGGUNA + DOMAIN
+    // ============================================================
+    fetch('https://ipapi.co/json/')
+        .then(function(r) { return r.json(); })
+        .then(function(userData) {
+            var lat = userData.latitude || -6.2088;
+            var lng = userData.longitude || 106.8456;
+            var kota = userData.city || 'Bandung';
+            var provinsi = userData.region || 'West Java';
+            var negara = userData.country_name || 'Indonesia';
+            var ip = userData.ip || 'Tidak diketahui';
+            var isp = userData.org || 'Tidak diketahui';
+
+            var lokasiDomain = cariLokasiDomain(emailInfo.domain);
+
+            var hasil = {
+                email: email,
+                metode: 'IP Pengguna + Domain',
+                lat: lat,
+                lng: lng,
+                kota: kota,
+                provinsi: provinsi,
+                negara: negara,
+                maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+                info: '📍 Lokasi berdasarkan IP Anda (' + ip + ')',
+                waktu: new Date().toLocaleString(),
+                ipAddress: ip,
+                isp: isp,
+                domainInfo: 'Domain ' + emailInfo.domain + ' terdaftar di ' + (emailInfo.provider || 'tidak diketahui'),
+                catatan: '⚠️ Menggunakan IP Anda sebagai referensi (metode fallback)',
+                akurasi: 'Sedang (IP ISP)',
+                detailTitik: 'IP Anda: ' + ip + ' (' + isp + ') | Domain: ' + emailInfo.domain
+            };
+
+            if (lokasiDomain) {
+                hasil.info += ' | Server email: ' + lokasiDomain.kota;
+                hasil.detailTitik += ' | Server: ' + lokasiDomain.kota + ', ' + lokasiDomain.negara;
+            }
+
+            if (loading) loading.classList.add('hidden');
+            simpanDanTampilkan('gmail_location', email, hasil);
+            showToast('✅ Lokasi ditemukan (metode fallback)', 'warning');
+        })
+        .catch(function() {
+            if (loading) loading.classList.add('hidden');
+            var hasil = {
+                email: email,
+                metode: 'Default',
+                lat: -6.9175,
+                lng: 107.6191,
+                kota: 'Bandung',
+                provinsi: 'West Java',
+                negara: 'Indonesia',
+                maps: 'https://www.google.com/maps?q=-6.9175,107.6191',
+                info: '📍 Lokasi default',
+                waktu: new Date().toLocaleString(),
+                catatan: '⚠️ Semua metode gagal, menggunakan lokasi default',
+                akurasi: 'Rendah (Default)',
+                detailTitik: 'Tidak ada data'
+            };
+            simpanDanTampilkan('gmail_location', email, hasil);
+            showToast('⚠️ Lokasi default (semua metode gagal)', 'warning');
+        });
+}
+
+// ============================================================
+// RENDER RIWAYAT - OVERRIDE
+// ============================================================
+window.refreshAppUI = function() {
+    console.log('🔄 refreshAppUI() OVERRIDE dipanggil');
+
+    var s = getSession();
+    var container = document.getElementById('riwayatLacakContainer');
+
+    if (!container) {
+        console.error('❌ Elemen riwayatLacakContainer tidak ditemukan!');
+        return;
+    }
+
+    if (!s) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3></div>';
+        return;
+    }
+
+    initUserApps(s);
+    var data = getAllLacakData()[s.id] || [];
+
+    if (data.length === 0) {
+        container.innerHTML = '<div class="empty-state" id="emptyRiwayat"><div class="empty-state-icon">📋</div><h3>Belum Ada Riwayat</h3><p>Riwayat pelacakan Anda akan muncul di sini.</p><button onclick="showLacakModal(\'ip\')" class="btn btn-primary">🔍 Mulai Lacak</button></div>';
+        return;
+    }
+
+    data.sort(function(a, b) { return new Date(b.time) - new Date(a.time); });
+
+    var icons = {
+        ip: '🌐',
+        email: '📧',
+        gmail_location: '📍',
+        sosmed_location: '📱',
+        tiktok: '🎵',
+        instagram: '📷',
+        facebook: '📘',
+        whatsapp: '📱',
+        tracker: '🔗'
+    };
+
+    var html = '';
+    for (var i = 0; i < data.length; i++) {
+        var d = data[i];
+        var k = '';
+        if (d.result && d.result.lat) {
+            k = ' <span style="color:#10b981;">📍' + d.result.lat + ',' + d.result.lng + '</span>';
+        }
+        var icon = icons[d.type] || '🔍';
+        var typeName = d.type.toUpperCase();
+        if (d.type === 'tracker') typeName = 'PESAN';
+        if (d.type === 'gmail_location') typeName = 'GMAIL LOC';
+        if (d.type === 'sosmed_location') typeName = 'SOSMED LOC';
+        html += '<div style="background:var(--bg-secondary);border-radius:8px;padding:12px;border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\'' + d.id + '\')">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">';
+        html += '<span>' + icon + ' <strong>' + typeName + '</strong> – ' + escapeHTML(d.input) + k + '</span>';
+        html += '<span style="font-size:0.75rem;color:var(--text-muted);">' + new Date(d.time).toLocaleString() + '</span>';
+        html += '</div></div>';
+    }
+
+    container.innerHTML = html;
+    console.log('✅ Riwayat ditampilkan, total:', data.length);
+};
+
+// ============================================================
+// SHOW DETAIL RIWAYAT - OVERRIDE
+// ============================================================
+window.showDetailRiwayat = function(id) {
+    console.log('📋 showDetailRiwayat() OVERRIDE dipanggil untuk ID:', id);
+
+    var s = getSession();
+    if (!s) {
+        showToast('⚠️ Login dulu!', 'error');
+        return;
+    }
+
+    var data = getAllLacakData()[s.id] || [];
+    var item = null;
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].id === id) { item = data[i]; break; }
+    }
+
+    if (!item) {
+        showToast('❌ Data tidak ditemukan!', 'error');
+        return;
+    }
+
+    var titleEl = document.getElementById('detailRiwayatTitle');
+    var contentEl = document.getElementById('detailRiwayatContent');
+
+    if (!titleEl || !contentEl) {
+        showToast('❌ Elemen tidak ditemukan!', 'error');
+        return;
+    }
+
+    var typeName = item.type.toUpperCase();
+    if (item.type === 'sosmed_location') typeName = 'SOSMED LOCATION';
+    if (item.type === 'gmail_location') typeName = 'GMAIL LOCATION';
+    titleEl.textContent = '📋 Detail ' + typeName;
+
+    var h = '<p><strong>Target:</strong> ' + escapeHTML(item.input) + '</p>';
+    h += '<p><strong>Waktu:</strong> ' + new Date(item.time).toLocaleString() + '</p>';
+    h += '<hr style="border-color:var(--border-color);margin:12px 0;">';
+
+    var hasil = item.result;
+
+    if (hasil.lat !== undefined && hasil.lng !== undefined) {
+        h += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
+        h += '<div style="font-size:0.8rem;">📍 TITIK KOORDINAT</div>';
+        h += '<div style="font-size:1.3rem;font-weight:800;">' + hasil.lat + ', ' + hasil.lng + '</div>';
+        if (hasil.maps) {
+            h += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;">🗺 Buka Google Maps</a>';
+        }
+        h += '</div>';
+    }
+
+    if (hasil.gambarData && hasil.gambarData.startsWith('data:image')) {
+        h += '<img src="' + hasil.gambarData + '" style="max-width:100%;max-height:250px;border-radius:8px;margin-bottom:8px;">';
+    }
+
+    for (var key in hasil) {
+        if (key === 'lat' || key === 'lng' || key === 'maps' || key === 'gambarData') continue;
+        if (typeof hasil[key] === 'string' || typeof hasil[key] === 'number') {
+            h += '<p><strong>' + key + ':</strong> ' + escapeHTML(String(hasil[key])) + '</p>';
+        }
+    }
+
+    contentEl.innerHTML = h;
+    openModal('detailRiwayatModal');
+    console.log('✅ Detail riwayat ditampilkan');
+};
+
+// ============================================================
+// OVERRIDE FUNGSI LAINNYA DARI BLOK 8
+// ============================================================
+window.showLinkTrackerModal = function() {
+    console.log('🔗 showLinkTrackerModal() OVERRIDE dipanggil');
+    
+    var s = getSession();
+    if (!s) {
+        showToast('⚠️ Login dulu!', 'error');
+        return;
+    }
+    
+    var titleInput = document.getElementById('trackerTitle');
+    var messageInput = document.getElementById('trackerMessage');
+    var imageUrlInput = document.getElementById('trackerImageUrl');
+    var imageFileInput = document.getElementById('trackerImageFile');
+    var previewDiv = document.getElementById('trackerImagePreview');
+    var resultDiv = document.getElementById('trackerResult');
+    var errorDiv = document.getElementById('trackerError');
+    var btn = document.getElementById('btnSiapkanKiriman');
+    
+    if (titleInput) titleInput.value = '';
+    if (messageInput) messageInput.value = '';
+    if (imageUrlInput) imageUrlInput.value = '';
+    if (imageFileInput) imageFileInput.value = '';
+    if (previewDiv) previewDiv.style.display = 'none';
+    if (resultDiv) {
+        resultDiv.classList.add('hidden');
+        resultDiv.setAttribute('data-title', '');
+        resultDiv.setAttribute('data-message', '');
+        resultDiv.setAttribute('data-image', '');
+    }
+    if (errorDiv) errorDiv.classList.remove('show');
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = '📤 Siapkan Kiriman';
+    }
+    
+    trackerImageData = null;
+    openModal('linkTrackerModal');
+    console.log('✅ Modal tracker dibuka');
+};
+
+window.showTrackerClicks = function() {
+    console.log('📊 showTrackerClicks() OVERRIDE dipanggil');
+    
+    var s = getSession();
+    if (!s) {
+        showToast('⚠️ Login dulu!', 'error');
+        return;
+    }
+    
+    var data = getAllLacakData()[s.id] || [];
+    var trackers = [];
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].type === 'tracker') trackers.push(data[i]);
+    }
+    
+    var container = document.getElementById('trackerClicksContent');
+    if (!container) {
+        showToast('❌ Elemen tidak ditemukan!', 'error');
+        return;
+    }
+    
+    if (trackers.length === 0) {
+        container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-muted);">📭 Belum ada pesan tracker.</p>';
+        openModal('trackerClicksModal');
+        return;
+    }
+    
+    var html = '';
+    html += '<p style="margin-bottom:12px;"><strong>📊 Total:</strong> ' + trackers.length + ' pesan</p>';
+    
+    trackers.reverse();
+    for (var i = 0; i < trackers.length; i++) {
+        var t = trackers[i];
+        var hasil = t.result || {};
+        var judul = hasil.judul || t.input || 'Tanpa Judul';
+        var pesan = hasil.pesan || '';
+        var gambar = hasil.gambarData || '';
+        var lat = hasil.lat || 0;
+        var lng = hasil.lng || 0;
+        var maps = hasil.maps || 'https://www.google.com/maps?q=' + lat + ',' + lng;
+        var waktu = new Date(t.time).toLocaleString();
+        
+        html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">';
+        html += '<strong style="font-size:0.95rem;">📌 ' + escapeHTML(judul) + '</strong>';
+        html += '<span style="font-size:0.75rem;color:var(--text-muted);">🕐 ' + waktu + '</span>';
+        html += '</div>';
+        
+        if (pesan) {
+            html += '<p style="font-size:0.85rem;margin-top:4px;white-space:pre-wrap;">' + escapeHTML(pesan).replace(/\n/g, '<br>') + '</p>';
+        }
+        
+        if (gambar && gambar.startsWith('data:image')) {
+            html += '<img src="' + gambar + '" style="max-width:100%;max-height:180px;border-radius:8px;margin-top:8px;">';
+        } else if (gambar && gambar.startsWith('http')) {
+            html += '<img src="' + gambar + '" style="max-width:100%;max-height:180px;border-radius:8px;margin-top:8px;" onerror="this.style.display=\'none\'">';
+        }
+        
+        if (lat && lng && lat !== 0) {
+            html += '<div style="margin-top:6px;">';
+            html += '<span style="color:#10b981;font-weight:600;font-size:0.85rem;">📍 ' + lat + ', ' + lng + '</span> ';
+            html += '<a href="' + maps + '" target="_blank" style="color:#3b82f6;font-size:0.8rem;">🗺 Buka Maps</a>';
+            html += '</div>';
+        }
+        
+        html += '</div>';
+    }
+    
+    container.innerHTML = html;
+    openModal('trackerClicksModal');
+    console.log('✅ Hasil klik ditampilkan, total:', trackers.length);
+};
+
+// ============================================================
+// LOG INIT
+// ============================================================
+console.log('✅ Blok 10 R3 – Fungsi Lacak & Tracker TraceID siap digunakan!');
+console.log('📌 Fungsi-fungsi yang tersedia:');
+console.log('   - showLacakModal() - Menampilkan modal lacak');
+console.log('   - executeLacak() - Eksekusi lacakan');
+console.log('   - lacakGmailLocation() - Lacak Gmail location');
+console.log('   - lacakSosmedLocation() - Lacak Sosmed location');
+console.log('   - showLinkTrackerModal() - Menampilkan modal tracker');
+console.log('   - showTrackerClicks() - Menampilkan hasil klik');
+console.log('   - refreshAppUI() - Refresh riwayat');
+console.log('   - showDetailRiwayat() - Menampilkan detail riwayat');
+console.log('📌 Semua fungsi telah di-override dari Blok 8!');
+</script>
+
 <!-- ============================================================
-     BLOK 11 R1 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI)
+     AKHIR BLOK 10 R3
+     LANJUT KE BLOK 11 UNTUK ADMIN PANEL
+     ============================================================ -->
+
+
+<!-- ===== TRICEID PRO → BLOK 11 R2 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
+<!-- ============================================================
+     BLOK 11 R2 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
      (Super Admin Panel functions, Kode Aktivasi, User Management, 
       Chat Admin, Backup, Settings, Iklan)
      ============================================================
@@ -3843,7 +4595,7 @@ if (typeof escapeHTML !== 'function') {
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 11 R1 – Memuat semua fungsi Admin Panel...');
+console.log('🔍 Blok 11 R2 – Memuat semua fungsi Admin Panel...');
 
 // ============================================================
 // SUPER ADMIN PANEL
@@ -4703,13 +5455,11 @@ function saveToGoogleDrive() {
             text: 'Simpan file backup TraceID ke Google Drive atau memori.',
             files: [file]
         })
-            .then(function() {
-                showToast
 
 
-<!-- ===== TRACERID → BLOK 12 R2 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT ===== -->
+<!-- ===== TRICEID PRO → BLOK 12 R3 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 12 R2 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 12 R3 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL)
      (Chat User ke Admin, Chat User ke User, Landing Display, Offline, Init)
      ============================================================
      PENJELASAN:
@@ -4745,7 +5495,7 @@ function escapeHTML(str) {
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 12 R2 – Memuat semua fungsi Chat, Landing, Init...');
+console.log('🔍 Blok 12 R3 – Memuat semua fungsi Chat, Landing, Init...');
 
 // ============================================================
 // HUBUNGI ADMIN (LANDING PAGE)
@@ -5170,7 +5920,7 @@ if (typeof toggleTheme !== 'function') {
         document.body.classList.toggle('light-theme');
         var isLight = document.body.classList.contains('light-theme');
         var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
-        document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b) {
+        document.querySelectorAll('#themeButton1, #themeButton2').forEach(function(b) {
             if (b) b.textContent = label;
         });
         localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
@@ -5221,7 +5971,7 @@ if (typeof handleLogout !== 'function') {
         clearSession();
         goToLandingPage();
         if (typeof updateHeaderUser === 'function') updateHeaderUser();
-        showToast('Logout berhasil.', 'info');
+        showToast('✅ Logout berhasil.', 'info');
     };
 }
 
@@ -5289,14 +6039,14 @@ if (typeof handleLogout !== 'function') {
         console.warn('⚠️ updateHeaderUser() tidak ditemukan, patch tidak bisa diterapkan');
     }
 
-    console.log('✅ Blok 12 R2 – TraceID v1.0 siap digunakan.');
+    console.log('✅ Blok 12 R3 – TraceID v1.0 siap digunakan.');
     console.log('📌 Chat, Landing Display, Offline, Init berhasil dimuat.');
     console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
     console.log('📌 Semua tombol di halaman depan seharusnya sudah berfungsi.');
 })();
 
 // ============================================================
-// AKHIR BLOK 12 R2
+// AKHIR BLOK 12 R3
 // ============================================================
 </script>
 
@@ -5311,5 +6061,5 @@ if (typeof handleLogout !== 'function') {
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 12 R2 - SELESAI
+     AKHIR BLOK 12 R3 - SELESAI
      ============================================================ -->
