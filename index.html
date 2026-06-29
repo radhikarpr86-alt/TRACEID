@@ -1153,9 +1153,9 @@
      ============================================================ -->
 
 
-<!-- ===== TRICEID PRO → BLOK 5 R4 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
+<!-- ===== TRICEID PRO → BLOK 5 R5 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 5 R4 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 5 R5 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL)
      (Modal Lacak, Link Tracker, Hasil Klik, Detail Riwayat, Confirm, Edit Package)
      ============================================================
      PENJELASAN:
@@ -1165,6 +1165,7 @@
      - DIPERBAIKI: Modal Lacak dengan tombol Gmail Location & Sosmed Location
      - DIPERBAIKI: Modal Link Tracker dengan atribut data untuk menyimpan pesan & gambar
      - DIPERBAIKI: Semua ID sesuai dengan fungsi JavaScript
+     - DIPERBAIKI: Penambahan tombol Real Location untuk GPS
      ============================================================ -->
 
 <!-- ============================================================
@@ -1206,6 +1207,14 @@
               style="margin-top:8px;display:none;" 
               onclick="lacakSosmedLocation(document.getElementById('lacakInput').value, document.getElementById('lacakType').value)">
         📱 Lacak Sosmed Location
+      </button>
+      
+      <!-- Tombol Real Location (GPS Perangkat) - muncul untuk semua type kecuali IP -->
+      <button id="btnRealLocation" 
+              class="btn btn-purple btn-block" 
+              style="margin-top:8px;display:none;" 
+              onclick="lacakRealLocation()">
+        📍 Lacak Lokasi Real (GPS)
       </button>
       
       <!-- Loading -->
@@ -1400,7 +1409,7 @@
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 5 R4
+     AKHIR BLOK 5 R5
      Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container
      ============================================================ -->
 
@@ -3322,9 +3331,9 @@ console.log('📌 Lanjut ke Blok 10 untuk fungsi Lacak & Tracker');
      ============================================================ -->
 
 
-<!-- ===== TRICEID PRO → BLOK 10 R4 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
+<!-- ===== TRICEID PRO → BLOK 10 R5 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 10 R4 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 10 R5 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL)
      ============================================================
      PENJELASAN:
      - Berisi semua fungsi lacak dan tracker untuk TraceID
@@ -3335,15 +3344,17 @@ console.log('📌 Lanjut ke Blok 10 untuk fungsi Lacak & Tracker');
      - Bagian 2 dari 2 (Lanjutan dari Blok 9)
      - DIPERBAIKI: Semua fungsi lengkap, override dari Blok 8,
        console log untuk debugging, error handling
-     - DIPERBAIKI: Lacak menggunakan API real (ipapi.co)
+     - DIPERBAIKI: Lacak menggunakan API real (ipapi.co) dengan validasi
      - DIPERBAIKI: Link Tracker event listener dan share functions
+     - DIPERBAIKI: Koordinat menggunakan IP pengguna untuk lacak email & sosmed
+     - DIPERBAIKI: Penambahan validasi untuk setiap API response
      ============================================================ -->
 
 <script>
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 10 R4 – Memuat fungsi Lacak & Tracker TraceID...');
+console.log('🔍 Blok 10 R5 – Memuat fungsi Lacak & Tracker TraceID...');
 
 // ============================================================
 // OVERRIDE FUNGSI DARI BLOK 8
@@ -3548,7 +3559,7 @@ function tambahTombolSosmedLocation(type) {
 }
 
 // ============================================================
-// EKSEKUSI LACAK - DIPERBAIKI DENGAN API REAL
+// EKSEKUSI LACAK - DIPERBAIKI DENGAN API REAL DAN VALIDASI
 // ============================================================
 function executeLacak() {
     console.log('🔍 executeLacak() OVERRIDE dipanggil');
@@ -3586,7 +3597,7 @@ function executeLacak() {
     if (resultDetail) resultDetail.classList.add('hidden');
 
     // ============================================================
-    // LACAK IP - Menggunakan API Real ipapi.co
+    // LACAK IP - Menggunakan API Real ipapi.co dengan validasi
     // ============================================================
     if (type === 'ip') {
         console.log('🌐 Lacak IP:', input);
@@ -3597,22 +3608,44 @@ function executeLacak() {
             .then(function(data) {
                 if (loading) loading.classList.add('hidden');
                 
-                // Cek apakah data valid
+                // Cek apakah data valid - periksa latitude dan longitude
                 if (data && data.latitude && data.longitude && data.latitude !== 0 && data.longitude !== 0) {
-                    var hasil = {
-                        ip: data.ip || input,
-                        kota: data.city || 'Tidak diketahui',
-                        provinsi: data.region || 'Tidak diketahui',
-                        negara: data.country_name || 'Tidak diketahui',
-                        lat: data.latitude,
-                        lng: data.longitude,
-                        maps: 'https://www.google.com/maps?q=' + data.latitude + ',' + data.longitude,
-                        isp: data.org || '-',
-                        timezone: data.timezone || '-',
-                        info: 'Lokasi real dari IP Address: ' + data.city + ', ' + data.region + ', ' + data.country_name
-                    };
-                    simpanDanTampilkan('ip', input, hasil);
-                    showToast('✅ Lokasi IP ditemukan!', 'success');
+                    // Validasi koordinat agar tidak keluar dari batas bumi
+                    var lat = parseFloat(data.latitude);
+                    var lng = parseFloat(data.longitude);
+                    
+                    if (lat > -90 && lat < 90 && lng > -180 && lng < 180) {
+                        var hasil = {
+                            ip: data.ip || input,
+                            kota: data.city || 'Tidak diketahui',
+                            provinsi: data.region || 'Tidak diketahui',
+                            negara: data.country_name || 'Tidak diketahui',
+                            lat: lat,
+                            lng: lng,
+                            maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+                            isp: data.org || '-',
+                            timezone: data.timezone || '-',
+                            info: 'Lokasi real dari IP Address: ' + (data.city || '') + ', ' + (data.region || '') + ', ' + (data.country_name || '')
+                        };
+                        simpanDanTampilkan('ip', input, hasil);
+                        showToast('✅ Lokasi IP ditemukan!', 'success');
+                    } else {
+                        // Koordinat tidak valid
+                        showToast('⚠️ Koordinat tidak valid!', 'error');
+                        var hasil = {
+                            ip: input,
+                            kota: 'Koordinat tidak valid',
+                            provinsi: '-',
+                            negara: '-',
+                            lat: 0,
+                            lng: 0,
+                            maps: '#',
+                            isp: '-',
+                            timezone: '-',
+                            info: 'Koordinat tidak valid - periksa kembali'
+                        };
+                        simpanDanTampilkan('ip', input, hasil);
+                    }
                 } else {
                     // IP tidak valid atau tidak ditemukan
                     showToast('⚠️ IP tidak valid atau tidak ditemukan!', 'error');
@@ -3634,6 +3667,21 @@ function executeLacak() {
             .catch(function() {
                 if (loading) loading.classList.add('hidden');
                 showToast('❌ Gagal terhubung ke API, periksa koneksi internet!', 'error');
+                
+                // Fallback dengan pesan error
+                var hasil = {
+                    ip: input,
+                    kota: 'Gagal koneksi',
+                    provinsi: '-',
+                    negara: '-',
+                    lat: 0,
+                    lng: 0,
+                    maps: '#',
+                    isp: '-',
+                    timezone: '-',
+                    info: 'Gagal terhubung ke API - periksa koneksi internet'
+                };
+                simpanDanTampilkan('ip', input, hasil);
             });
 
     // ============================================================
@@ -3692,6 +3740,29 @@ function executeLacak() {
             .catch(function() {
                 if (loading) loading.classList.add('hidden');
                 showToast('❌ Gagal mendapatkan lokasi, periksa koneksi!', 'error');
+                
+                // Fallback
+                var hasil = {
+                    email: input,
+                    domain: emailInfo.domain,
+                    provider: emailInfo.provider,
+                    valid: emailInfo.valid,
+                    kota: 'Gagal koneksi',
+                    provinsi: '-',
+                    negara: '-',
+                    lat: 0,
+                    lng: 0,
+                    maps: '#',
+                    info: '📍 Gagal mendapatkan lokasi',
+                    waktu: new Date().toLocaleString(),
+                    ipAddress: 'Tidak diketahui',
+                    isp: 'Tidak diketahui',
+                    timezone: 'Tidak diketahui',
+                    userLocation: 'Tidak dapat mendeteksi lokasi Anda',
+                    domainInfo: 'Domain ' + emailInfo.domain + ' terdaftar di ' + (emailInfo.provider || 'tidak diketahui'),
+                    catatan: '⚠️ Gagal mendapatkan lokasi, periksa koneksi internet'
+                };
+                simpanDanTampilkan('email', input, hasil);
             });
 
     // ============================================================
@@ -3972,7 +4043,7 @@ function simpanDanTampilkan(type, input, hasil) {
 }
 
 // ============================================================
-// TAMPILKAN HASIL - DIPERBAIKI
+// TAMPILKAN HASIL - DIPERBAIKI DENGAN VALIDASI
 // ============================================================
 function tampilkanHasil(hasil) {
     var container = document.getElementById('lacakResultContent');
@@ -3980,7 +4051,7 @@ function tampilkanHasil(hasil) {
 
     var html = '<div style="font-size:0.9rem;line-height:1.8;">';
 
-    // TAMPILKAN KOORDINAT
+    // TAMPILKAN KOORDINAT - dengan validasi
     if (hasil.lat !== undefined && hasil.lng !== undefined && hasil.lat !== 0 && hasil.lng !== 0) {
         html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
         html += '<div style="font-size:0.8rem;opacity:0.9;">📍 LOKASI</div>';
@@ -3989,7 +4060,8 @@ function tampilkanHasil(hasil) {
             html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;font-size:0.85rem;">🗺 Buka di Google Maps</a>';
         }
         html += '</div>';
-    } else {
+    } else if (hasil.lat === 0 && hasil.lng === 0) {
+        // Tampilkan pesan error jika koordinat 0,0
         html += '<div style="background:#ef4444;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
         html += '<div style="font-size:0.8rem;opacity:0.9;">❌ LOKASI TIDAK DITEMUKAN</div>';
         html += '<div style="font-size:1rem;font-weight:600;">Data tidak valid atau IP tidak ditemukan</div>';
@@ -4035,9 +4107,15 @@ function tampilkanHasil(hasil) {
     if (hasil.kota || hasil.provinsi || hasil.negara) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📍 Lokasi</h4>';
-        if (hasil.kota && hasil.kota !== 'Tidak ditemukan') html += '<p><strong>🏙️ Kota:</strong> ' + escapeHTML(hasil.kota) + '</p>';
-        if (hasil.provinsi && hasil.provinsi !== '-') html += '<p><strong>📍 Provinsi:</strong> ' + escapeHTML(hasil.provinsi) + '</p>';
-        if (hasil.negara && hasil.negara !== '-') html += '<p><strong>🌍 Negara:</strong> ' + escapeHTML(hasil.negara) + '</p>';
+        if (hasil.kota && hasil.kota !== 'Tidak ditemukan' && hasil.kota !== 'Gagal koneksi') {
+            html += '<p><strong>🏙️ Kota:</strong> ' + escapeHTML(hasil.kota) + '</p>';
+        }
+        if (hasil.provinsi && hasil.provinsi !== '-') {
+            html += '<p><strong>📍 Provinsi:</strong> ' + escapeHTML(hasil.provinsi) + '</p>';
+        }
+        if (hasil.negara && hasil.negara !== '-') {
+            html += '<p><strong>🌍 Negara:</strong> ' + escapeHTML(hasil.negara) + '</p>';
+        }
         if (hasil.info) html += '<p><strong>ℹ️ Info:</strong> ' + escapeHTML(hasil.info) + '</p>';
         html += '</div>';
     }
@@ -4052,7 +4130,7 @@ function tampilkanHasil(hasil) {
 
     if (hasil.waktu) html += '<p><strong>⏰ Waktu:</strong> ' + escapeHTML(hasil.waktu) + '</p>';
 
-    if (hasil.lat !== undefined && hasil.lng !== undefined && hasil.maps && hasil.maps !== '#') {
+    if (hasil.lat !== undefined && hasil.lng !== undefined && hasil.maps && hasil.maps !== '#' && hasil.lat !== 0 && hasil.lng !== 0) {
         html += '<div style="margin-top:12px;text-align:center;">';
         html += '<a href="' + hasil.maps + '" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex;">🗺 Buka Google Maps</a>';
         html += '</div>';
@@ -4760,7 +4838,7 @@ window.showDetailRiwayat = function(id) {
 // ============================================================
 // LOG INIT
 // ============================================================
-console.log('✅ Blok 10 R4 – Fungsi Lacak & Tracker TraceID siap digunakan!');
+console.log('✅ Blok 10 R5 – Fungsi Lacak & Tracker TraceID siap digunakan!');
 console.log('📌 Fungsi-fungsi yang tersedia:');
 console.log('   - showLacakModal() - Menampilkan modal lacak');
 console.log('   - executeLacak() - Eksekusi lacakan (dengan API real)');
@@ -4774,10 +4852,11 @@ console.log('   - refreshAppUI() - Refresh riwayat');
 console.log('   - showDetailRiwayat() - Menampilkan detail riwayat');
 console.log('📌 Semua fungsi telah di-override dari Blok 8!');
 console.log('📌 Event listener untuk tombol Siapkan Kiriman sudah terpasang!');
+console.log('📌 Validasi koordinat sudah ditambahkan untuk hasil lebih akurat');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 10 R4
+     AKHIR BLOK 10 R5
      LANJUT KE BLOK 11 UNTUK ADMIN PANEL
      ============================================================ -->
 
