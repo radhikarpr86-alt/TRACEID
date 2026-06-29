@@ -3331,35 +3331,52 @@ console.log('📌 Lanjut ke Blok 10 untuk fungsi Lacak & Tracker');
      ============================================================ -->
 
 
-<!-- ===== TRICEID PRO → BLOK 10 R5 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
+<!-- ===== TRICEID PRO → BLOK 10 R7 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 10 R5 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 10 R7 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION, REAL LOCATION (LENGKAP + DIPERBAIKI DARI AWAL)
      ============================================================
      PENJELASAN:
      - Berisi semua fungsi lacak dan tracker untuk TraceID
      - Lacak via IP, Email, TikTok, Instagram, Facebook, WhatsApp
-     - Link Tracker (Kirim Pesan & Gambar) - LENGKAP
+     - Link Tracker (Kirim Pesan & Gambar) - LENGKAP DENGAN LACAKAN LOKASI
      - Gmail Location: Multi-metode (Google Maps Sharing, IP Header, Fallback)
      - Sosmed Location: Menggunakan data izin lokasi dari aplikasi (simulasi)
+     - Real Location: Menggunakan GPS perangkat (akurasi tinggi)
      - Bagian 2 dari 2 (Lanjutan dari Blok 9)
+     - DIPERBAIKI: Link Tracker dengan sistem lacak lokasi saat target buka link
+     - DIPERBAIKI: Menggunakan ip-api.com sebagai API utama (lebih akurat)
+     - DIPERBAIKI: Validasi koordinat agar tidak menampilkan 0,0
+     - DIPERBAIKI: Fungsi lacakRealLocation() untuk GPS perangkat
      - DIPERBAIKI: Semua fungsi lengkap, override dari Blok 8,
        console log untuk debugging, error handling
-     - DIPERBAIKI: Lacak menggunakan API real (ipapi.co) dengan validasi
-     - DIPERBAIKI: Link Tracker event listener dan share functions
-     - DIPERBAIKI: Koordinat menggunakan IP pengguna untuk lacak email & sosmed
-     - DIPERBAIKI: Penambahan validasi untuk setiap API response
      ============================================================ -->
 
 <script>
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 10 R5 – Memuat fungsi Lacak & Tracker TraceID...');
+console.log('🔍 Blok 10 R7 – Memuat fungsi Lacak & Tracker TraceID...');
 
 // ============================================================
 // OVERRIDE FUNGSI DARI BLOK 8
 // ============================================================
 console.log('🔄 Meng-override fungsi-fungsi dari Blok 8...');
+
+// ============================================================
+// STORAGE FUNGSI UNTUK TRACKER LINKS
+// ============================================================
+function getTrackerLinks() {
+    try {
+        var v = localStorage.getItem('tr_tracker_links');
+        return v ? JSON.parse(v) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveTrackerLinks(data) {
+    localStorage.setItem('tr_tracker_links', JSON.stringify(data));
+}
 
 // ============================================================
 // SHOW LACAK MODAL - OVERRIDE
@@ -3421,17 +3438,14 @@ window.showLacakModal = function(type) {
     if (loading) loading.classList.add('hidden');
     if (error) error.classList.remove('show');
 
-    // Tambahkan tombol Gmail Location jika type = email
     if (type === 'email') {
         tambahTombolGmailLocation();
     }
 
-    // Tambahkan tombol Sosmed Location jika type = tiktok/instagram/facebook/whatsapp
     if (['tiktok', 'instagram', 'facebook', 'whatsapp'].indexOf(type) !== -1) {
         tambahTombolSosmedLocation(type);
     }
 
-    // Update tampilan tombol
     updateLacakButtons(type);
 
     openModal('lacakModal');
@@ -3487,6 +3501,7 @@ function updateLacakButtons(type) {
     
     var btnGmail = document.getElementById('btnGmailLocation');
     var btnSosmed = document.getElementById('btnSosmedLocation');
+    var btnReal = document.getElementById('btnRealLocation');
     
     if (btnGmail) {
         btnGmail.style.display = (type === 'email') ? 'block' : 'none';
@@ -3497,6 +3512,11 @@ function updateLacakButtons(type) {
         var sosmedTypes = ['tiktok', 'instagram', 'facebook', 'whatsapp'];
         btnSosmed.style.display = (sosmedTypes.indexOf(type) !== -1) ? 'block' : 'none';
         console.log('✅ Tombol Sosmed Location:', (sosmedTypes.indexOf(type) !== -1) ? 'ditampilkan' : 'disembunyikan');
+    }
+    
+    if (btnReal) {
+        btnReal.style.display = (type !== 'ip') ? 'block' : 'none';
+        console.log('✅ Tombol Real Location:', (type !== 'ip') ? 'ditampilkan' : 'disembunyikan');
     }
 }
 
@@ -3559,7 +3579,110 @@ function tambahTombolSosmedLocation(type) {
 }
 
 // ============================================================
-// EKSEKUSI LACAK - DIPERBAIKI DENGAN API REAL DAN VALIDASI
+// FUNGSI DAPATKAN LOKASI REAL DARI PERANGKAT (GPS)
+// ============================================================
+function getRealLocation(callback) {
+    console.log('📍 Mendapatkan lokasi real dari perangkat...');
+    
+    if (!navigator.geolocation) {
+        showToast('❌ Browser tidak mendukung Geolocation!', 'error');
+        if (callback) callback(null);
+        return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            console.log('✅ Lokasi real didapatkan:', lat, lng);
+            
+            fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lng + '&localityLanguage=id')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    var hasil = {
+                        lat: lat,
+                        lng: lng,
+                        kota: data.city || data.locality || 'Tidak diketahui',
+                        provinsi: data.principalSubdivision || 'Tidak diketahui',
+                        negara: data.countryName || 'Indonesia',
+                        maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+                        info: '📍 Lokasi real dari perangkat Anda (akurasi tinggi)',
+                        akurasi: 'Tinggi (GPS)'
+                    };
+                    if (callback) callback(hasil);
+                })
+                .catch(function() {
+                    var hasil = {
+                        lat: lat,
+                        lng: lng,
+                        kota: 'Tidak diketahui',
+                        provinsi: 'Tidak diketahui',
+                        negara: 'Indonesia',
+                        maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+                        info: '📍 Lokasi real dari perangkat Anda',
+                        akurasi: 'Tinggi (GPS)'
+                    };
+                    if (callback) callback(hasil);
+                });
+        },
+        function(error) {
+            console.warn('⚠️ Gagal mendapatkan lokasi:', error.message);
+            var pesanError = '';
+            if (error.code === 1) {
+                pesanError = 'Izin lokasi ditolak. Aktifkan GPS dan izinkan akses lokasi.';
+            } else if (error.code === 2) {
+                pesanError = 'Lokasi tidak tersedia. Pastikan GPS aktif.';
+            } else if (error.code === 3) {
+                pesanError = 'Timeout mendapatkan lokasi. Coba lagi.';
+            } else {
+                pesanError = 'Gagal mendapatkan lokasi: ' + error.message;
+            }
+            showToast('⚠️ ' + pesanError, 'warning');
+            if (callback) callback(null);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+// ============================================================
+// LACAK LOKASI REAL (MENGGUNAKAN GPS PERANGKAT)
+// ============================================================
+function lacakRealLocation() {
+    console.log('📍 lacakRealLocation() dipanggil');
+    
+    var s = getSession();
+    if (!s) {
+        showToast('⚠️ Login dulu!', 'error');
+        return;
+    }
+    
+    var loading = document.getElementById('lacakLoading');
+    var resultDetail = document.getElementById('lacakResultDetail');
+    if (loading) loading.classList.remove('hidden');
+    if (resultDetail) resultDetail.classList.add('hidden');
+    
+    getRealLocation(function(hasil) {
+        if (loading) loading.classList.add('hidden');
+        
+        if (hasil) {
+            hasil.waktu = new Date().toLocaleString();
+            hasil.catatan = '✅ Lokasi real dari GPS perangkat Anda. Akurasi tinggi (10-20 meter).';
+            hasil.sumber = 'GPS Perangkat';
+            
+            simpanDanTampilkan('real_location', 'Lokasi Real', hasil);
+            showToast('✅ Lokasi real ditemukan!', 'success');
+        } else {
+            showToast('❌ Gagal mendapatkan lokasi real. Coba metode lain.', 'error');
+        }
+    });
+}
+
+// ============================================================
+// EKSEKUSI LACAK - DIPERBAIKI DENGAN ip-api.com
 // ============================================================
 function executeLacak() {
     console.log('🔍 executeLacak() OVERRIDE dipanggil');
@@ -3597,40 +3720,36 @@ function executeLacak() {
     if (resultDetail) resultDetail.classList.add('hidden');
 
     // ============================================================
-    // LACAK IP - Menggunakan API Real ipapi.co dengan validasi
+    // LACAK IP - Menggunakan ip-api.com
     // ============================================================
     if (type === 'ip') {
         console.log('🌐 Lacak IP:', input);
         
-        // Gunakan API ipapi.co untuk mendapatkan lokasi real
-        fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
+        fetch('http://ip-api.com/json/' + encodeURIComponent(input) + '?fields=status,message,country,regionName,city,lat,lon,isp,org,timezone')
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 if (loading) loading.classList.add('hidden');
                 
-                // Cek apakah data valid - periksa latitude dan longitude
-                if (data && data.latitude && data.longitude && data.latitude !== 0 && data.longitude !== 0) {
-                    // Validasi koordinat agar tidak keluar dari batas bumi
-                    var lat = parseFloat(data.latitude);
-                    var lng = parseFloat(data.longitude);
+                if (data && data.status === 'success') {
+                    var lat = parseFloat(data.lat);
+                    var lng = parseFloat(data.lon);
                     
-                    if (lat > -90 && lat < 90 && lng > -180 && lng < 180) {
+                    if (lat > -90 && lat < 90 && lng > -180 && lng < 180 && lat !== 0 && lng !== 0) {
                         var hasil = {
-                            ip: data.ip || input,
+                            ip: input,
                             kota: data.city || 'Tidak diketahui',
-                            provinsi: data.region || 'Tidak diketahui',
-                            negara: data.country_name || 'Tidak diketahui',
+                            provinsi: data.regionName || 'Tidak diketahui',
+                            negara: data.country || 'Tidak diketahui',
                             lat: lat,
                             lng: lng,
                             maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
-                            isp: data.org || '-',
+                            isp: data.isp || data.org || '-',
                             timezone: data.timezone || '-',
-                            info: 'Lokasi real dari IP Address: ' + (data.city || '') + ', ' + (data.region || '') + ', ' + (data.country_name || '')
+                            info: 'Lokasi real dari IP Address: ' + (data.city || '') + ', ' + (data.regionName || '') + ', ' + (data.country || '')
                         };
                         simpanDanTampilkan('ip', input, hasil);
                         showToast('✅ Lokasi IP ditemukan!', 'success');
                     } else {
-                        // Koordinat tidak valid
                         showToast('⚠️ Koordinat tidak valid!', 'error');
                         var hasil = {
                             ip: input,
@@ -3647,28 +3766,82 @@ function executeLacak() {
                         simpanDanTampilkan('ip', input, hasil);
                     }
                 } else {
-                    // IP tidak valid atau tidak ditemukan
-                    showToast('⚠️ IP tidak valid atau tidak ditemukan!', 'error');
-                    var hasil = {
-                        ip: input,
-                        kota: 'Tidak ditemukan',
-                        provinsi: '-',
-                        negara: '-',
-                        lat: 0,
-                        lng: 0,
-                        maps: '#',
-                        isp: '-',
-                        timezone: '-',
-                        info: 'IP tidak valid - periksa kembali'
-                    };
-                    simpanDanTampilkan('ip', input, hasil);
+                    fetch('https://ipapi.co/' + encodeURIComponent(input) + '/json/')
+                        .then(function(r2) { return r2.json(); })
+                        .then(function(data2) {
+                            if (data2 && data2.latitude && data2.longitude) {
+                                var lat = parseFloat(data2.latitude);
+                                var lng = parseFloat(data2.longitude);
+                                if (lat > -90 && lat < 90 && lng > -180 && lng < 180 && lat !== 0 && lng !== 0) {
+                                    var hasil = {
+                                        ip: data2.ip || input,
+                                        kota: data2.city || 'Tidak diketahui',
+                                        provinsi: data2.region || 'Tidak diketahui',
+                                        negara: data2.country_name || 'Tidak diketahui',
+                                        lat: lat,
+                                        lng: lng,
+                                        maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+                                        isp: data2.org || '-',
+                                        timezone: data2.timezone || '-',
+                                        info: 'Lokasi dari IP Address (fallback)'
+                                    };
+                                    simpanDanTampilkan('ip', input, hasil);
+                                    showToast('✅ Lokasi IP ditemukan (fallback)!', 'success');
+                                } else {
+                                    showToast('⚠️ Koordinat tidak valid (fallback)!', 'error');
+                                    var hasil = {
+                                        ip: input,
+                                        kota: 'Koordinat tidak valid',
+                                        provinsi: '-',
+                                        negara: '-',
+                                        lat: 0,
+                                        lng: 0,
+                                        maps: '#',
+                                        isp: '-',
+                                        timezone: '-',
+                                        info: 'Koordinat tidak valid - periksa kembali'
+                                    };
+                                    simpanDanTampilkan('ip', input, hasil);
+                                }
+                            } else {
+                                showToast('⚠️ IP tidak valid atau tidak ditemukan!', 'error');
+                                var hasil = {
+                                    ip: input,
+                                    kota: 'Tidak ditemukan',
+                                    provinsi: '-',
+                                    negara: '-',
+                                    lat: 0,
+                                    lng: 0,
+                                    maps: '#',
+                                    isp: '-',
+                                    timezone: '-',
+                                    info: 'IP tidak valid - periksa kembali'
+                                };
+                                simpanDanTampilkan('ip', input, hasil);
+                            }
+                        })
+                        .catch(function() {
+                            showToast('❌ Gagal mendapatkan lokasi dari fallback API', 'error');
+                            if (loading) loading.classList.add('hidden');
+                            var hasil = {
+                                ip: input,
+                                kota: 'Gagal koneksi',
+                                provinsi: '-',
+                                negara: '-',
+                                lat: 0,
+                                lng: 0,
+                                maps: '#',
+                                isp: '-',
+                                timezone: '-',
+                                info: 'Gagal terhubung ke API'
+                            };
+                            simpanDanTampilkan('ip', input, hasil);
+                        });
                 }
             })
             .catch(function() {
                 if (loading) loading.classList.add('hidden');
                 showToast('❌ Gagal terhubung ke API, periksa koneksi internet!', 'error');
-                
-                // Fallback dengan pesan error
                 var hasil = {
                     ip: input,
                     kota: 'Gagal koneksi',
@@ -3685,7 +3858,7 @@ function executeLacak() {
             });
 
     // ============================================================
-    // LACAK EMAIL - DIPERBAIKI DENGAN IP PENGGUNA
+    // LACAK EMAIL
     // ============================================================
     } else if (type === 'email') {
         console.log('📧 Lacak email:', input);
@@ -3693,9 +3866,6 @@ function executeLacak() {
         var emailInfo = analisisEmail(input);
         console.log('📧 Informasi email:', emailInfo);
 
-        // ============================================================
-        // DAPATKAN LOKASI DARI IP PENGGUNA (BUKAN RANDOM)
-        // ============================================================
         fetch('https://ipapi.co/json/')
             .then(function(r) { return r.json(); })
             .then(function(userData) {
@@ -3709,9 +3879,6 @@ function executeLacak() {
                 var userIp = userData.ip || 'Tidak diketahui';
                 var userIsp = userData.org || 'Tidak diketahui';
 
-                // ============================================================
-                // TAMPILKAN INFORMASI EMAIL + LOKASI IP PENGGUNA
-                // ============================================================
                 var hasil = {
                     email: input,
                     domain: emailInfo.domain,
@@ -3740,8 +3907,6 @@ function executeLacak() {
             .catch(function() {
                 if (loading) loading.classList.add('hidden');
                 showToast('❌ Gagal mendapatkan lokasi, periksa koneksi!', 'error');
-                
-                // Fallback
                 var hasil = {
                     email: input,
                     domain: emailInfo.domain,
@@ -3766,7 +3931,7 @@ function executeLacak() {
             });
 
     // ============================================================
-    // LACAK SOSIAL MEDIA (TikTok, Instagram, Facebook, WhatsApp)
+    // LACAK SOSIAL MEDIA
     // ============================================================
     } else if (type === 'tiktok' || type === 'instagram' || type === 'facebook' || type === 'whatsapp') {
         console.log('📱 Lacak Sosmed:', type, input);
@@ -3878,7 +4043,7 @@ function executeLacak() {
 }
 
 // ============================================================
-// FUNGSI LACAK SOSMED LOCATION - DENGAN IZIN LOKASI APLIKASI
+// FUNGSI LACAK SOSMED LOCATION
 // ============================================================
 function lacakSosmedLocation(username, platform) {
     console.log('📍 lacakSosmedLocation() dipanggil untuk:', username, 'di', platform);
@@ -3895,7 +4060,6 @@ function lacakSosmedLocation(username, platform) {
         'whatsapp': 'WhatsApp'
     };
 
-    // Cari lokasi dari username (database simulasi)
     var lokasiDariUsername = cariLokasiSosmed(username, platform);
     console.log('📌 Lokasi dari username:', lokasiDariUsername);
 
@@ -3915,7 +4079,6 @@ function lacakSosmedLocation(username, platform) {
 
             var points = [];
 
-            // Titik 1: Dari data platform (jika ada)
             if (lokasiDariUsername) {
                 var jarak = hitungJarak(userLat, userLng, lokasiDariUsername.lat, lokasiDariUsername.lng);
                 points.push({
@@ -3931,7 +4094,6 @@ function lacakSosmedLocation(username, platform) {
                 });
             }
 
-            // Titik 2: IP Pengguna
             points.push({
                 lat: userLat,
                 lng: userLng,
@@ -3944,7 +4106,6 @@ function lacakSosmedLocation(username, platform) {
                 akurasi: 'Tinggi (IP ISP)'
             });
 
-            // Urutkan berdasarkan priority
             points.sort(function(a, b) { return a.priority - b.priority; });
 
             var titikTerbaik = points[0];
@@ -4043,7 +4204,7 @@ function simpanDanTampilkan(type, input, hasil) {
 }
 
 // ============================================================
-// TAMPILKAN HASIL - DIPERBAIKI DENGAN VALIDASI
+// TAMPILKAN HASIL - DIPERBAIKI
 // ============================================================
 function tampilkanHasil(hasil) {
     var container = document.getElementById('lacakResultContent');
@@ -4051,7 +4212,6 @@ function tampilkanHasil(hasil) {
 
     var html = '<div style="font-size:0.9rem;line-height:1.8;">';
 
-    // TAMPILKAN KOORDINAT - dengan validasi
     if (hasil.lat !== undefined && hasil.lng !== undefined && hasil.lat !== 0 && hasil.lng !== 0) {
         html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
         html += '<div style="font-size:0.8rem;opacity:0.9;">📍 LOKASI</div>';
@@ -4059,16 +4219,18 @@ function tampilkanHasil(hasil) {
         if (hasil.maps && hasil.maps !== '#') {
             html += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;font-size:0.85rem;">🗺 Buka di Google Maps</a>';
         }
+        if (hasil.akurasi) {
+            html += '<div style="font-size:0.7rem;opacity:0.8;margin-top:6px;">📊 Akurasi: ' + hasil.akurasi + '</div>';
+        }
+        html += '<div style="font-size:0.7rem;opacity:0.6;margin-top:4px;">⚠️ Lokasi ini adalah perkiraan dari IP (akurasi: kota/provinsi)</div>';
         html += '</div>';
-    } else if (hasil.lat === 0 && hasil.lng === 0) {
-        // Tampilkan pesan error jika koordinat 0,0
+    } else {
         html += '<div style="background:#ef4444;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
         html += '<div style="font-size:0.8rem;opacity:0.9;">❌ LOKASI TIDAK DITEMUKAN</div>';
         html += '<div style="font-size:1rem;font-weight:600;">Data tidak valid atau IP tidak ditemukan</div>';
         html += '</div>';
     }
 
-    // INFORMASI PLATFORM
     if (hasil.platform || hasil.username) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📱 Informasi Platform</h4>';
@@ -4080,7 +4242,6 @@ function tampilkanHasil(hasil) {
         html += '</div>';
     }
 
-    // INFORMASI EMAIL
     if (hasil.email) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📧 Informasi Email</h4>';
@@ -4092,7 +4253,6 @@ function tampilkanHasil(hasil) {
         html += '</div>';
     }
 
-    // INFORMASI IP
     if (hasil.ipAddress || hasil.isp) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">🌐 Informasi IP</h4>';
@@ -4103,7 +4263,6 @@ function tampilkanHasil(hasil) {
         html += '</div>';
     }
 
-    // LOKASI
     if (hasil.kota || hasil.provinsi || hasil.negara) {
         html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📍 Lokasi</h4>';
@@ -4120,7 +4279,6 @@ function tampilkanHasil(hasil) {
         html += '</div>';
     }
 
-    // DETAIL TITIK
     if (hasil.detailTitik) {
         html += '<div style="background:var(--bg-secondary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px dashed var(--border-color);">';
         html += '<h4 style="margin-bottom:8px;color:var(--text-muted);">📊 Titik yang Ditemukan</h4>';
@@ -4129,6 +4287,13 @@ function tampilkanHasil(hasil) {
     }
 
     if (hasil.waktu) html += '<p><strong>⏰ Waktu:</strong> ' + escapeHTML(hasil.waktu) + '</p>';
+
+    html += '<div style="margin-top:16px;padding:12px;background:var(--bg-tertiary);border-radius:8px;border:1px solid var(--border-color);font-size:0.75rem;color:var(--text-muted);">';
+    html += '⚠️ <strong>Catatan:</strong> ';
+    html += 'Lokasi dari IP adalah perkiraan berdasarkan database ISP. ';
+    html += 'Untuk akurasi tinggi, gunakan fitur <strong>"📍 Lacak Lokasi Real (GPS)"</strong> ';
+    html += 'yang memerlukan izin akses lokasi perangkat.';
+    html += '</div>';
 
     if (hasil.lat !== undefined && hasil.lng !== undefined && hasil.maps && hasil.maps !== '#' && hasil.lat !== 0 && hasil.lng !== 0) {
         html += '<div style="margin-top:12px;text-align:center;">';
@@ -4144,7 +4309,7 @@ function tampilkanHasil(hasil) {
 }
 
 // ============================================================
-// FITUR LACAK GMAIL LOCATION (MULTI-METODE)
+// FITUR LACAK GMAIL LOCATION
 // ============================================================
 function lacakGmailLocation(email) {
     console.log('📍 lacakGmailLocation() dipanggil untuk:', email);
@@ -4161,9 +4326,6 @@ function lacakGmailLocation(email) {
 
     var emailInfo = analisisEmail(email);
 
-    // ============================================================
-    // METODE 1: COBA DARI GOOGLE MAPS LOCATION SHARING
-    // ============================================================
     fetch('/api/gmail-location?email=' + encodeURIComponent(email))
         .then(function(r) { return r.json(); })
         .then(function(data) {
@@ -4197,9 +4359,6 @@ function lacakGmailLocation(email) {
 }
 
 function metodeKeduaGmail(email, emailInfo, loading) {
-    // ============================================================
-    // METODE 2: GUNAKAN IP PENGGUNA + DOMAIN
-    // ============================================================
     fetch('https://ipapi.co/json/')
         .then(function(r) { return r.json(); })
         .then(function(userData) {
@@ -4264,7 +4423,17 @@ function metodeKeduaGmail(email, emailInfo, loading) {
 }
 
 // ============================================================
-// OVERRIDE FUNGSI LAINNYA DARI BLOK 8 - LINK TRACKER
+// ============================================================
+// ============================================================
+// ⭐ FITUR LINK TRACKER (KIRIM PESAN & GAMBAR + LACAK LOKASI)
+// ============================================================
+// ============================================================
+// ============================================================
+
+var trackerImageData = null;
+
+// ============================================================
+// SHOW LINK TRACKER MODAL
 // ============================================================
 window.showLinkTrackerModal = function() {
     console.log('🔗 showLinkTrackerModal() OVERRIDE dipanggil');
@@ -4275,7 +4444,6 @@ window.showLinkTrackerModal = function() {
         return;
     }
     
-    // Reset semua field
     var titleInput = document.getElementById('trackerTitle');
     var messageInput = document.getElementById('trackerMessage');
     var imageUrlInput = document.getElementById('trackerImageUrl');
@@ -4295,14 +4463,13 @@ window.showLinkTrackerModal = function() {
         resultDiv.setAttribute('data-title', '');
         resultDiv.setAttribute('data-message', '');
         resultDiv.setAttribute('data-image', '');
+        resultDiv.setAttribute('data-link', '');
+        resultDiv.setAttribute('data-linkid', '');
     }
     if (errorDiv) errorDiv.classList.remove('show');
     if (btn) {
         btn.disabled = false;
         btn.textContent = '📤 Siapkan Kiriman';
-        // ============================================================
-        // ⭐ PASTIKAN EVENT LISTENER TERPASANG
-        // ============================================================
         btn.onclick = function() {
             generateTrackerLink();
         };
@@ -4314,7 +4481,56 @@ window.showLinkTrackerModal = function() {
 };
 
 // ============================================================
-// GENERATE TRACKER LINK - DIPERBAIKI
+// PREVIEW TRACKER IMAGE
+// ============================================================
+function previewTrackerImage() {
+    console.log('🖼️ previewTrackerImage() dipanggil');
+
+    var f = document.getElementById('trackerImageFile');
+    if (!f || !f.files || !f.files[0]) {
+        showToast('⚠️ Pilih file gambar!', 'error');
+        return;
+    }
+
+    var file = f.files[0];
+    if (!file.type.startsWith('image/')) {
+        showToast('❌ Pilih file gambar!', 'error');
+        return;
+    }
+    if (file.size > 5242880) {
+        showToast('❌ Gambar terlalu besar (max 5MB)!', 'error');
+        return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        trackerImageData = e.target.result;
+        var img = document.getElementById('trackerImagePreviewImg');
+        var preview = document.getElementById('trackerImagePreview');
+        if (img) img.src = trackerImageData;
+        if (preview) preview.style.display = 'block';
+        showToast('✅ Gambar siap!', 'success');
+        console.log('✅ Gambar diupload, size:', file.size);
+    };
+    reader.readAsDataURL(file);
+}
+
+// ============================================================
+// REMOVE TRACKER IMAGE
+// ============================================================
+function removeTrackerImage() {
+    console.log('🗑 removeTrackerImage() dipanggil');
+
+    trackerImageData = null;
+    var fileInput = document.getElementById('trackerImageFile');
+    var preview = document.getElementById('trackerImagePreview');
+    if (fileInput) fileInput.value = '';
+    if (preview) preview.style.display = 'none';
+    showToast('🗑 Gambar dihapus', 'info');
+}
+
+// ============================================================
+// GENERATE TRACKER LINK - DENGAN SISTEM LACAK LOKASI
 // ============================================================
 function generateTrackerLink() {
     console.log('📤 generateTrackerLink() dipanggil');
@@ -4349,172 +4565,459 @@ function generateTrackerLink() {
     }
 
     // ============================================================
-    // DAPATKAN LOKASI DARI IP PENGGUNA (BUKAN RANDOM)
+    // BUAT LINK UNIK UNTUK DILACAK
     // ============================================================
+    var linkId = Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 6);
+    
+    // Dapatkan lokasi pembuat link (Anda)
     fetch('https://ipapi.co/json/')
         .then(function(r) { return r.json(); })
-        .then(function(data) {
-            var lat = data.latitude || -6.2088;
-            var lng = data.longitude || 106.8456;
-            var kota = data.city || 'Jakarta';
-            var provinsi = data.region || 'DKI Jakarta';
-            var negara = data.country_name || 'Indonesia';
-            var ip = data.ip || 'Tidak diketahui';
-            var isp = data.org || 'Tidak diketahui';
+        .then(function(userData) {
+            var userLat = userData.latitude || -6.2088;
+            var userLng = userData.longitude || 106.8456;
+            var userKota = userData.city || 'Jakarta';
+            var userProvinsi = userData.region || 'DKI Jakarta';
+            var userNegara = userData.country_name || 'Indonesia';
+            var userIp = userData.ip || 'Tidak diketahui';
+            var userIsp = userData.org || 'Tidak diketahui';
 
-            var hasil = {
+            // Simpan data tracker ke localStorage
+            var trackerData = {
+                id: linkId,
                 judul: title,
                 pesan: message,
-                gambar: finalImage ? '📷 Ada' : '(tidak ada)',
-                gambarData: finalImage,
-                status: 'Siap Dikirim',
-                waktu: new Date().toLocaleString(),
-                lat: lat,
-                lng: lng,
-                kota: kota,
-                provinsi: provinsi,
-                negara: negara,
-                maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
-                ip: ip,
-                isp: isp,
-                info: '📍 Lokasi berdasarkan IP Anda: ' + ip + ' (' + isp + ')'
+                gambar: finalImage,
+                waktu_dibuat: new Date().toISOString(),
+                status: 'Belum dibuka',
+                lokasi: null,
+                pembuat: {
+                    ip: userIp,
+                    isp: userIsp,
+                    kota: userKota,
+                    provinsi: userProvinsi,
+                    negara: userNegara,
+                    lat: userLat,
+                    lng: userLng
+                }
             };
+            
+            var allTracker = getTrackerLinks();
+            allTracker[linkId] = trackerData;
+            saveTrackerLinks(allTracker);
+            
+            // Buat link yang akan dikirim
+            var baseUrl = window.location.href.split('?')[0];
+            var linkUrl = baseUrl + '?tracker=' + linkId;
 
-            simpanDanTampilkanTracker(title, message, finalImage, hasil);
-            tampilkanPreviewTracker(title, message, finalImage, hasil);
-
-            if (btn) {
-                btn.textContent = '📤 Siapkan Kiriman';
-                btn.disabled = false;
+            // ============================================================
+            // TAMPILKAN LINK DAN PREVIEW
+            // ============================================================
+            var previewHtml = '';
+            previewHtml += '<div style="background:var(--bg-primary);border-radius:8px;padding:12px;margin-bottom:8px;border:2px solid #10b981;">';
+            previewHtml += '<div style="background:#10b981;color:#fff;padding:4px 12px;border-radius:4px;display:inline-block;font-size:0.7rem;font-weight:700;margin-bottom:8px;">✅ LINK SIAP DIKIRIM</div>';
+            previewHtml += '<p style="font-weight:700;font-size:1.1rem;color:var(--accent-light);">📌 ' + escapeHTML(title) + '</p>';
+            previewHtml += '<p style="white-space:pre-wrap;">' + escapeHTML(message).replace(/\n/g, '<br>') + '</p>';
+            if (finalImage && finalImage.startsWith('data:image')) {
+                previewHtml += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
+            } else if (finalImage && finalImage.startsWith('http')) {
+                previewHtml += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;" onerror="this.style.display=\'none\'">';
             }
+            
+            // Link yang bisa dicopy
+            previewHtml += '<div style="margin-top:12px;padding:12px;background:#10b981;color:#fff;border-radius:8px;">';
+            previewHtml += '<strong>🔗 LINK KIRIMAN (Copy & Kirim):</strong><br>';
+            previewHtml += '<span style="font-size:0.85rem;word-break:break-all;background:rgba(255,255,255,0.1);padding:4px 8px;border-radius:4px;display:block;margin-top:4px;">' + linkUrl + '</span>';
+            previewHtml += '<button onclick="copyTrackerLink(\'' + linkUrl + '\')" style="background:#fff;color:#10b981;border:none;padding:6px 16px;border-radius:4px;font-weight:600;cursor:pointer;margin-top:8px;">📋 Copy Link</button>';
+            previewHtml += '</div>';
+            
+            // Petunjuk
+            previewHtml += '<div style="margin-top:8px;padding:12px;background:#1a1a35;border-radius:6px;border:1px solid rgba(59,130,246,0.3);">';
+            previewHtml += '<div style="display:flex;align-items:center;gap:8px;">';
+            previewHtml += '<span style="font-size:1.2rem;">📌</span>';
+            previewHtml += '<div style="font-size:0.8rem;color:var(--text-secondary);">';
+            previewHtml += '<strong>Petunjuk:</strong> Kirim link ini ke target. Saat target membuka link dan mengizinkan lokasi, ';
+            previewHtml += 'koordinat akan terekam otomatis di riwayat Anda.';
+            previewHtml += '</div>';
+            previewHtml += '</div>';
+            previewHtml += '</div>';
+            previewHtml += '</div>';
+            
+            var previewContainer = document.getElementById('trackerPreviewFinal');
+            if (previewContainer) previewContainer.innerHTML = previewHtml;
 
             if (resultDiv) {
                 resultDiv.classList.remove('hidden');
                 resultDiv.setAttribute('data-title', title);
                 resultDiv.setAttribute('data-message', message);
                 resultDiv.setAttribute('data-image', finalImage);
+                resultDiv.setAttribute('data-link', linkUrl);
+                resultDiv.setAttribute('data-linkid', linkId);
             }
 
-            showToast('✅ Pesan & koordinat siap!', 'success');
-            console.log('✅ Tracker siap untuk:', title);
+            if (btn) {
+                btn.textContent = '✅ Kiriman Siap!';
+                btn.disabled = false;
+                btn.style.background = '#10b981';
+            }
+
+            showToast('✅ Link kiriman siap! Kirim ke target.', 'success');
+            console.log('✅ Tracker link dibuat:', linkId);
         })
         .catch(function() {
-            // Fallback tanpa lokasi
-            var hasil = {
+            // Fallback tanpa lokasi pembuat
+            var allTracker = getTrackerLinks();
+            allTracker[linkId] = {
+                id: linkId,
                 judul: title,
                 pesan: message,
-                gambar: finalImage ? '📷 Ada' : '(tidak ada)',
-                gambarData: finalImage,
-                status: 'Siap Dikirim',
-                waktu: new Date().toLocaleString(),
-                lat: 0,
-                lng: 0,
-                kota: 'Tidak diketahui',
-                provinsi: 'Tidak diketahui',
-                negara: 'Tidak diketahui',
-                maps: '#',
-                ip: 'Tidak diketahui',
-                isp: 'Tidak diketahui',
-                info: '📍 Lokasi tidak dapat ditentukan (offline)'
+                gambar: finalImage,
+                waktu_dibuat: new Date().toISOString(),
+                status: 'Belum dibuka',
+                lokasi: null,
+                pembuat: null
             };
+            saveTrackerLinks(allTracker);
+            
+            var baseUrl = window.location.href.split('?')[0];
+            var linkUrl = baseUrl + '?tracker=' + linkId;
 
-            simpanDanTampilkanTracker(title, message, finalImage, hasil);
-            tampilkanPreviewTracker(title, message, finalImage, hasil);
-
-            if (btn) {
-                btn.textContent = '📤 Siapkan Kiriman';
-                btn.disabled = false;
+            var previewHtml = '';
+            previewHtml += '<div style="background:var(--bg-primary);border-radius:8px;padding:12px;margin-bottom:8px;border:2px solid #10b981;">';
+            previewHtml += '<div style="background:#10b981;color:#fff;padding:4px 12px;border-radius:4px;display:inline-block;font-size:0.7rem;font-weight:700;margin-bottom:8px;">✅ LINK SIAP DIKIRIM</div>';
+            previewHtml += '<p style="font-weight:700;font-size:1.1rem;color:var(--accent-light);">📌 ' + escapeHTML(title) + '</p>';
+            previewHtml += '<p style="white-space:pre-wrap;">' + escapeHTML(message).replace(/\n/g, '<br>') + '</p>';
+            if (finalImage && finalImage.startsWith('data:image')) {
+                previewHtml += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
+            } else if (finalImage && finalImage.startsWith('http')) {
+                previewHtml += '<img src="' + finalImage + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;" onerror="this.style.display=\'none\'">';
             }
+            previewHtml += '<div style="margin-top:12px;padding:12px;background:#10b981;color:#fff;border-radius:8px;">';
+            previewHtml += '<strong>🔗 LINK KIRIMAN (Copy & Kirim):</strong><br>';
+            previewHtml += '<span style="font-size:0.85rem;word-break:break-all;background:rgba(255,255,255,0.1);padding:4px 8px;border-radius:4px;display:block;margin-top:4px;">' + linkUrl + '</span>';
+            previewHtml += '<button onclick="copyTrackerLink(\'' + linkUrl + '\')" style="background:#fff;color:#10b981;border:none;padding:6px 16px;border-radius:4px;font-weight:600;cursor:pointer;margin-top:8px;">📋 Copy Link</button>';
+            previewHtml += '</div>';
+            previewHtml += '<div style="margin-top:8px;padding:12px;background:#1a1a35;border-radius:6px;border:1px solid rgba(59,130,246,0.3);">';
+            previewHtml += '<div style="display:flex;align-items:center;gap:8px;">';
+            previewHtml += '<span style="font-size:1.2rem;">📌</span>';
+            previewHtml += '<div style="font-size:0.8rem;color:var(--text-secondary);">';
+            previewHtml += '<strong>Petunjuk:</strong> Kirim link ini ke target. Saat target membuka link dan mengizinkan lokasi, ';
+            previewHtml += 'koordinat akan terekam otomatis di riwayat Anda.';
+            previewHtml += '</div>';
+            previewHtml += '</div>';
+            previewHtml += '</div>';
+            previewHtml += '</div>';
+            
+            var previewContainer = document.getElementById('trackerPreviewFinal');
+            if (previewContainer) previewContainer.innerHTML = previewHtml;
 
             if (resultDiv) {
                 resultDiv.classList.remove('hidden');
                 resultDiv.setAttribute('data-title', title);
                 resultDiv.setAttribute('data-message', message);
                 resultDiv.setAttribute('data-image', finalImage);
+                resultDiv.setAttribute('data-link', linkUrl);
+                resultDiv.setAttribute('data-linkid', linkId);
             }
 
-            showToast('✅ Pesan siap (tanpa lokasi)', 'warning');
-            console.log('✅ Tracker siap (offline):', title);
+            if (btn) {
+                btn.textContent = '✅ Kiriman Siap!';
+                btn.disabled = false;
+                btn.style.background = '#10b981';
+            }
+
+            showToast('✅ Link kiriman siap! Kirim ke target.', 'success');
+            console.log('✅ Tracker link dibuat (offline):', linkId);
         });
 }
 
 // ============================================================
-// SIMPAN DAN TAMPILKAN TRACKER
+// COPY TRACKER LINK
 // ============================================================
-function simpanDanTampilkanTracker(title, message, image, hasil) {
-    console.log('💾 simpanDanTampilkanTracker() dipanggil');
+function copyTrackerLink(link) {
+    console.log('📋 copyTrackerLink() dipanggil:', link);
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link)
+            .then(function() {
+                showToast('✅ Link disalin ke clipboard!', 'success');
+            })
+            .catch(function() {
+                fallbackCopyLink(link);
+            });
+    } else {
+        fallbackCopyLink(link);
+    }
+}
 
-    var s = getSession();
-    if (!s) return;
-
-    var all = getAllLacakData();
-    var userData = all[s.id] || [];
-
-    userData.push({
-        id: Date.now().toString(),
-        type: 'tracker',
-        input: title,
-        result: hasil,
-        time: new Date().toISOString()
-    });
-
-    all[s.id] = userData;
-    saveAllLacakData(all);
-    autoSaveData();
-    refreshAppUI();
-    updateStats();
-    console.log('✅ Tracker disimpan');
+function fallbackCopyLink(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+        document.execCommand('copy');
+        showToast('✅ Link disalin ke clipboard!', 'success');
+    } catch (e) {
+        showToast('❌ Gagal menyalin link', 'error');
+    }
+    document.body.removeChild(ta);
 }
 
 // ============================================================
-// TAMPILKAN PREVIEW TRACKER
+// CEK TRACKER LINK - SAAT LINK DIBUKA (HALAMAN TARGET)
 // ============================================================
-function tampilkanPreviewTracker(title, message, image, hasil) {
-    var preview = document.getElementById('trackerPreviewFinal');
-    if (!preview) return;
-
-    var html = '';
-    html += '<div style="background:var(--bg-primary);border-radius:8px;padding:12px;margin-bottom:8px;">';
-    html += '<p style="font-weight:700;font-size:1.1rem;color:var(--accent-light);">📌 ' + escapeHTML(title) + '</p>';
-    html += '<p style="white-space:pre-wrap;">' + escapeHTML(message).replace(/\n/g, '<br>') + '</p>';
-
-    if (image && image.startsWith('data:image')) {
-        html += '<img src="' + image + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;">';
-    } else if (image && image.startsWith('http')) {
-        html += '<img src="' + image + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:8px;" onerror="this.style.display=\'none\'">';
+function checkTrackerLink() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var trackerId = urlParams.get('tracker');
+    
+    if (!trackerId) return;
+    
+    console.log('🔍 Tracker link dibuka! ID:', trackerId);
+    
+    var allTracker = getTrackerLinks();
+    var data = allTracker[trackerId];
+    
+    if (!data) {
+        console.warn('⚠️ Tracker tidak ditemukan!');
+        return;
     }
-
-    if (hasil && hasil.lat && hasil.lng && hasil.lat !== 0) {
-        html += '<p style="margin-top:8px;color:#10b981;font-weight:700;">📍 Lokasi Anda: ' + hasil.lat + ', ' + hasil.lng + '</p>';
-        html += '<a href="' + (hasil.maps || 'https://www.google.com/maps?q=' + hasil.lat + ',' + hasil.lng) + '" target="_blank" style="color:#3b82f6;font-size:0.85rem;">🗺 Buka Google Maps</a>';
+    
+    // Update status
+    data.status = 'Sedang dilihat';
+    allTracker[trackerId] = data;
+    saveTrackerLinks(allTracker);
+    
+    // ============================================================
+    // TAMPILKAN HALAMAN UNTUK TARGET
+    // ============================================================
+    var body = document.body;
+    var originalContent = body.innerHTML;
+    
+    var imageHtml = '';
+    if (data.gambar && data.gambar.startsWith('data:image')) {
+        imageHtml = '<img src="' + data.gambar + '" style="max-width:100%;max-height:300px;border-radius:12px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.1);">';
+    } else if (data.gambar && data.gambar.startsWith('http')) {
+        imageHtml = '<img src="' + data.gambar + '" style="max-width:100%;max-height:300px;border-radius:12px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.1);" onerror="this.style.display=\'none\'">';
     }
-
-    html += '</div>';
-    preview.innerHTML = html;
+    
+    body.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0a0a1a,#1a1a35);color:#fff;font-family:system-ui;padding:20px;">
+            <div style="max-width:520px;background:#12122a;border-radius:20px;padding:35px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 20px 60px rgba(0,0,0,0.6);text-align:center;width:100%;">
+                <div style="font-size:3.5rem;margin-bottom:12px;">${data.gambar ? '📷' : '💬'}</div>
+                <h2 style="font-size:1.6rem;font-weight:700;margin-bottom:6px;color:#fff;">${escapeHTML(data.judul)}</h2>
+                <p style="color:#a0a0b8;margin-bottom:16px;white-space:pre-wrap;font-size:1rem;line-height:1.6;">${escapeHTML(data.pesan).replace(/\n/g, '<br>')}</p>
+                ${imageHtml}
+                
+                <!-- PESAN EMOSIONAL -->
+                <div style="background:rgba(59,130,246,0.1);border-radius:12px;padding:16px;margin:16px 0;border:1px solid rgba(59,130,246,0.2);">
+                    <p style="font-size:0.9rem;color:#93c5fd;margin:0;">
+                        💕 "Kirim lokasi agar kita bisa bertemu dan bicara baik-baik. Aku menunggu..."
+                    </p>
+                </div>
+                
+                <div style="background:#1a1a35;border-radius:12px;padding:20px;margin:16px 0;border:1px solid rgba(16,185,129,0.3);">
+                    <p style="font-size:0.95rem;color:#a0a0b8;margin-bottom:12px;">
+                        📍 Klik tombol di bawah untuk membagikan lokasi Anda
+                    </p>
+                    <button onclick="trackerAllowLocation('${trackerId}')" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;padding:14px 40px;border-radius:12px;font-weight:700;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 15px rgba(16,185,129,0.3);transition:all 0.2s;width:100%;">
+                        📍 Izinkan & Bagikan Lokasi
+                    </button>
+                    <button onclick="trackerSkipLocation('${trackerId}')" style="background:transparent;color:#6a6a80;border:1px solid #374151;padding:10px 20px;border-radius:8px;font-weight:500;cursor:pointer;font-size:0.85rem;margin-top:10px;width:100%;">
+                        Lewati (tidak membagikan lokasi)
+                    </button>
+                </div>
+                <div id="trackerStatus" style="font-size:0.8rem;color:#6a6a80;margin-top:8px;"></div>
+                
+                <!-- Footer -->
+                <div style="margin-top:20px;font-size:0.7rem;color:#4a4a5a;border-top:1px solid rgba(255,255,255,0.05);padding-top:16px;">
+                    Pesan ini dikirim melalui TraceID
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Simpan original content untuk restore jika diperlukan
+    body._originalContent = originalContent;
 }
 
 // ============================================================
-// SHARE FUNCTIONS - DIPERBAIKI
+// IZINKAN LOKASI DARI TRACKER (TARGET KLIK TOMBOL)
+// ============================================================
+function trackerAllowLocation(trackerId) {
+    console.log('📍 trackerAllowLocation() dipanggil untuk:', trackerId);
+    
+    var statusEl = document.getElementById('trackerStatus');
+    if (statusEl) statusEl.textContent = '⏳ Mengambil lokasi...';
+    
+    if (!navigator.geolocation) {
+        if (statusEl) statusEl.textContent = '❌ Browser tidak mendukung GPS';
+        return;
+    }
+    
+    // Tampilkan pesan loading
+    var btn = document.querySelector('button[onclick*="trackerAllowLocation"]');
+    if (btn) {
+        btn.textContent = '⏳ Mengambil lokasi...';
+        btn.disabled = true;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            var akurasi = position.coords.accuracy;
+            
+            console.log('✅ Lokasi target didapatkan:', lat, lng, 'Akurasi:', akurasi + 'm');
+            
+            // Simpan lokasi ke tracker
+            var allTracker = getTrackerLinks();
+            var data = allTracker[trackerId];
+            if (data) {
+                data.status = '✅ Lokasi didapatkan';
+                data.lokasi = {
+                    lat: lat,
+                    lng: lng,
+                    akurasi: akurasi,
+                    waktu: new Date().toISOString(),
+                    sumber: 'GPS Target'
+                };
+                allTracker[trackerId] = data;
+                saveTrackerLinks(allTracker);
+                
+                // ============================================================
+                // TAMPILKAN HALAMAN SUKSES UNTUK TARGET
+                // ============================================================
+                var body = document.querySelector('body');
+                body.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0a0a1a,#064e3b);color:#fff;font-family:system-ui;padding:20px;">
+                        <div style="max-width:500px;background:#12122a;border-radius:20px;padding:35px;border:1px solid rgba(16,185,129,0.3);text-align:center;">
+                            <div style="font-size:4rem;margin-bottom:16px;">✅</div>
+                            <h2 style="font-size:1.6rem;font-weight:700;margin-bottom:8px;color:#10b981;">Terima Kasih!</h2>
+                            <p style="color:#a0a0b8;font-size:1.05rem;">Lokasi Anda telah diterima dengan aman.</p>
+                            <div style="background:#1a1a35;border-radius:8px;padding:12px;margin:16px 0;border:1px solid rgba(255,255,255,0.05);">
+                                <p style="font-size:0.8rem;color:#6a6a80;margin:2px 0;">🕐 ${new Date().toLocaleString()}</p>
+                                <p style="font-size:0.85rem;color:#93c5fd;margin:2px 0;">📍 ${lat}, ${lng}</p>
+                                <p style="font-size:0.75rem;color:#6a6a80;margin:2px 0;">📊 Akurasi: ${akurasi ? Math.round(akurasi) + ' meter' : 'Tinggi'}</p>
+                            </div>
+                            <p style="color:#6a6a80;font-size:0.85rem;">💕 Semoga semuanya baik-baik saja. Kirim pesan jika ada yang perlu dibicarakan.</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Simpan ke riwayat lacak user (yang login sebagai pengirim)
+                var s = getSession();
+                if (s) {
+                    var hasil = {
+                        judul: data.judul || 'Tracker Link',
+                        pesan: data.pesan || '',
+                        lat: lat,
+                        lng: lng,
+                        akurasi: akurasi,
+                        maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+                        info: '📍 Lokasi dari target via Link Tracker',
+                        waktu: new Date().toLocaleString(),
+                        catatan: '✅ Target membagikan lokasi melalui link tracker',
+                        sumber: 'Tracker Link',
+                        akurasiLabel: akurasi ? Math.round(akurasi) + ' meter' : 'Tinggi'
+                    };
+                    
+                    // Simpan ke riwayat
+                    var all = getAllLacakData();
+                    var userData = all[s.id] || [];
+                    userData.push({
+                        id: Date.now().toString(),
+                        type: 'tracker_location',
+                        input: 'Link Tracker: ' + (data.judul || 'Pesan'),
+                        result: hasil,
+                        time: new Date().toISOString()
+                    });
+                    all[s.id] = userData;
+                    saveAllLacakData(all);
+                    autoSaveData();
+                    
+                    // Refresh UI
+                    if (typeof refreshAppUI === 'function') refreshAppUI();
+                    if (typeof updateStats === 'function') updateStats();
+                }
+                
+                showToast('✅ Lokasi berhasil didapatkan!', 'success');
+            }
+        },
+        function(error) {
+            var pesan = '';
+            if (error.code === 1) {
+                pesan = '❌ Izin lokasi ditolak. Aktifkan GPS dan izinkan akses lokasi.';
+            } else if (error.code === 2) {
+                pesan = '❌ Lokasi tidak tersedia. Pastikan GPS aktif.';
+            } else {
+                pesan = '❌ Gagal: ' + error.message;
+            }
+            if (statusEl) statusEl.textContent = pesan;
+            
+            var btn = document.querySelector('button[onclick*="trackerAllowLocation"]');
+            if (btn) {
+                btn.textContent = '📍 Izinkan & Bagikan Lokasi';
+                btn.disabled = false;
+            }
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+    );
+}
+
+// ============================================================
+// SKIP LOKASI DARI TRACKER
+// ============================================================
+function trackerSkipLocation(trackerId) {
+    console.log('⏭️ trackerSkipLocation() dipanggil untuk:', trackerId);
+    
+    var allTracker = getTrackerLinks();
+    var data = allTracker[trackerId];
+    if (data) {
+        data.status = '⏭️ Dilewati (tanpa lokasi)';
+        allTracker[trackerId] = data;
+        saveTrackerLinks(allTracker);
+    }
+    
+    document.getElementById('trackerStatus').textContent = '⏭️ Anda memilih untuk tidak membagikan lokasi.';
+    
+    setTimeout(function() {
+        document.querySelector('body').innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0a0a1a,#1a1a35);color:#fff;font-family:system-ui;padding:20px;">
+                <div style="max-width:500px;background:#12122a;border-radius:20px;padding:35px;border:1px solid rgba(255,255,255,0.08);text-align:center;">
+                    <div style="font-size:3.5rem;margin-bottom:16px;">👋</div>
+                    <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:8px;">Terima Kasih</h2>
+                    <p style="color:#a0a0b8;">Anda telah melihat pesan. Tetap jaga komunikasi yang baik.</p>
+                    <p style="color:#6a6a80;font-size:0.8rem;margin-top:12px;">💕 Semoga semuanya baik-baik saja.</p>
+                </div>
+            </div>
+        `;
+    }, 2000);
+}
+
+// ============================================================
+// SHARE TRACKER FUNCTIONS - DIPERBAIKI UNTUK KIRIM LINK
 // ============================================================
 function shareTrackerWA() {
     console.log('📱 shareTrackerWA() dipanggil');
     
     var result = document.getElementById('trackerResult');
     if (!result) {
-        showToast('❌ Tidak ada pesan untuk dibagikan!', 'error');
+        showToast('❌ Tidak ada link untuk dibagikan!', 'error');
         return;
     }
     
     var title = result.getAttribute('data-title') || '';
     var message = result.getAttribute('data-message') || '';
-    var image = result.getAttribute('data-image') || '';
+    var link = result.getAttribute('data-link') || '';
     
-    var text = '📌 ' + title + '\n\n' + message;
-    if (image && image.startsWith('http')) {
-        text += '\n\n📷 ' + image;
-    }
+    var text = '📌 ' + title + '\n\n' + message + '\n\n🔗 ' + link;
     
-    // BUKA WHATSAPP DENGAN PESAN
     var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
     window.open(waUrl, '_blank');
     showToast('✅ WhatsApp dibuka!', 'success');
@@ -4525,15 +5028,16 @@ function shareTrackerEmail() {
     
     var result = document.getElementById('trackerResult');
     if (!result) {
-        showToast('❌ Tidak ada pesan untuk dibagikan!', 'error');
+        showToast('❌ Tidak ada link untuk dibagikan!', 'error');
         return;
     }
     
     var title = result.getAttribute('data-title') || '';
     var message = result.getAttribute('data-message') || '';
+    var link = result.getAttribute('data-link') || '';
     
-    // BUKA EMAIL DENGAN SUBJECT DAN BODY
-    var emailUrl = 'mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(message);
+    var body = message + '\n\n🔗 ' + link;
+    var emailUrl = 'mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
     window.open(emailUrl, '_blank');
     showToast('✅ Email dibuka!', 'success');
 }
@@ -4543,15 +5047,14 @@ function shareTrackerSMS() {
     
     var result = document.getElementById('trackerResult');
     if (!result) {
-        showToast('❌ Tidak ada pesan untuk dibagikan!', 'error');
+        showToast('❌ Tidak ada link untuk dibagikan!', 'error');
         return;
     }
     
     var title = result.getAttribute('data-title') || '';
-    var message = result.getAttribute('data-message') || '';
+    var link = result.getAttribute('data-link') || '';
     
-    // BUKA SMS DENGAN PESAN
-    var smsUrl = 'sms:?body=' + encodeURIComponent(title + ': ' + message);
+    var smsUrl = 'sms:?body=' + encodeURIComponent(title + ': ' + link);
     window.open(smsUrl, '_blank');
     showToast('✅ SMS dibuka!', 'success');
 }
@@ -4567,28 +5070,24 @@ function copyTrackerMessage() {
     
     var title = result.getAttribute('data-title') || '';
     var message = result.getAttribute('data-message') || '';
-    var image = result.getAttribute('data-image') || '';
+    var link = result.getAttribute('data-link') || '';
     
-    var text = '📌 ' + title + '\n\n' + message;
-    if (image && image.startsWith('http')) {
-        text += '\n\n📷 ' + image;
-    }
+    var text = '📌 ' + title + '\n\n' + message + '\n\n🔗 ' + link;
     
-    // COPY KE CLIPBOARD
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text)
             .then(function() {
-                showToast('✅ Pesan disalin ke clipboard!', 'success');
+                showToast('✅ Pesan & link disalin ke clipboard!', 'success');
             })
             .catch(function() {
-                fallbackCopy(text);
+                fallbackCopyMessage(text);
             });
     } else {
-        fallbackCopy(text);
+        fallbackCopyMessage(text);
     }
 }
 
-function fallbackCopy(text) {
+function fallbackCopyMessage(text) {
     var ta = document.createElement('textarea');
     ta.value = text;
     ta.style.position = 'fixed';
@@ -4597,12 +5096,75 @@ function fallbackCopy(text) {
     ta.select();
     try {
         document.execCommand('copy');
-        showToast('✅ Pesan disalin ke clipboard!', 'success');
+        showToast('✅ Pesan & link disalin ke clipboard!', 'success');
     } catch (e) {
-        showToast('❌ Gagal menyalin pesan', 'error');
+        showToast('❌ Gagal menyalin', 'error');
     }
     document.body.removeChild(ta);
 }
+
+// ============================================================
+// TAMPILKAN RIWAYAT TRACKER DI ADMIN PANEL
+// ============================================================
+function renderTrackerResults() {
+    console.log('📊 renderTrackerResults() dipanggil');
+    
+    var container = document.getElementById('trackerResultList');
+    if (!container) return;
+    
+    var allTracker = getTrackerLinks();
+    var keys = Object.keys(allTracker);
+    
+    if (keys.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">📭 Belum ada tracker.</p>';
+        return;
+    }
+    
+    var html = '';
+    html += '<p style="margin-bottom:12px;color:var(--text-secondary);">📊 Total: ' + keys.length + ' link tracker</p>';
+    
+    // Tampilkan dari yang terbaru
+    var sortedKeys = keys.sort(function(a, b) {
+        return new Date(allTracker[b].waktu_dibuat) - new Date(allTracker[a].waktu_dibuat);
+    });
+    
+    for (var i = 0; i < sortedKeys.length; i++) {
+        var id = sortedKeys[i];
+        var data = allTracker[id];
+        var statusColor = data.status === '✅ Lokasi didapatkan' ? '#10b981' : 
+                         (data.status === 'Sedang dilihat' ? '#f59e0b' : '#6a6a80');
+        
+        html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
+        html += '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;">';
+        html += '<strong style="font-size:0.95rem;">📌 ' + escapeHTML(data.judul) + '</strong>';
+        html += '<span style="color:' + statusColor + ';font-size:0.75rem;font-weight:600;">' + data.status + '</span>';
+        html += '</div>';
+        
+        if (data.pesan) {
+            html += '<div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">' + escapeHTML(data.pesan).substring(0, 60) + (data.pesan.length > 60 ? '...' : '') + '</div>';
+        }
+        
+        html += '<div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;display:flex;flex-wrap:wrap;gap:12px;">';
+        html += '📅 Dibuat: ' + new Date(data.waktu_dibuat).toLocaleString();
+        
+        if (data.lokasi) {
+            html += ' | 📍 <a href="https://www.google.com/maps?q=' + data.lokasi.lat + ',' + data.lokasi.lng + '" target="_blank" style="color:#3b82f6;text-decoration:none;">' + data.lokasi.lat + ', ' + data.lokasi.lng + '</a>';
+            if (data.lokasi.akurasi) {
+                html += ' (Akurasi: ' + Math.round(data.lokasi.akurasi) + 'm)';
+            }
+        }
+        html += '</div>';
+        html += '</div>';
+    }
+    container.innerHTML = html;
+}
+
+// ============================================================
+// CEK TRACKER SAAT LOAD
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    checkTrackerLink();
+});
 
 // ============================================================
 // SHOW TRACKER CLICKS - OVERRIDE
@@ -4616,10 +5178,13 @@ window.showTrackerClicks = function() {
         return;
     }
     
+    // Cek tracker dari lacak data
     var data = getAllLacakData()[s.id] || [];
     var trackers = [];
     for (var i = 0; i < data.length; i++) {
-        if (data[i].type === 'tracker') trackers.push(data[i]);
+        if (data[i].type === 'tracker_location' || data[i].type === 'tracker') {
+            trackers.push(data[i]);
+        }
     }
     
     var container = document.getElementById('trackerClicksContent');
@@ -4629,25 +5194,26 @@ window.showTrackerClicks = function() {
     }
     
     if (trackers.length === 0) {
-        container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-muted);">📭 Belum ada pesan tracker.</p>';
+        container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-muted);">📭 Belum ada hasil tracker.</p>';
         openModal('trackerClicksModal');
         return;
     }
     
     var html = '';
-    html += '<p style="margin-bottom:12px;"><strong>📊 Total:</strong> ' + trackers.length + ' pesan</p>';
+    html += '<p style="margin-bottom:12px;"><strong>📊 Total:</strong> ' + trackers.length + ' hasil</p>';
     
     trackers.reverse();
     for (var i = 0; i < trackers.length; i++) {
         var t = trackers[i];
         var hasil = t.result || {};
-        var judul = hasil.judul || t.input || 'Tanpa Judul';
+        var judul = hasil.judul || t.input || 'Tracker Link';
         var pesan = hasil.pesan || '';
         var gambar = hasil.gambarData || '';
         var lat = hasil.lat || 0;
         var lng = hasil.lng || 0;
         var maps = hasil.maps || 'https://www.google.com/maps?q=' + lat + ',' + lng;
         var waktu = new Date(t.time).toLocaleString();
+        var akurasi = hasil.akurasi || hasil.akurasiLabel || 'Tinggi';
         
         html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">';
@@ -4669,6 +5235,9 @@ window.showTrackerClicks = function() {
             html += '<div style="margin-top:6px;">';
             html += '<span style="color:#10b981;font-weight:600;font-size:0.85rem;">📍 ' + lat + ', ' + lng + '</span> ';
             html += '<a href="' + maps + '" target="_blank" style="color:#3b82f6;font-size:0.8rem;">🗺 Buka Maps</a>';
+            if (akurasi) {
+                html += ' <span style="font-size:0.7rem;color:var(--text-muted);">(Akurasi: ' + akurasi + ')</span>';
+            }
             html += '</div>';
         }
         
@@ -4677,31 +5246,8 @@ window.showTrackerClicks = function() {
     
     container.innerHTML = html;
     openModal('trackerClicksModal');
-    console.log('✅ Hasil klik ditampilkan, total:', trackers.length);
+    console.log('✅ Hasil tracker ditampilkan, total:', trackers.length);
 };
-
-// ============================================================
-// EVENT LISTENER - PASTIKAN TOMBOL BERFUNGSI
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('btnSiapkanKiriman');
-    if (btn) {
-        btn.removeAttribute('onclick');
-        btn.addEventListener('click', generateTrackerLink);
-        console.log('✅ Event listener untuk tombol Siapkan Kiriman terpasang');
-    }
-});
-
-// Fallback jika tombol belum ada
-setTimeout(function() {
-    var btn = document.getElementById('btnSiapkanKiriman');
-    if (btn && !btn._listenerAttached) {
-        btn.removeAttribute('onclick');
-        btn.addEventListener('click', generateTrackerLink);
-        btn._listenerAttached = true;
-        console.log('✅ Event listener (fallback) untuk tombol Siapkan Kiriman terpasang');
-    }
-}, 500);
 
 // ============================================================
 // RENDER RIWAYAT - OVERRIDE
@@ -4741,7 +5287,9 @@ window.refreshAppUI = function() {
         instagram: '📷',
         facebook: '📘',
         whatsapp: '📱',
-        tracker: '🔗'
+        tracker: '🔗',
+        tracker_location: '📍',
+        real_location: '📍'
     };
 
     var html = '';
@@ -4754,8 +5302,10 @@ window.refreshAppUI = function() {
         var icon = icons[d.type] || '🔍';
         var typeName = d.type.toUpperCase();
         if (d.type === 'tracker') typeName = 'PESAN';
+        if (d.type === 'tracker_location') typeName = '📍 TRACKER';
         if (d.type === 'gmail_location') typeName = 'GMAIL LOC';
         if (d.type === 'sosmed_location') typeName = 'SOSMED LOC';
+        if (d.type === 'real_location') typeName = 'REAL LOC (GPS)';
         html += '<div style="background:var(--bg-secondary);border-radius:8px;padding:12px;border:1px solid var(--border-color);cursor:pointer;margin-bottom:8px;" onclick="showDetailRiwayat(\'' + d.id + '\')">';
         html += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">';
         html += '<span>' + icon + ' <strong>' + typeName + '</strong> – ' + escapeHTML(d.input) + k + '</span>';
@@ -4801,6 +5351,8 @@ window.showDetailRiwayat = function(id) {
     var typeName = item.type.toUpperCase();
     if (item.type === 'sosmed_location') typeName = 'SOSMED LOCATION';
     if (item.type === 'gmail_location') typeName = 'GMAIL LOCATION';
+    if (item.type === 'real_location') typeName = 'REAL LOCATION (GPS)';
+    if (item.type === 'tracker_location') typeName = 'TRACKER LOCATION';
     titleEl.textContent = '📋 Detail ' + typeName;
 
     var h = '<p><strong>Target:</strong> ' + escapeHTML(item.input) + '</p>';
@@ -4816,6 +5368,9 @@ window.showDetailRiwayat = function(id) {
         if (hasil.maps && hasil.maps !== '#') {
             h += '<a href="' + hasil.maps + '" target="_blank" style="color:#fff;text-decoration:underline;">🗺 Buka Google Maps</a>';
         }
+        if (hasil.akurasi || hasil.akurasiLabel) {
+            h += '<div style="font-size:0.7rem;opacity:0.8;margin-top:4px;">📊 Akurasi: ' + (hasil.akurasi || hasil.akurasiLabel) + '</div>';
+        }
         h += '</div>';
     }
 
@@ -4824,7 +5379,7 @@ window.showDetailRiwayat = function(id) {
     }
 
     for (var key in hasil) {
-        if (key === 'lat' || key === 'lng' || key === 'maps' || key === 'gambarData') continue;
+        if (key === 'lat' || key === 'lng' || key === 'maps' || key === 'gambarData' || key === 'akurasi' || key === 'akurasiLabel') continue;
         if (typeof hasil[key] === 'string' || typeof hasil[key] === 'number') {
             h += '<p><strong>' + key + ':</strong> ' + escapeHTML(String(hasil[key])) + '</p>';
         }
@@ -4838,34 +5393,39 @@ window.showDetailRiwayat = function(id) {
 // ============================================================
 // LOG INIT
 // ============================================================
-console.log('✅ Blok 10 R5 – Fungsi Lacak & Tracker TraceID siap digunakan!');
+console.log('✅ Blok 10 R7 – Fungsi Lacak & Tracker TraceID siap digunakan!');
 console.log('📌 Fungsi-fungsi yang tersedia:');
 console.log('   - showLacakModal() - Menampilkan modal lacak');
-console.log('   - executeLacak() - Eksekusi lacakan (dengan API real)');
+console.log('   - executeLacak() - Eksekusi lacakan (dengan ip-api.com & fallback)');
+console.log('   - lacakRealLocation() - Lacak lokasi real dengan GPS');
 console.log('   - lacakGmailLocation() - Lacak Gmail location');
 console.log('   - lacakSosmedLocation() - Lacak Sosmed location');
-console.log('   - showLinkTrackerModal() - Menampilkan modal tracker');
-console.log('   - generateTrackerLink() - Generate link tracker');
+console.log('   - showLinkTrackerModal() - Menampilkan modal tracker (KIRIM PESAN + GAMBAR)');
+console.log('   - generateTrackerLink() - Generate link tracker dengan sistem lacak lokasi');
+console.log('   - checkTrackerLink() - Cek saat link dibuka target');
+console.log('   - trackerAllowLocation() - Target izinkan lokasi');
 console.log('   - shareTrackerWA/Email/SMS/Copy() - Share functions');
-console.log('   - showTrackerClicks() - Menampilkan hasil klik');
+console.log('   - showTrackerClicks() - Menampilkan hasil klik tracker');
+console.log('   - renderTrackerResults() - Lihat hasil tracker di admin');
 console.log('   - refreshAppUI() - Refresh riwayat');
 console.log('   - showDetailRiwayat() - Menampilkan detail riwayat');
 console.log('📌 Semua fungsi telah di-override dari Blok 8!');
 console.log('📌 Event listener untuk tombol Siapkan Kiriman sudah terpasang!');
-console.log('📌 Validasi koordinat sudah ditambahkan untuk hasil lebih akurat');
+console.log('📌 GPS Real Location tersedia untuk akurasi tinggi!');
+console.log('📌 LINK TRACKER: Kirim pesan + gambar, target buka link, lokasi tercatat!');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 10 R5
+     AKHIR BLOK 10 R7
      LANJUT KE BLOK 11 UNTUK ADMIN PANEL
      ============================================================ -->
 
 
-<!-- ===== TRICEID PRO → BLOK 11 R3 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
+<!-- ===== TRICEID PRO → BLOK 11 R4 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 11 R3 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 11 R4 – JS ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
      (Super Admin Panel functions, Kode Aktivasi, User Management, 
-      Chat Admin, Backup, Settings, Iklan)
+      Chat Admin, Backup, Settings, Iklan, Tracker Results)
      ============================================================
      PENJELASAN:
      - Berisi semua fungsi untuk Super Admin Panel
@@ -4877,9 +5437,11 @@ console.log('📌 Validasi koordinat sudah ditambahkan untuk hasil lebih akurat'
      - Iklan: load, save, reset
      - Chat Admin: view, send, mass chat
      - Backup: JSON, HTML, Google Drive, Email
+     - Tracker Results: lihat hasil link tracker dari target
      - DIPERBAIKI: escapeHTML() fallback, semua fungsi lengkap,
        console log untuk debugging, error handling,
-       Panel Admin muncul dengan benar
+       Panel Admin muncul dengan benar,
+       Tab Tracker untuk melihat hasil link tracker
      ============================================================ -->
 
 <script>
@@ -4904,7 +5466,7 @@ if (typeof escapeHTML !== 'function') {
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 11 R3 – Memuat semua fungsi Admin Panel...');
+console.log('🔍 Blok 11 R4 – Memuat semua fungsi Admin Panel...');
 
 // ============================================================
 // SUPER ADMIN PANEL - DIPERBAIKI
@@ -4973,6 +5535,9 @@ function showSuperAdminPanel() {
 
 function refreshAllAdminTabs() {
     renderActiveCodesList();
+    if (typeof renderTrackerResults === 'function') {
+        renderTrackerResults();
+    }
 }
 
 function switchAdminTab(tab) {
@@ -5013,6 +5578,7 @@ function switchAdminTab(tab) {
     if (tab === 'chat') renderAdminChat();
     if (tab === 'codes') renderActiveCodesList();
     if (tab === 'iklan') loadAdSettings();
+    if (tab === 'tracker') renderTrackerResults();
 }
 
 // ============================================================
@@ -5544,6 +6110,7 @@ function resetAllApplicationData() {
         saveSecurityLogs([]);
         saveChatMessages([]);
         saveWhatsapp(DEFAULT_WHATSAPP);
+        saveTrackerLinks({});
 
         updateAllWaDisplays();
         showToast('⚠️ Semua data telah direset!', 'warning');
@@ -6005,24 +6572,112 @@ function sendMassChat() {
 }
 
 // ============================================================
+// ============================================================
+// ⭐ TRACKER RESULTS - LIHAT HASIL LINK TRACKER DI ADMIN
+// ============================================================
+// ============================================================
+
+function getTrackerLinks() {
+    try {
+        var v = localStorage.getItem('tr_tracker_links');
+        return v ? JSON.parse(v) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveTrackerLinks(data) {
+    localStorage.setItem('tr_tracker_links', JSON.stringify(data));
+}
+
+function renderTrackerResults() {
+    console.log('📊 renderTrackerResults() dipanggil');
+    
+    var container = document.getElementById('trackerResultList');
+    if (!container) {
+        console.error('❌ Elemen trackerResultList tidak ditemukan!');
+        return;
+    }
+    
+    var allTracker = getTrackerLinks();
+    var keys = Object.keys(allTracker);
+    
+    if (keys.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">📭 Belum ada tracker link.</p>';
+        return;
+    }
+    
+    var html = '';
+    html += '<p style="margin-bottom:12px;color:var(--text-secondary);">📊 Total: <strong>' + keys.length + '</strong> link tracker</p>';
+    
+    // Tampilkan dari yang terbaru
+    var sortedKeys = keys.sort(function(a, b) {
+        return new Date(allTracker[b].waktu_dibuat) - new Date(allTracker[a].waktu_dibuat);
+    });
+    
+    for (var i = 0; i < sortedKeys.length; i++) {
+        var id = sortedKeys[i];
+        var data = allTracker[id];
+        var statusColor = data.status === '✅ Lokasi didapatkan' ? '#10b981' : 
+                         (data.status === 'Sedang dilihat' ? '#f59e0b' : '#6a6a80');
+        
+        html += '<div style="background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid var(--border-color);">';
+        html += '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;">';
+        html += '<strong style="font-size:0.95rem;">📌 ' + escapeHTML(data.judul || 'Tanpa Judul') + '</strong>';
+        html += '<span style="color:' + statusColor + ';font-size:0.75rem;font-weight:600;">' + escapeHTML(data.status || 'Belum dibuka') + '</span>';
+        html += '</div>';
+        
+        if (data.pesan) {
+            html += '<div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">' + escapeHTML(data.pesan).substring(0, 80) + (data.pesan.length > 80 ? '...' : '') + '</div>';
+        }
+        
+        if (data.gambar && data.gambar.startsWith('data:image')) {
+            html += '<div style="margin-top:4px;"><img src="' + data.gambar + '" style="max-width:100px;max-height:80px;border-radius:4px;object-fit:cover;"></div>';
+        }
+        
+        html += '<div style="font-size:0.7rem;color:var(--text-muted);margin-top:6px;display:flex;flex-wrap:wrap;gap:12px;">';
+        html += '📅 Dibuat: ' + new Date(data.waktu_dibuat).toLocaleString();
+        
+        if (data.lokasi) {
+            html += ' | 📍 <a href="https://www.google.com/maps?q=' + data.lokasi.lat + ',' + data.lokasi.lng + '" target="_blank" style="color:#3b82f6;text-decoration:none;">' + data.lokasi.lat + ', ' + data.lokasi.lng + '</a>';
+            if (data.lokasi.akurasi) {
+                html += ' (Akurasi: ' + Math.round(data.lokasi.akurasi) + 'm)';
+            }
+            html += ' 🕐 ' + new Date(data.lokasi.waktu).toLocaleString();
+        }
+        
+        // Tampilkan info pembuat (Anda)
+        if (data.pembuat && data.pembuat.kota) {
+            html += ' | 👤 Dikirim dari: ' + escapeHTML(data.pembuat.kota) + ', ' + escapeHTML(data.pembuat.provinsi);
+        }
+        
+        html += '</div>';
+        html += '</div>';
+    }
+    container.innerHTML = html;
+    console.log('✅ Tracker results ditampilkan, total:', keys.length);
+}
+
+// ============================================================
 // LOG INIT
 // ============================================================
-console.log('✅ Blok 11 R3 – JS Admin Panel TraceID siap digunakan.');
+console.log('✅ Blok 11 R4 – JS Admin Panel TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi admin sudah lengkap dan siap digunakan.');
 console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
 console.log('📌 escapeHTML() fallback tersedia untuk keamanan XSS.');
 console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admin.');
+console.log('📌 Tab TRACKER tersedia untuk melihat hasil link tracker dari target.');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 11 R3
+     AKHIR BLOK 11 R4
      LANJUT KE BLOK 12 UNTUK JS CHAT & INIT
      ============================================================ -->
 
 
-<!-- ===== TRICEID PRO → BLOK 12 R3 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
+<!-- ===== TRICEID PRO → BLOK 12 R4 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL) ===== -->
 <!-- ============================================================
-     BLOK 12 R3 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL)
+     BLOK 12 R4 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL)
      (Chat User ke Admin, Chat User ke User, Landing Display, Offline, Init)
      ============================================================
      PENJELASAN:
@@ -6031,11 +6686,11 @@ console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admi
      - Chat User ke User: pilih user, kirim pesan, load chat
      - Landing: refresh package display, render iklan
      - Offline: download for offline, update status
-     - Init: setup awal aplikasi
+     - Init: setup awal aplikasi, pastikan Super Admin ada
      - DIPERBAIKI: Semua fungsi lengkap, tidak ada error sintaks,
        escapeHTML() di awal, patch superadmin header sudah benar,
        fungsi origUpdateHeader sudah lengkap,
-       semua tombol landing page berfungsi
+       fallback functions untuk tombol landing page
      ============================================================ -->
 
 <script>
@@ -6058,7 +6713,7 @@ function escapeHTML(str) {
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 12 R3 – Memuat semua fungsi Chat, Landing, Init...');
+console.log('🔍 Blok 12 R4 – Memuat semua fungsi Chat, Landing, Init...');
 
 // ============================================================
 // HUBUNGI ADMIN (LANDING PAGE)
@@ -6414,7 +7069,7 @@ function updateOnlineStatus() {
             badge.style.background = '#10b981';
         }
         if (off) off.classList.remove('show');
-        checkAllExpiredActivations();
+        if (typeof checkAllExpiredActivations === 'function') checkAllExpiredActivations();
         console.log('🌐 Status: ONLINE');
     } else {
         if (badge) {
@@ -6457,7 +7112,7 @@ function patchSuperadminHeader() {
 }
 
 // ============================================================
-// FUNGSI TAMBAHAN - PASTIKAN SEMUA TOMBOL BERFUNGSI
+// FALLBACK FUNCTIONS - PASTIKAN SEMUA TOMBOL BERFUNGSI
 // ============================================================
 
 // Fungsi untuk showLoginModal (fallback jika belum ada)
@@ -6602,14 +7257,14 @@ if (typeof handleLogout !== 'function') {
         console.warn('⚠️ updateHeaderUser() tidak ditemukan, patch tidak bisa diterapkan');
     }
 
-    console.log('✅ Blok 12 R3 – TraceID v1.0 siap digunakan.');
+    console.log('✅ Blok 12 R4 – TraceID v1.0 siap digunakan.');
     console.log('📌 Chat, Landing Display, Offline, Init berhasil dimuat.');
     console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
     console.log('📌 Semua tombol di halaman depan seharusnya sudah berfungsi.');
 })();
 
 // ============================================================
-// AKHIR BLOK 12 R3
+// AKHIR BLOK 12 R4
 // ============================================================
 </script>
 
@@ -6624,5 +7279,5 @@ if (typeof handleLogout !== 'function') {
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 12 R3 - SELESAI
+     AKHIR BLOK 12 R4 - SELESAI
      ============================================================ -->
