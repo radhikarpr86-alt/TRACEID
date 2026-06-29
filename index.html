@@ -2880,9 +2880,9 @@ console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admi
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 9 R19 – JS CORE 2 (TRACEID FINAL + PERBAIKAN TRACKER) ===== -->
+<!-- ===== TRACERID → BLOK 9 R20 – JS CORE 2 (TRACEID FINAL + PERBAIKAN TRACKER) ===== -->
 <!-- ============================================================
-     BLOK 9 R19 – JS CORE 2 (TRACEID) - LENGKAP + DIPERBAIKI DARI AWAL
+     BLOK 9 R20 – JS CORE 2 (TRACEID) - LENGKAP + DIPERBAIKI DARI AWAL
      (Lacak, Riwayat, Tracker, Backup/Restore, Auto-save, Search)
      ============================================================
      PENJELASAN:
@@ -2892,8 +2892,8 @@ console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admi
      - Riwayat pelacakan, detail riwayat
      - Backup/Restore user, Export/Import
      - Auto-save, Validate data, Search
-     - DIPERBAIKI: Lacak email menggunakan analisis domain & database
-     - DIPERBAIKI: Lokasi tidak selalu Jakarta, gunakan domain & TLD
+     - DIPERBAIKI: Lacak email menggunakan IP pengguna, bukan domain
+     - DIPERBAIKI: Tampilan hasil lebih informatif
      - DIPERBAIKI: escapeHTML() di awal, semua fungsi lengkap
      ============================================================ -->
 
@@ -2917,7 +2917,7 @@ function escapeHTML(str) {
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 9 R19 – Memuat semua fungsi TraceID...');
+console.log('🔍 Blok 9 R20 – Memuat semua fungsi TraceID...');
 
 // ============================================================
 // FUNGSI BANTU: ANALISIS EMAIL
@@ -3566,7 +3566,7 @@ function executeLacak() {
       });
     
   // ============================================================
-  // LACAK EMAIL - DIPERBAIKI DENGAN ANALISIS DOMAIN
+  // LACAK EMAIL - MENGGUNAKAN LOKASI IP PENGGUNA (DIPERBAIKI)
   // ============================================================
   } else if (type === 'email') {
     console.log('📧 Lacak email:', input);
@@ -3574,83 +3574,16 @@ function executeLacak() {
     var emailInfo = analisisEmail(input);
     console.log('📧 Informasi email:', emailInfo);
     
-    var lokasiDariDomain = cariLokasiDomain(emailInfo.domain);
-    console.log('📍 Lokasi dari domain:', lokasiDariDomain);
-    
     fetch('https://ipapi.co/json/')
       .then(function(r) { return r.json(); })
       .then(function(userData) {
         if (loading) loading.classList.add('hidden');
         
-        var userLat = userData.latitude || -6.2088;
-        var userLng = userData.longitude || 106.8456;
-        var userKota = userData.city || 'Jakarta';
-        var userProvinsi = userData.region || 'DKI Jakarta';
-        var userNegara = userData.country_name || 'Indonesia';
-        
-        var hasilAkhir = {
-          email: input,
-          domain: emailInfo.domain,
-          provider: emailInfo.provider,
-          valid: emailInfo.valid,
-          userKota: userKota,
-          userProvinsi: userProvinsi,
-          userNegara: userNegara,
-          userLat: userLat,
-          userLng: userLng,
-          info: 'Informasi dari email: ' + emailInfo.provider,
-          waktu: new Date().toLocaleString()
-        };
-        
-        var lat, lng, kota, provinsi, negara, maps, detailInfo;
-        
-        if (lokasiDariDomain) {
-          lat = lokasiDariDomain.lat;
-          lng = lokasiDariDomain.lng;
-          kota = lokasiDariDomain.kota;
-          provinsi = lokasiDariDomain.provinsi;
-          negara = lokasiDariDomain.negara;
-          maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-          detailInfo = 'Lokasi berdasarkan domain email: ' + emailInfo.domain;
-        } else if (emailInfo.countryCode) {
-          var lokasiNegara = cariLokasiNegara(emailInfo.countryCode);
-          if (lokasiNegara) {
-            lat = lokasiNegara.lat;
-            lng = lokasiNegara.lng;
-            kota = lokasiNegara.kota || 'Ibu Kota';
-            provinsi = lokasiNegara.provinsi || '-';
-            negara = lokasiNegara.negara;
-            maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-            detailInfo = 'Lokasi berdasarkan kode negara: ' + emailInfo.countryCode;
-          } else {
-            lat = userLat;
-            lng = userLng;
-            kota = userKota;
-            provinsi = userProvinsi;
-            negara = userNegara;
-            maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-            detailInfo = 'Perkiraan lokasi (menggunakan lokasi Anda sebagai referensi)';
-          }
-        } else {
-          var lokasiTLD = cariLokasiTLD(emailInfo.domain);
-          if (lokasiTLD) {
-            lat = lokasiTLD.lat;
-            lng = lokasiTLD.lng;
-            kota = lokasiTLD.kota;
-            provinsi = lokasiTLD.provinsi;
-            negara = lokasiTLD.negara;
-            maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-            detailInfo = 'Lokasi berdasarkan TLD domain: ' + emailInfo.domain;
-          } else {
-            lat = userLat;
-            lng = userLng;
-            kota = userKota;
-            provinsi = userProvinsi;
-            negara = userNegara;
-            maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-            detailInfo = 'Perkiraan lokasi (menggunakan lokasi Anda sebagai referensi)';
-          }
-        }
+        var lat = userData.latitude || -6.2088;
+        var lng = userData.longitude || 106.8456;
+        var kota = userData.city || 'Jakarta';
+        var provinsi = userData.region || 'DKI Jakarta';
+        var negara = userData.country_name || 'Indonesia';
         
         var hasil = {
           email: input,
@@ -3662,10 +3595,14 @@ function executeLacak() {
           negara: negara,
           lat: lat,
           lng: lng,
-          maps: maps,
-          info: detailInfo,
+          maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+          info: 'Lokasi berdasarkan IP Anda saat ini',
           waktu: new Date().toLocaleString(),
-          userLocation: 'Anda berada di ' + userKota + ', ' + userProvinsi + ', ' + userNegara
+          ipAddress: userData.ip || 'Tidak diketahui',
+          isp: userData.org || 'Tidak diketahui',
+          timezone: userData.timezone || 'Tidak diketahui',
+          userLocation: 'Anda berada di ' + kota + ', ' + provinsi + ', ' + negara,
+          domainLocation: 'Domain ' + emailInfo.domain + ' terdaftar di ' + (emailInfo.provider || 'tidak diketahui')
         };
         
         simpanDanTampilkan('email', input, hasil);
@@ -3675,36 +3612,11 @@ function executeLacak() {
       .catch(function() {
         if (loading) loading.classList.add('hidden');
         
-        var lat, lng, kota, provinsi, negara, maps, detailInfo;
-        
-        if (lokasiDariDomain) {
-          lat = lokasiDariDomain.lat;
-          lng = lokasiDariDomain.lng;
-          kota = lokasiDariDomain.kota;
-          provinsi = lokasiDariDomain.provinsi;
-          negara = lokasiDariDomain.negara;
-          maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-          detailInfo = 'Lokasi berdasarkan domain email (offline): ' + emailInfo.domain;
-        } else {
-          var lokasiTLD = cariLokasiTLD(emailInfo.domain);
-          if (lokasiTLD) {
-            lat = lokasiTLD.lat;
-            lng = lokasiTLD.lng;
-            kota = lokasiTLD.kota;
-            provinsi = lokasiTLD.provinsi;
-            negara = lokasiTLD.negara;
-            maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-            detailInfo = 'Lokasi berdasarkan TLD domain: ' + emailInfo.domain;
-          } else {
-            lat = -6.2088;
-            lng = 106.8456;
-            kota = 'Jakarta (default)';
-            provinsi = 'DKI Jakarta';
-            negara = 'Indonesia';
-            maps = 'https://www.google.com/maps?q=' + lat + ',' + lng;
-            detailInfo = 'Lokasi default (tidak ada informasi tersedia)';
-          }
-        }
+        var lat = -6.2088;
+        var lng = 106.8456;
+        var kota = 'Jakarta';
+        var provinsi = 'DKI Jakarta';
+        var negara = 'Indonesia';
         
         var hasil = {
           email: input,
@@ -3716,10 +3628,14 @@ function executeLacak() {
           negara: negara,
           lat: lat,
           lng: lng,
-          maps: maps,
-          info: detailInfo,
+          maps: 'https://www.google.com/maps?q=' + lat + ',' + lng,
+          info: 'Perkiraan lokasi (offline)',
           waktu: new Date().toLocaleString(),
-          userLocation: 'Tidak dapat mendeteksi lokasi Anda'
+          ipAddress: 'Tidak diketahui',
+          isp: 'Tidak diketahui',
+          timezone: 'Tidak diketahui',
+          userLocation: 'Tidak dapat mendeteksi lokasi Anda',
+          domainLocation: 'Domain ' + emailInfo.domain + ' terdaftar di ' + (emailInfo.provider || 'tidak diketahui')
         };
         
         simpanDanTampilkan('email', input, hasil);
@@ -3818,7 +3734,7 @@ function simpanDanTampilkan(type, input, hasil) {
 }
 
 // ============================================================
-// TAMPILKAN HASIL - DIPERBAIKI
+// TAMPILKAN HASIL - DIPERBAIKI DENGAN INFORMASI LENGKAP
 // ============================================================
 function tampilkanHasil(hasil) {
   var container = document.getElementById('lacakResultContent');
@@ -3826,6 +3742,7 @@ function tampilkanHasil(hasil) {
   
   var html = '<div style="font-size:0.9rem;line-height:1.8;">';
   
+  // TAMPILKAN KOORDINAT DENGAN GOOGLE MAPS
   if (hasil.lat !== undefined && hasil.lng !== undefined) {
     html += '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;margin-bottom:12px;text-align:center;">';
     html += '<div style="font-size:0.8rem;opacity:0.9;">📍 TITIK KOORDINAT</div>';
@@ -3836,6 +3753,7 @@ function tampilkanHasil(hasil) {
     html += '</div>';
   }
   
+  // TAMPILKAN INFORMASI EMAIL
   if (hasil.email) {
     html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
     html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📧 Informasi Email</h4>';
@@ -3843,27 +3761,31 @@ function tampilkanHasil(hasil) {
     if (hasil.domain) html += '<p><strong>Domain:</strong> ' + escapeHTML(hasil.domain) + '</p>';
     if (hasil.provider) html += '<p><strong>Provider:</strong> ' + escapeHTML(hasil.provider) + '</p>';
     if (hasil.valid !== undefined) html += '<p><strong>Valid:</strong> ' + (hasil.valid ? '✅ Ya' : '❌ Tidak') + '</p>';
+    if (hasil.domainLocation) html += '<p><strong>📌 Info Domain:</strong> ' + escapeHTML(hasil.domainLocation) + '</p>';
+    if (hasil.ipAddress) html += '<p><strong>🌐 IP Anda:</strong> ' + escapeHTML(hasil.ipAddress) + '</p>';
+    if (hasil.isp) html += '<p><strong>📡 ISP:</strong> ' + escapeHTML(hasil.isp) + '</p>';
+    if (hasil.timezone) html += '<p><strong>🕐 Zona Waktu:</strong> ' + escapeHTML(hasil.timezone) + '</p>';
     if (hasil.userLocation) html += '<p><strong>📍 Lokasi Anda:</strong> ' + escapeHTML(hasil.userLocation) + '</p>';
     html += '</div>';
   }
   
+  // TAMPILKAN LOKASI
   if (hasil.kota || hasil.provinsi || hasil.negara) {
     html += '<div style="background:var(--bg-tertiary);padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid var(--border-color);">';
-    html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📍 Lokasi</h4>';
+    html += '<h4 style="margin-bottom:8px;color:var(--accent-light);">📍 Lokasi Berdasarkan IP Anda</h4>';
     if (hasil.kota) html += '<p><strong>🏙️ Kota:</strong> ' + escapeHTML(hasil.kota) + '</p>';
     if (hasil.provinsi) html += '<p><strong>📍 Provinsi:</strong> ' + escapeHTML(hasil.provinsi) + '</p>';
     if (hasil.negara) html += '<p><strong>🌍 Negara:</strong> ' + escapeHTML(hasil.negara) + '</p>';
+    if (hasil.info) html += '<p><strong>ℹ️ Info:</strong> ' + escapeHTML(hasil.info) + '</p>';
     html += '</div>';
   }
   
-  if (hasil.ip) html += '<p><strong>🌐 IP:</strong> ' + escapeHTML(hasil.ip) + '</p>';
+  // INFORMASI LAINNYA
   if (hasil.input) html += '<p><strong>🔍 Target:</strong> ' + escapeHTML(hasil.input) + '</p>';
   if (hasil.platform) html += '<p><strong>📱 Platform:</strong> ' + escapeHTML(hasil.platform) + '</p>';
-  if (hasil.isp) html += '<p><strong>📡 ISP:</strong> ' + escapeHTML(hasil.isp) + '</p>';
-  if (hasil.timezone) html += '<p><strong>🕐 Zona Waktu:</strong> ' + escapeHTML(hasil.timezone) + '</p>';
-  if (hasil.info) html += '<p><strong>ℹ️ Info:</strong> ' + escapeHTML(hasil.info) + '</p>';
   if (hasil.waktu) html += '<p><strong>⏰ Waktu:</strong> ' + escapeHTML(hasil.waktu) + '</p>';
   
+  // LINK MAPS
   if (hasil.lat !== undefined && hasil.lng !== undefined && hasil.maps) {
     html += '<div style="margin-top:12px;text-align:center;">';
     html += '<a href="' + hasil.maps + '" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex;">🗺 Buka Google Maps</a>';
@@ -4838,7 +4760,7 @@ if (origRefreshAppUI) {
 // ============================================================
 // LOG INIT
 // ============================================================
-console.log('✅ Blok 9 R19 – JS Core 2 TraceID siap digunakan.');
+console.log('✅ Blok 9 R20 – JS Core 2 TraceID siap digunakan.');
 console.log('📌 Fungsi-fungsi yang tersedia:');
 console.log('   - Lacak: showLacakModal(), executeLacak()');
 console.log('   - Tracker: showLinkTrackerModal(), generateTrackerLink()');
@@ -4847,10 +4769,11 @@ console.log('   - Backup: backupUserData(), restoreUserData()');
 console.log('   - Search: toggleSearch(), performSearch(), clearSearch()');
 console.log('   - Auto-save: autoSaveData(), validateAndLoadUserData()');
 console.log('   - Analisis Email: analisisEmail(), cariLokasiDomain()');
+console.log('📌 Lacak Email: Menggunakan lokasi IP pengguna (bukan domain)');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 9 R19
+     AKHIR BLOK 9 R20
      ============================================================ -->
 
 
