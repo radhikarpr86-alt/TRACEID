@@ -13,6 +13,7 @@
      - DIPERBAIKI: Semua elemen lengkap, price-grid menggunakan class CSS,
        installBanner dan expiryWarning sudah ada.
      - DITAMBAHKAN: CSS untuk tombol Gmail Location & Sosmed Location.
+     - DITAMBAHKAN: CSS untuk tombol-tombol di toolbar.
      ============================================================ -->
 <!DOCTYPE html>
 <html lang="id">
@@ -374,153 +375,12 @@
 <body>
 
 <!-- CONNECTION STATUS BADGE -->
-<div id="connectionBadge" style="position:fixed;top:10px;right:10px;z-index:997;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:#10b981;color:#fff;opacity:0.85;">
-  ONLINE
-</div>
-
-<!-- OFFLINE BANNER -->
-<div class="offline-banner" id="offlineBanner">
-  <span><strong>Mode Offline</strong> - Data disimpan di browser. Beberapa fitur terbatas.</span>
-  <button onclick="downloadForOffline()" class="btn btn-warning btn-sm">Download Untuk Offline</button>
-</div>
-
-<!-- EXPIRY WARNING BANNER -->
-<div class="expiry-warning" id="expiryWarning">
-  <span id="expiryWarningText">Premium akan segera berakhir!</span>
-  <button onclick="showActivationModal()" class="btn btn-warning btn-sm">Perpanjang Premium</button>
-</div>
-
-<!-- INSTALL BANNER -->
-<div class="install-banner" id="installBanner" onclick="installApplication()">
-  <span><strong>Install TraceID sebagai Aplikasi Desktop!</strong> Buka dari layar utama.</span>
-  <span style="font-size:1.2rem;">📲 Klik Disini</span>
-</div>
-
-<!-- LANDING PAGE -->
-<div class="container" id="landingPage">
-  <header class="header">
-    <div class="logo">
-      <span class="logo-icon">📍</span>
-      <span class="logo-text">TraceID v1.0</span>
-    </div>
-    <div class="header-buttons">
-      <button onclick="showLoginModal()" class="btn btn-outline btn-sm">Login</button>
-      <button onclick="showRegisterModal()" class="btn btn-primary btn-sm">Daftar</button>
-      <button onclick="toggleTheme()" id="themeButton1" class="btn btn-gray btn-sm">🌙 Dark Mode</button>
-      <button onclick="openApplication()" class="btn btn-success btn-sm">Buka Aplikasi</button>
-      <button onclick="downloadForOffline()" class="btn btn-blue btn-sm">Download Offline</button>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="hero-icon">📍</div>
-    <h1 class="gradient-text">TraceID – Smart People Locator</h1>
-    <p class="hero-description">
-      Lacak lokasi seseorang dengan mudah dan akurat. Gunakan IP Address, Email, 
-      atau Media Sosial (TikTok, Instagram, Facebook, WhatsApp) untuk menemukan orang yang Anda cari. 
-      Cocok untuk mencari HP hilang, kerabat yang kabur, atau mengawasi anak.
-    </p>
-    <div class="hero-buttons">
-      <button onclick="openApplication()" class="btn btn-primary btn-lg">🔍 Mulai Lacak Sekarang</button>
-      <button onclick="showLoginModal()" class="btn btn-outline btn-lg">Login</button>
-      <button onclick="installApplication()" class="btn btn-success btn-lg" id="heroInstallButton">📲 Install Desktop</button>
-    </div>
-  </section>
-
-  <!-- BANNER HUBUNGI ADMIN VIA CHAT -->
-  <div class="whatsapp-banner" onclick="hubungiAdminLanding()">
-    <div class="whatsapp-banner-left">
-      <span class="whatsapp-banner-icon">💬</span>
-      <div>
-        <strong>Hubungi Admin</strong>
-        <br>
-        <small>Butuh bantuan lacak? Chat langsung dengan Admin.</small>
-      </div>
-    </div>
-    <div class="whatsapp-banner-right">
-      <span>Chat Admin</span>
-      <span style="font-size:1.2rem;">👉</span>
-    </div>
-  </div>
-
-<!-- ============================================================
-     BLOK 1 LANJUTAN – FITUR UNGGULAN & PAKET PREMIUM
-     ============================================================ -->
-  <h3 class="section-title">🔍 Fitur Pelacakan Unggulan</h3>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">🌐</div>
-      <h4>Lacak via IP Address</h4>
-      <p>Masukkan IP target dan dapatkan lokasi (kota, provinsi, ISP, koordinat GPS).</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📧</div>
-      <h4>Lacak via Email</h4>
-      <p>Cari akun media sosial dan platform yang terdaftar dengan email target.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🎵</div>
-      <h4>Lacak via TikTok</h4>
-      <p>Temukan bio, link, followers, dan info lokasi dari profil TikTok.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📷</div>
-      <h4>Lacak via Instagram</h4>
-      <p>Cari info kontak, email, lokasi, dan postingan terbaru dari profil IG.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📘</div>
-      <h4>Lacak via Facebook</h4>
-      <p>Dapatkan info publik, lokasi, foto, dan friends list dari akun Facebook.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📱</div>
-      <h4>Lacak via WhatsApp</h4>
-      <p>Validasi nomor HP, cek negara, provider, dan foto profil WhatsApp.</p>
-    </div>
-  </div>
-
-  <h3 class="section-title">💎 Paket Premium TraceID</h3>
-  <div class="price-grid" id="landingPriceGrid">
-    <!-- Diisi oleh JavaScript refreshPackageDisplay() -->
-  </div>
-
-  <!-- TOMBOL BACKUP DATA -->
-  <div style="text-align:center;margin:30px 0;">
-    <button class="btn btn-lg" style="background:#3b82f6;color:#fff;" onclick="backupSebelumUpgrade()">
-      ☁️ Backup Data Sebelum Upgrade
-    </button>
-    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">
-      Simpan semua data lacak Anda sebelum melakukan upgrade aplikasi.
-    </p>
-  </div>
-
-  <!-- TOMBOL SIMPAN KE GOOGLE DRIVE / MEMORI -->
-  <div style="text-align:center;margin:30px 0;">
-    <button class="btn btn-lg" style="background:#4285F4;color:#fff;" onclick="saveToGoogleDrive()">
-      ☁️ Simpan Data ke Google Drive / Memori
-    </button>
-    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">
-      Backup semua data Anda ke Google Drive atau simpan di memori HP.
-    </p>
-  </div>
-
-  <!-- IKLAN LANDING PAGE -->
-  <div id="landingAdContainer" style="max-width:1000px;margin:0 auto 30px auto;padding:0 var(--spacing-lg);">
-    <!-- Diisi oleh renderLandingAd() -->
-  </div>
-</div>
-<!-- END LANDING PAGE -->
-
-<!-- ============================================================
-     AKHIR BLOK 1 R4
-     Blok 2 akan melanjutkan: Halaman Aplikasi (Application Page)
-     ============================================================ -->
+<div id="connectionBadge" style="position:fixed;top:10px;right:10px;z-index:997;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:#10b981;color:#fff;opacity:0.85
 
 
 <!-- ===== TRACERID → BLOK 2 R2 – APPLICATION PAGE ===== -->
 <!-- ============================================================
-     BLOK 2 R2 – APPLICATION PAGE TraceID (LENGKAP + DIPERBAIKI)
+     BLOK 2 R2 – APPLICATION PAGE TraceID (LENGKAP + DIPERBAIKI DARI AWAL)
      (Header, Stats Dashboard, Toolbar, Search Bar, Riwayat)
      ============================================================
      PENJELASAN:
@@ -530,7 +390,8 @@
        search bar, dan riwayat pelacakan
      - Identik dengan struktur Notepad+ v3.3
      - DIPERBAIKI: Tombol Panel Admin menggunakan style display:none,
-       semua tombol sudah terhubung dengan benar
+       semua tombol sudah terhubung dengan benar,
+       ikon ditambahkan pada semua tombol
      ============================================================ -->
 
 <!-- APPLICATION PAGE -->
@@ -651,17 +512,19 @@
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 3 R1      Blok 4 akan melanjutkan: Modal Profil & Super Admin Panel ===== -->
+<!-- ===== TRACERID → BLOK 3 R2 – MODAL AUTH ===== -->
 <!-- ============================================================
-     BLOK 3 R1 – MODAL AUTH TraceID (LENGKAP + DIPERBAIKI)
+     BLOK 3 R2 – MODAL AUTH (LENGKAP + DIPERBAIKI DARI AWAL)
      (Login, Register, Forgot Password)
      ============================================================
      PENJELASAN:
      - Berisi 3 modal: Login, Register, Forgot Password
      - Identik dengan struktur Notepad+ v3.3
      - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
-     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS, 
-       tambahan atribut autocomplete, struktur rapi
+     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS,
+       label dan placeholder ditambahkan,
+       autocomplete untuk membantu pengisian,
+       form hint untuk petunjuk
      ============================================================ -->
 
 <!-- ============================================================
@@ -786,14 +649,14 @@
 </div>
 
 <!-- ============================================================
-     AKHIR BLOK 3 R1
+     AKHIR BLOK 3 R2
      Blok 4 akan melanjutkan: Modal Profil & Super Admin Panel
      ============================================================ -->
 
 
 <!-- ===== TRACERID → BLOK 4 R2 – MODAL PROFIL & SUPER ADMIN PANEL ===== -->
 <!-- ============================================================
-     BLOK 4 R2 – MODAL PROFIL & SUPER ADMIN PANEL TraceID (LENGKAP + DIPERBAIKI)
+     BLOK 4 R2 – MODAL PROFIL & SUPER ADMIN PANEL (LENGKAP + DIPERBAIKI DARI AWAL)
      (Profil, Super Admin Panel dengan semua tab)
      ============================================================
      PENJELASAN:
@@ -801,8 +664,9 @@
      - Super Admin Panel memiliki 8 tab: Kode Aktivasi, Daftar User,
        Paket & Harga, Log Keamanan, Pengaturan, Iklan, Chat User, Backup
      - Identik dengan struktur Notepad+ v3.3
-     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS, struktur rapi,
-       tombol-tombol sudah terhubung dengan benar
+     - DIPERBAIKI: Semua ID sesuai dengan fungsi JS,
+       tombol-tombol sudah terhubung dengan benar,
+       label dan placeholder ditambahkan
      ============================================================ -->
 
 <!-- ============================================================
@@ -1002,7 +866,7 @@
           </select>
         </div>
         <div class="chat-messages" id="adminChatMessages" style="height:250px;overflow-y:auto;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:8px;margin-bottom:12px;">
-          <p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>
+          <p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Pilih user untuk melihat chat.</p>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:8px;">
           <input type="text" id="adminChatInput" placeholder="Ketik balasan..." style="flex:1;" onkeydown="if(event.key==='Enter') sendAdminChat()">
@@ -1061,7 +925,7 @@
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 5 R3      Blok 6 akan melanjutkan: Modal Chat, Aktivasi & Toast Container ===== -->
+<!-- ===== TRACERID → BLOK 5 R3 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET ===== -->
 <!-- ============================================================
      BLOK 5 R3 – MODAL LACAK, TRACKER, KONFIRMASI, EDIT PAKET (LENGKAP + DIPERBAIKI DARI AWAL)
      (Modal Lacak, Link Tracker, Hasil Klik, Detail Riwayat, Confirm, Edit Package)
@@ -1314,7 +1178,7 @@
 
 <!-- ===== TRACERID → BLOK 6 R2 – MODAL CHAT, AKTIVASI & TOAST CONTAINER ===== -->
 <!-- ============================================================
-     BLOK 6 R2 – MODAL CHAT, AKTIVASI & TOAST CONTAINER (LENGKAP + DIPERBAIKI)
+     BLOK 6 R2 – MODAL CHAT, AKTIVASI & TOAST CONTAINER (LENGKAP + DIPERBAIKI DARI AWAL)
      (Chat User ke Admin, Chat Sesama User, Aktivasi Premium, Toast Container)
      ============================================================
      PENJELASAN:
@@ -1323,7 +1187,8 @@
      - Identik dengan struktur Notepad+ v3.3
      - Warna aksen disesuaikan dengan tema TraceID (biru #3b82f6)
      - DIPERBAIKI: Semua ID sesuai dengan fungsi JS, 
-       tombol sudah terhubung dengan benar, support Enter key
+       tombol sudah terhubung dengan benar, support Enter key,
+       label dan form hint ditambahkan
      ============================================================ -->
 
 <!-- ============================================================
@@ -1338,7 +1203,7 @@
     <div class="modal-body">
       <div class="chat-container" id="userChatContainer">
         <div class="chat-messages" id="userChatMessages">
-          <p style="color:var(--text-secondary);text-align:center;padding:20px;">Belum ada pesan.</p>
+          <p style="color:var(--text-secondary);text-align:center;padding:20px;">💬 Belum ada pesan.</p>
         </div>
         <div class="chat-input-row">
           <input type="text" id="userChatInput" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendUserChat()">
@@ -1372,7 +1237,7 @@
 
       <!-- AREA CHAT -->
       <div class="chat-messages" id="userToUserChatMessages" style="height:300px;overflow-y:auto;background:var(--bg-tertiary);border-radius:var(--radius-sm);padding:8px;margin-bottom:12px;">
-        <p style="color:var(--text-secondary);text-align:center;padding:20px;">Pilih user untuk memulai chat.</p>
+        <p style="color:var(--text-secondary);text-align:center;padding:20px;">👥 Pilih user untuk memulai chat.</p>
       </div>
 
       <!-- INPUT CHAT -->
@@ -1429,9 +1294,9 @@
      ============================================================ -->
 
 
-<!-- ===== TRACERID → BLOK 7 R1      Blok 8 akan melanjutkan: JS Core ===== -->
+<!-- ===== TRACERID → BLOK 7 R2 – JS CORE 1 ===== -->
 <!-- ============================================================
-     BLOK 7 R1 – JS CORE 1 (TRACEID)
+     BLOK 7 R2 – JS CORE 1 (TRACEID) - LENGKAP + DIPERBAIKI DARI AWAL
      (PWA, Service Worker, Storage, Auth, Theme, Navigation, Premium)
      ============================================================
      PENJELASAN:
@@ -1443,6 +1308,8 @@
      - WhatsApp formatter, Toast, Modal helpers
      - IDENTIK dengan Notepad+ v3.3
      - DIPERBAIKI: Semua fungsi sudah lengkap dan siap digunakan
+     - DIPERBAIKI: updateHeaderUser() menampilkan Panel Admin dengan benar
+     - DIPERBAIKI: Semua fungsi dasar untuk landing page
      ============================================================ -->
 
 <script>
@@ -1451,1478 +1318,1183 @@
 // ============================================================
 var deferredPrompt;
 window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  var banner = document.getElementById('installBanner');
-  if (banner) banner.style.display = 'flex';
+    e.preventDefault();
+    deferredPrompt = e;
+    var banner = document.getElementById('installBanner');
+    if (banner) banner.style.display = 'flex';
 });
 
 function installApplication() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(choiceResult) {
-      if (choiceResult.outcome === 'accepted') {
-        showToast('Instalasi berhasil! TraceID bisa dibuka dari layar utama.', 'success');
-      }
-      deferredPrompt = null;
-      var banner = document.getElementById('installBanner');
-      if (banner) banner.style.display = 'none';
-    });
-  } else if (window.matchMedia('(display-mode: standalone)').matches) {
-    showToast('Aplikasi sudah terinstall!', 'warning');
-  } else {
-    alert('Buka menu browser lalu pilih "Tambahkan ke Layar Utama" atau "Install" untuk menginstal aplikasi ini.');
-  }
-}
-
-// ============================================================
-// SERVICE WORKER
-// ============================================================
-if ('serviceWorker' in navigator) {
-  var swCode = `
-    var CACHE_NAME = 'traceid-v1';
-    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
-    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-  `;
-  var swBlob = new Blob([swCode], {type: 'application/javascript'});
-  var swUrl = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl).catch(function(){});
-}
-
-// ============================================================
-// ENKRIPSI PASSWORD
-// ============================================================
-function encodePassword(pw) { return btoa(pw); }
-function decodePassword(hash) { return atob(hash); }
-
-// ============================================================
-// DATA DEFAULT
-// ============================================================
-var SUPER_ADMIN_DATA = {
-  username: 'superadmin', password: encodePassword('admin123'),
-  nama: 'Super Admin', email: 'admin@traceid.com', hp: '081220285226',
-  role: 'superadmin', premium: true, premiumExpiry: null, locked: false
-};
-var DEFAULT_WHATSAPP = '081220285226';
-var DEFAULT_PACKAGES = [
-  { id: '1minggu', name: 'Starter', price: 25000, days: 7, label: '1 Minggu', features: '5x lacak/hari • IP & Email' },
-  { id: '1bulan', name: 'Professional', price: 50000, days: 30, label: '1 Bulan', features: '20x lacak/hari • Semua Fitur' },
-  { id: '3bulan', name: 'Enterprise', price: 100000, days: 90, label: '3 Bulan', features: 'Unlimited lacak • Prioritas Support' }
-];
-
-// ============================================================
-// LOCAL STORAGE (prefix tr_)
-// ============================================================
-function getStore(key, def) { try { var v = localStorage.getItem('tr_' + key); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
-function setStore(key, val) { localStorage.setItem('tr_' + key, JSON.stringify(val)); }
-function remStore(key) { localStorage.removeItem('tr_' + key); }
-
-function getAllUsers() { return getStore('users', []); }
-function saveAllUsers(arr) { setStore('users', arr); }
-function getAllLacakData() { return getStore('lacak', {}); }
-function saveAllLacakData(obj) { setStore('lacak', obj); }
-function getSession() { return getStore('session', null); }
-function saveSession(s) { setStore('session', s); }
-function clearSession() { remStore('session'); }
-function getPackages() { return getStore('packages', DEFAULT_PACKAGES); }
-function savePackages(p) { setStore('packages', p); }
-function getWhatsapp() { return getStore('whatsapp', DEFAULT_WHATSAPP); }
-function saveWhatsapp(n) { setStore('whatsapp', n); }
-function getValidCodes() { return getStore('validCodes', {}); }
-function saveValidCodes(c) { setStore('validCodes', c); }
-function getSecurityLogs() { return getStore('securityLogs', []); }
-function saveSecurityLogs(l) { setStore('securityLogs', l); }
-function getChatMessages() { return getStore('chatMessages', []); }
-function saveChatMessages(m) { setStore('chatMessages', m); }
-
-// ============================================================
-// WHATSAPP FORMATTER
-// ============================================================
-function formatWa(raw) {
-  var n = raw.replace(/[^0-9]/g,'');
-  if (n.startsWith('0')) n = '62' + n.substring(1);
-  if (!n.startsWith('62')) n = '62' + n;
-  return '+' + n;
-}
-
-function updateAllWaDisplays() {
-  var f = formatWa(getWhatsapp());
-  var ids = ['whatsappNumberLanding','whatsappNumberApp'];
-  ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.textContent = f; });
-}
-
-function openWhatsApp(msg) {
-  var link = getWhatsapp().replace(/[^0-9]/g,'');
-  var url = 'https://wa.me/' + link + (msg ? '?text=' + encodeURIComponent(msg) : '');
-  window.open(url,'_blank');
-}
-
-// ============================================================
-// TOAST NOTIFICATION
-// ============================================================
-function showToast(msg, type) {
-  var c = document.getElementById('toastContainer');
-  if (!c) return;
-  var t = document.createElement('div');
-  t.className = 'toast toast-' + (type||'info');
-  t.textContent = msg;
-  c.appendChild(t);
-  requestAnimationFrame(function(){ t.classList.add('show'); });
-  setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); },300); },3000);
-}
-
-// ============================================================
-// MODAL HELPERS
-// ============================================================
-function openModal(id) { 
-  var el = document.getElementById(id);
-  if (el) el.classList.add('show'); 
-}
-
-function closeModal(id) { 
-  var el = document.getElementById(id);
-  if (el) el.classList.remove('show'); 
-  clearModalErrors(); 
-}
-
-function clearModalErrors() {
-  document.querySelectorAll('.form-error,.form-success').forEach(function(el){ 
-    el.textContent=''; 
-    el.classList.remove('show'); 
-  });
-}
-
-// ============================================================
-// THEME
-// ============================================================
-function toggleTheme() {
-  document.body.classList.toggle('light-theme');
-  var isLight = document.body.classList.contains('light-theme');
-  var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
-  document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ 
-    if (b) b.textContent = label; 
-  });
-  localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
-}
-
-// Load theme on init
-(function(){ 
-  if(localStorage.getItem('tr_theme')==='light'){ 
-    document.body.classList.add('light-theme'); 
-    document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ 
-      if (b) b.textContent='☀️ Light Mode'; 
-    }); 
-  } 
-})();
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-function openApplication() {
-  var s = getSession();
-  if (!s) return showLoginModal();
-  var landing = document.getElementById('landingPage');
-  var app = document.getElementById('applicationPage');
-  if (landing) landing.classList.add('hidden');
-  if (app) app.classList.remove('hidden');
-  refreshAppUI(); 
-  updateStats(); 
-  updateHeaderUser(); 
-  checkAllExpiredActivations();
-}
-
-function goToLandingPage() {
-  var app = document.getElementById('applicationPage');
-  var landing = document.getElementById('landingPage');
-  if (app) app.classList.add('hidden');
-  if (landing) landing.classList.remove('hidden');
-  refreshPackageDisplay();
-}
-
-function showLoginModal() { 
-  openModal('loginModal'); 
-}
-
-function showRegisterModal() { 
-  openModal('registerModal'); 
-}
-
-function showProfileModal() { 
-  openModal('profileModal'); 
-  loadProfileData(); 
-}
-
-function showActivationModal() { 
-  if(!getSession()) return showLoginModal(); 
-  openModal('activationModal'); 
-}
-
-// ============================================================
-// AUTH (DENGAN LOG KEAMANAN)
-// ============================================================
-function handleLogin() {
-  var u = document.getElementById('loginUsername');
-  var p = document.getElementById('loginPassword');
-  var err = document.getElementById('loginError');
-  if (!u || !p) return showToast('Form login tidak ditemukan.','error');
-  var username = u.value.trim();
-  var password = p.value;
-  if (err) err.classList.remove('show');
-  if(!username||!password){ 
-    if (err) { err.textContent='Isi semua field!'; err.classList.add('show'); }
-    return; 
-  }
-
-  // Super admin login
-  if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
-    saveSession(SUPER_ADMIN_DATA);
-    addSecurityLog('Super Admin login.');
-    closeModal('loginModal'); 
-    showToast('Login Super Admin berhasil!','success');
-    openApplication(); 
-    return;
-  }
-
-  var users = getAllUsers();
-  var user = null;
-  for (var i = 0; i < users.length; i++) {
-    if ((users[i].username === username || users[i].email === username) && password === decodePassword(users[i].password)) {
-      user = users[i]; 
-      break;
-    }
-  }
-  if (!user) { 
-    if (err) { err.textContent='Username/password salah!'; err.classList.add('show'); }
-    return; 
-  }
-  if (user.locked) { 
-    if (err) { err.textContent='Akun terkunci! Hubungi admin.'; err.classList.add('show'); }
-    return; 
-  }
-  saveSession(user);
-  addSecurityLog('User ' + user.username + ' login.');
-  closeModal('loginModal'); 
-  showToast('Login berhasil!','success');
-  openApplication();
-}
-
-function handleRegister() {
-  var n = document.getElementById('registerNama');
-  var e = document.getElementById('registerEmail');
-  var hp = document.getElementById('registerHp');
-  var un = document.getElementById('registerUsername');
-  var pw = document.getElementById('registerPassword');
-  var cp = document.getElementById('registerPasswordConfirm');
-  var err = document.getElementById('registerError'); 
-  var suc = document.getElementById('registerSuccess');
-  
-  if (!n || !e || !hp || !un || !pw || !cp) return showToast('Form tidak lengkap!','error');
-  
-  var nama = n.value.trim();
-  var email = e.value.trim();
-  var hpVal = hp.value.trim();
-  var username = un.value.trim();
-  var password = pw.value;
-  var confirm = cp.value;
-  
-  if (err) err.classList.remove('show'); 
-  if (suc) suc.classList.remove('show');
-  
-  if(!nama||!email||!hpVal||!username||!password||!confirm){ 
-    if (err) { err.textContent='Semua field wajib!'; err.classList.add('show'); }
-    return; 
-  }
-  if(password!==confirm){ 
-    if (err) { err.textContent='Password tidak cocok!'; err.classList.add('show'); }
-    return; 
-  }
-  if(password.length<6){ 
-    if (err) { err.textContent='Password minimal 6 karakter!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var users = getAllUsers();
-  if(users.find(function(x){return x.username===username;})){ 
-    if (err) { err.textContent='Username sudah dipakai!'; err.classList.add('show'); }
-    return; 
-  }
-  if(users.find(function(x){return x.email===email;})){ 
-    if (err) { err.textContent='Email sudah dipakai!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var newUser = { 
-    id: Date.now().toString(), 
-    nama: nama, 
-    email: email, 
-    hp: hpVal, 
-    username: username, 
-    password: encodePassword(password), 
-    role: 'user', 
-    premium: false, 
-    premiumExpiry: null, 
-    locked: false, 
-    createdAt: new Date().toISOString() 
-  };
-  
-  users.push(newUser); 
-  saveAllUsers(users);
-  
-  if (suc) {
-    suc.textContent='Pendaftaran berhasil! Silakan login.'; 
-    suc.classList.add('show');
-  }
-  
-  // Auto-create lacak data for new user
-  var all = getAllLacakData();
-  if (!all[newUser.id]) { 
-    all[newUser.id] = []; 
-    saveAllLacakData(all); 
-  }
-  
-  setTimeout(function(){ 
-    closeModal('registerModal'); 
-    showLoginModal(); 
-  }, 2000);
-}
-
-function handleLogout() {
-  var s = getSession();
-  if (s) { 
-    addSecurityLog('User ' + s.username + ' logout.'); 
-  }
-  clearSession(); 
-  goToLandingPage(); 
-  updateHeaderUser(); 
-  showToast('Logout berhasil.','info');
-}
-
-// ============================================================
-// PREMIUM ACTIVATION
-// ============================================================
-function activatePremiumFromModal() {
-  var code = document.getElementById('activationCodeInputMain');
-  if (!code) return;
-  activatePremium(code.value.trim(), 'activationModalError','activationModalSuccess');
-}
-
-function activatePremium(code, errId, sucId) {
-  var err = document.getElementById(errId); 
-  var suc = document.getElementById(sucId);
-  if (err) err.classList.remove('show'); 
-  if (suc) suc.classList.remove('show');
-  
-  if(!code){ 
-    if (err) { err.textContent='Masukkan kode aktivasi!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var session = getSession();
-  if(!session){ 
-    if (err) { err.textContent='Anda harus login!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var valid = getValidCodes();
-  var cd = valid[code];
-  if(!cd||cd.used){ 
-    if (err) { err.textContent='Kode tidak valid/sudah dipakai!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var users = getAllUsers();
-  var idx = users.findIndex(function(x){return x.id===session.id;});
-  if(idx===-1){ 
-    if (err) { err.textContent='User tidak ditemukan!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var pkgs = getPackages();
-  var pkg = pkgs.find(function(p){return p.id===cd.packageId;});
-  if(!pkg){ 
-    if (err) { err.textContent='Paket tidak valid!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var now = new Date();
-  var exp = new Date(now.getTime() + pkg.days*86400000);
-  users[idx].premium = true; 
-  users[idx].premiumExpiry = exp.toISOString(); 
-  saveAllUsers(users);
-  
-  cd.used = true; 
-  cd.usedBy = session.username; 
-  cd.usedAt = now.toISOString(); 
-  valid[code] = cd; 
-  saveValidCodes(valid);
-  
-  var newSess = Object.assign({}, users[idx]); 
-  saveSession(newSess);
-  
-  if (suc) {
-    suc.textContent = 'Aktivasi sukses! Premium hingga ' + exp.toLocaleDateString(); 
-    suc.classList.add('show');
-  }
-  
-  updateHeaderUser();
-  if (!document.getElementById('applicationPage').classList.contains('hidden')) { 
-    refreshAppUI(); 
-    updateStats(); 
-  }
-  
-  setTimeout(function(){ 
-    if(document.getElementById('activationModal') && document.getElementById('activationModal').classList.contains('show')) 
-      closeModal('activationModal'); 
-  }, 2000);
-}
-
-// ============================================================
-// SECURITY LOGS
-// ============================================================
-function addSecurityLog(msg) {
-  var logs = getSecurityLogs(); 
-  logs.push({time:new Date().toISOString(), msg:msg}); 
-  saveSecurityLogs(logs);
-}
-
-// ============================================================
-// UPDATE HEADER USER
-// ============================================================
-function updateHeaderUser() {
-  var s = getSession();
-  var badge = document.getElementById('userBadge');
-  var prof = document.getElementById('profileButton');
-  var adm = document.getElementById('adminButton');
-  var logout = document.getElementById('logoutButton');
-  var act = document.getElementById('activationToolbarButton');
-  var chatAdminBtn = document.getElementById('chatButton');
-  var chatUserBtn = document.getElementById('chatUserButton');
-
-  if(s){
-    if (badge) {
-      badge.style.display='flex'; 
-      var avatar = document.getElementById('userAvatar');
-      var nameDisplay = document.getElementById('userNameDisplay');
-      if (avatar) avatar.textContent = s.nama.charAt(0).toUpperCase();
-      if (nameDisplay) nameDisplay.textContent = s.nama;
-    }
-    if (prof) prof.classList.remove('hidden');
-    if (logout) logout.classList.remove('hidden');
-    if (adm) adm.classList.toggle('hidden', s.role!=='superadmin');
-    if (act) act.style.display = (s.role=='user'&&!s.premium) ? 'inline-flex' : 'none';
-
-    if (s.role === 'superadmin') {
-      if (chatAdminBtn) chatAdminBtn.classList.add('hidden');
-      if (chatUserBtn) chatUserBtn.classList.remove('hidden');
+    console.log('📲 installApplication() dipanggil');
+    
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+            if (choiceResult.outcome === 'accepted') {
+                showToast('Instalasi berhasil! TraceID bisa dibuka dari layar utama.', 'success');
+            }
+            deferredPrompt = null;
+            var banner = document.getElementById('installBanner');
+            if (banner) banner.style.display = 'none';
+        });
+    } else if (window.matchMedia('(display-mode: standalone)').matches) {
+        showToast('Aplikasi sudah terinstall!', 'warning');
     } else {
-      if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-      if (chatUserBtn) chatUserBtn.classList.add('hidden');
+        alert('Buka menu browser lalu pilih "Tambahkan ke Layar Utama" atau "Install" untuk menginstal aplikasi ini.');
     }
-  }else{
-    if (badge) badge.style.display='none';
-    if (prof) prof.classList.add('hidden');
-    if (adm) adm.classList.add('hidden');
-    if (logout) logout.classList.add('hidden');
-    if (act) act.style.display='none';
-    if (chatAdminBtn) chatAdminBtn.classList.remove('hidden');
-    if (chatUserBtn) chatUserBtn.classList.add('hidden');
-  }
-}
-
-// ============================================================
-// UPDATE STATS (akan ditimpa oleh Blok 9)
-// ============================================================
-function updateStats() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('updateStats() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// REFRESH APP UI (akan ditimpa oleh Blok 9)
-// ============================================================
-function refreshAppUI() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('refreshAppUI() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// FORGOT PASSWORD (akan ditimpa oleh Blok 9)
-// ============================================================
-function handleForgotPassword() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('handleForgotPassword() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// LOAD PROFILE DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function loadProfileData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('loadProfileData() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SAVE PROFILE (akan ditimpa oleh Blok 9)
-// ============================================================
-function saveProfile() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('saveProfile() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// DELETE ACCOUNT (akan ditimpa oleh Blok 9)
-// ============================================================
-function deleteAccount() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('deleteAccount() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// CHECK EXPIRED ACTIVATIONS (akan ditimpa oleh Blok 9)
-// ============================================================
-function checkAllExpiredActivations() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('checkAllExpiredActivations() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// REFRESH PACKAGE DISPLAY (akan ditimpa oleh Blok 11)
-// ============================================================
-function refreshPackageDisplay() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('refreshPackageDisplay() akan di-override oleh Blok 11');
-}
-
-// ============================================================
-// RENDER LANDING AD (akan ditimpa oleh Blok 11)
-// ============================================================
-function renderLandingAd() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('renderLandingAd() akan di-override oleh Blok 11');
-}
-
-// ============================================================
-// HUBUNGI ADMIN LANDING (akan ditimpa oleh Blok 11)
-// ============================================================
-function hubungiAdminLanding() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('hubungiAdminLanding() akan di-override oleh Blok 11');
-}
-
-// ============================================================
-// SHOW CHAT MODAL (akan ditimpa oleh Blok 11)
-// ============================================================
-function showChatModal() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('showChatModal() akan di-override oleh Blok 11');
-}
-
-// ============================================================
-// SHOW USER CHAT MODAL (akan ditimpa oleh Blok 11)
-// ============================================================
-function showUserChatModal() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('showUserChatModal() akan di-override oleh Blok 11');
-}
-
-// ============================================================
-// DOWNLOAD FOR OFFLINE (akan ditimpa oleh Blok 11)
-// ============================================================
-function downloadForOffline() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('downloadForOffline() akan di-override oleh Blok 11');
-}
-
-// ============================================================
-// BACKUP SEBELUM UPGRADE (akan ditimpa oleh Blok 9)
-// ============================================================
-function backupSebelumUpgrade() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('backupSebelumUpgrade() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SAVE TO GOOGLE DRIVE (akan ditimpa oleh Blok 10)
-// ============================================================
-function saveToGoogleDrive() {
-  // Fungsi ini akan ditimpa oleh Blok 10
-  console.log('saveToGoogleDrive() akan di-override oleh Blok 10');
-}
-
-// ============================================================
-// EXPORT ALL DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function exportAllData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('exportAllData() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// IMPORT ALL DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function importAllData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('importAllData() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// BACKUP USER DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function backupUserData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('backupUserData() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// RESTORE USER DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function restoreUserData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('restoreUserData() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SHOW LACAK MODAL (akan ditimpa oleh Blok 9)
-// ============================================================
-function showLacakModal() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('showLacakModal() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SHOW LINK TRACKER MODAL (akan ditimpa oleh Blok 9)
-// ============================================================
-function showLinkTrackerModal() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('showLinkTrackerModal() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SHOW TRACKER CLICKS (akan ditimpa oleh Blok 9)
-// ============================================================
-function showTrackerClicks() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('showTrackerClicks() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// TOGGLE SEARCH (akan ditimpa oleh Blok 9)
-// ============================================================
-function toggleSearch() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('toggleSearch() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// PERFORM SEARCH (akan ditimpa oleh Blok 9)
-// ============================================================
-function performSearch() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('performSearch() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// CLEAR SEARCH (akan ditimpa oleh Blok 9)
-// ============================================================
-function clearSearch() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('clearSearch() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// INIT USER APPS (akan ditimpa oleh Blok 9)
-// ============================================================
-function initUserApps() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('initUserApps() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// AUTO SAVE DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function autoSaveData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('autoSaveData() akan di-override oleh Blok 9');
-}
-
-console.log('✅ Blok 7 R1 – JS Core 1 TraceID siap digunakan.');
-console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, dan 11.');
-</script>
-
-<!-- ============================================================
-     AKHIR BLOK 7 R1
-     Blok 8 akan melanjutkan: JS Core 2 (Lacak, Riwayat, Tracker, dll)
-     ============================================================ -->
-
-
-<!-- ===== TRACERID → BLOK 8 R3 – JS CORE 1 ===== -->
-<!-- ============================================================
-     BLOK 8 R3 – JS CORE 1 (TRACEID) - LENGKAP + DIPERBAIKI
-     (PWA, Service Worker, Storage, Auth, Theme, Navigation, Premium)
-     ============================================================
-     PENJELASAN:
-     - Berisi semua fungsi core JavaScript untuk TraceID
-     - PWA Install Prompt, Service Worker
-     - Local Storage functions (prefix tr_)
-     - Auth: Login, Register, Logout
-     - Theme toggle, Navigation, Premium Activation
-     - WhatsApp formatter, Toast, Modal helpers
-     - DIPERBAIKI: updateHeaderUser() menampilkan Panel Admin dengan benar,
-       semua fungsi sudah lengkap dan siap digunakan
-     ============================================================ -->
-
-<script>
-// ============================================================
-// PWA INSTALL PROMPT
-// ============================================================
-var deferredPrompt;
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  var banner = document.getElementById('installBanner');
-  if (banner) banner.style.display = 'flex';
-});
-
-function installApplication() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(choiceResult) {
-      if (choiceResult.outcome === 'accepted') {
-        showToast('Instalasi berhasil! TraceID bisa dibuka dari layar utama.', 'success');
-      }
-      deferredPrompt = null;
-      var banner = document.getElementById('installBanner');
-      if (banner) banner.style.display = 'none';
-    });
-  } else if (window.matchMedia('(display-mode: standalone)').matches) {
-    showToast('Aplikasi sudah terinstall!', 'warning');
-  } else {
-    alert('Buka menu browser lalu pilih "Tambahkan ke Layar Utama" atau "Install" untuk menginstal aplikasi ini.');
-  }
 }
 
 // ============================================================
 // SERVICE WORKER
 // ============================================================
 if ('serviceWorker' in navigator) {
-  var swCode = `
-    var CACHE_NAME = 'traceid-v1';
-    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
-    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-  `;
-  var swBlob = new Blob([swCode], {type: 'application/javascript'});
-  var swUrl = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl).catch(function(){});
+    var swCode = `
+        var CACHE_NAME = 'traceid-v1';
+        self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
+        self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+    `;
+    var swBlob = new Blob([swCode], {type: 'application/javascript'});
+    var swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).catch(function(){});
 }
 
 // ============================================================
 // ENKRIPSI PASSWORD
 // ============================================================
-function encodePassword(pw) { return btoa(pw); }
-function decodePassword(hash) { return atob(hash); }
+function encodePassword(pw) { 
+    return btoa(pw); 
+}
+
+function decodePassword(hash) { 
+    return atob(hash); 
+}
 
 // ============================================================
 // DATA DEFAULT
 // ============================================================
 var SUPER_ADMIN_DATA = {
-  username: 'superadmin', password: encodePassword('admin123'),
-  nama: 'Super Admin', email: 'admin@traceid.com', hp: '081220285226',
-  role: 'superadmin', premium: true, premiumExpiry: null, locked: false
+    username: 'superadmin',
+    password: encodePassword('admin123'),
+    nama: 'Super Admin',
+    email: 'admin@traceid.com',
+    hp: '081220285226',
+    role: 'superadmin',
+    premium: true,
+    premiumExpiry: null,
+    locked: false
 };
+
 var DEFAULT_WHATSAPP = '081220285226';
+
 var DEFAULT_PACKAGES = [
-  { id: '1minggu', name: 'Starter', price: 25000, days: 7, label: '1 Minggu', features: '5x lacak/hari • IP & Email' },
-  { id: '1bulan', name: 'Professional', price: 50000, days: 30, label: '1 Bulan', features: '20x lacak/hari • Semua Fitur' },
-  { id: '3bulan', name: 'Enterprise', price: 100000, days: 90, label: '3 Bulan', features: 'Unlimited lacak • Prioritas Support' }
+    { id: '1minggu', name: 'Starter', price: 25000, days: 7, label: '1 Minggu', features: '5x lacak/hari • IP & Email' },
+    { id: '1bulan', name: 'Professional', price: 50000, days: 30, label: '1 Bulan', features: '20x lacak/hari • Semua Fitur' },
+    { id: '3bulan', name: 'Enterprise', price: 100000, days: 90, label: '3 Bulan', features: 'Unlimited lacak • Prioritas Support' }
 ];
 
 // ============================================================
 // LOCAL STORAGE (prefix tr_)
 // ============================================================
-function getStore(key, def) { try { var v = localStorage.getItem('tr_' + key); return v ? JSON.parse(v) : def; } catch (e) { return def; } }
-function setStore(key, val) { localStorage.setItem('tr_' + key, JSON.stringify(val)); }
-function remStore(key) { localStorage.removeItem('tr_' + key); }
+function getStore(key, def) { 
+    try { 
+        var v = localStorage.getItem('tr_' + key); 
+        return v ? JSON.parse(v) : def; 
+    } catch (e) { 
+        return def; 
+    } 
+}
 
-function getAllUsers() { return getStore('users', []); }
-function saveAllUsers(arr) { setStore('users', arr); }
-function getAllLacakData() { return getStore('lacak', {}); }
-function saveAllLacakData(obj) { setStore('lacak', obj); }
-function getSession() { return getStore('session', null); }
-function saveSession(s) { setStore('session', s); }
-function clearSession() { remStore('session'); }
-function getPackages() { return getStore('packages', DEFAULT_PACKAGES); }
-function savePackages(p) { setStore('packages', p); }
-function getWhatsapp() { return getStore('whatsapp', DEFAULT_WHATSAPP); }
-function saveWhatsapp(n) { setStore('whatsapp', n); }
-function getValidCodes() { return getStore('validCodes', {}); }
-function saveValidCodes(c) { setStore('validCodes', c); }
-function getSecurityLogs() { return getStore('securityLogs', []); }
-function saveSecurityLogs(l) { setStore('securityLogs', l); }
-function getChatMessages() { return getStore('chatMessages', []); }
-function saveChatMessages(m) { setStore('chatMessages', m); }
+function setStore(key, val) { 
+    localStorage.setItem('tr_' + key, JSON.stringify(val)); 
+}
+
+function remStore(key) { 
+    localStorage.removeItem('tr_' + key); 
+}
+
+function getAllUsers() { 
+    return getStore('users', []); 
+}
+
+function saveAllUsers(arr) { 
+    setStore('users', arr); 
+}
+
+function getAllLacakData() { 
+    return getStore('lacak', {}); 
+}
+
+function saveAllLacakData(obj) { 
+    setStore('lacak', obj); 
+}
+
+function getSession() { 
+    return getStore('session', null); 
+}
+
+function saveSession(s) { 
+    setStore('session', s); 
+}
+
+function clearSession() { 
+    remStore('session'); 
+}
+
+function getPackages() { 
+    return getStore('packages', DEFAULT_PACKAGES); 
+}
+
+function savePackages(p) { 
+    setStore('packages', p); 
+}
+
+function getWhatsapp() { 
+    return getStore('whatsapp', DEFAULT_WHATSAPP); 
+}
+
+function saveWhatsapp(n) { 
+    setStore('whatsapp', n); 
+}
+
+function getValidCodes() { 
+    return getStore('validCodes', {}); 
+}
+
+function saveValidCodes(c) { 
+    setStore('validCodes', c); 
+}
+
+function getSecurityLogs() { 
+    return getStore('securityLogs', []); 
+}
+
+function saveSecurityLogs(l) { 
+    setStore('securityLogs', l); 
+}
+
+function getChatMessages() { 
+    return getStore('chatMessages', []); 
+}
+
+function saveChatMessages(m) { 
+    setStore('chatMessages', m); 
+}
 
 // ============================================================
 // WHATSAPP FORMATTER
 // ============================================================
 function formatWa(raw) {
-  var n = raw.replace(/[^0-9]/g,'');
-  if (n.startsWith('0')) n = '62' + n.substring(1);
-  if (!n.startsWith('62')) n = '62' + n;
-  return '+' + n;
+    var n = raw.replace(/[^0-9]/g, '');
+    if (n.startsWith('0')) n = '62' + n.substring(1);
+    if (!n.startsWith('62')) n = '62' + n;
+    return '+' + n;
 }
 
 function updateAllWaDisplays() {
-  var f = formatWa(getWhatsapp());
-  var ids = ['whatsappNumberLanding','whatsappNumberApp'];
-  ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.textContent = f; });
+    var f = formatWa(getWhatsapp());
+    var ids = ['whatsappNumberLanding', 'whatsappNumberApp'];
+    for (var i = 0; i < ids.length; i++) {
+        var el = document.getElementById(ids[i]);
+        if (el) el.textContent = f;
+    }
 }
 
 function openWhatsApp(msg) {
-  var link = getWhatsapp().replace(/[^0-9]/g,'');
-  var url = 'https://wa.me/' + link + (msg ? '?text=' + encodeURIComponent(msg) : '');
-  window.open(url,'_blank');
+    var link = getWhatsapp().replace(/[^0-9]/g, '');
+    var url = 'https://wa.me/' + link + (msg ? '?text=' + encodeURIComponent(msg) : '');
+    window.open(url, '_blank');
 }
 
 // ============================================================
 // TOAST NOTIFICATION
 // ============================================================
 function showToast(msg, type) {
-  var c = document.getElementById('toastContainer');
-  if (!c) return;
-  var t = document.createElement('div');
-  t.className = 'toast toast-' + (type||'info');
-  t.textContent = msg;
-  c.appendChild(t);
-  requestAnimationFrame(function(){ t.classList.add('show'); });
-  setTimeout(function(){ t.classList.remove('show'); setTimeout(function(){ t.remove(); },300); },3000);
+    console.log('🔔 showToast() dipanggil:', msg);
+    
+    var c = document.getElementById('toastContainer');
+    if (!c) {
+        console.error('❌ Toast container tidak ditemukan!');
+        return;
+    }
+    
+    var t = document.createElement('div');
+    t.className = 'toast toast-' + (type || 'info');
+    t.textContent = msg;
+    c.appendChild(t);
+    
+    requestAnimationFrame(function() {
+        t.classList.add('show');
+    });
+    
+    setTimeout(function() {
+        t.classList.remove('show');
+        setTimeout(function() {
+            t.remove();
+        }, 300);
+    }, 3000);
 }
 
 // ============================================================
 // MODAL HELPERS
 // ============================================================
 function openModal(id) { 
-  var el = document.getElementById(id);
-  if (el) el.classList.add('show'); 
+    console.log('🔓 openModal() dipanggil:', id);
+    
+    var el = document.getElementById(id);
+    if (el) {
+        el.classList.add('show');
+        console.log('✅ Modal ' + id + ' dibuka');
+    } else {
+        console.error('❌ Modal ' + id + ' tidak ditemukan!');
+        showToast('Modal tidak ditemukan!', 'error');
+    }
 }
 
 function closeModal(id) { 
-  var el = document.getElementById(id);
-  if (el) el.classList.remove('show'); 
-  clearModalErrors(); 
+    console.log('🔒 closeModal() dipanggil:', id);
+    
+    var el = document.getElementById(id);
+    if (el) {
+        el.classList.remove('show');
+        console.log('✅ Modal ' + id + ' ditutup');
+    }
+    clearModalErrors();
 }
 
 function clearModalErrors() {
-  document.querySelectorAll('.form-error,.form-success').forEach(function(el){ 
-    el.textContent=''; 
-    el.classList.remove('show'); 
-  });
+    var els = document.querySelectorAll('.form-error, .form-success');
+    for (var i = 0; i < els.length; i++) {
+        els[i].textContent = '';
+        els[i].classList.remove('show');
+    }
 }
 
 // ============================================================
 // THEME
 // ============================================================
 function toggleTheme() {
-  document.body.classList.toggle('light-theme');
-  var isLight = document.body.classList.contains('light-theme');
-  var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
-  document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ 
-    if (b) b.textContent = label; 
-  });
-  localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
+    console.log('🌙 toggleTheme() dipanggil');
+    
+    document.body.classList.toggle('light-theme');
+    var isLight = document.body.classList.contains('light-theme');
+    var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+    
+    var buttons = document.querySelectorAll('#themeButton1, #themeButton2');
+    for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i]) buttons[i].textContent = label;
+    }
+    
+    localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
+    console.log('✅ Theme diubah ke:', isLight ? 'Light' : 'Dark');
 }
 
 // Load theme on init
-(function(){ 
-  if(localStorage.getItem('tr_theme')==='light'){ 
-    document.body.classList.add('light-theme'); 
-    document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b){ 
-      if (b) b.textContent='☀️ Light Mode'; 
-    }); 
-  } 
+(function() {
+    if (localStorage.getItem('tr_theme') === 'light') {
+        document.body.classList.add('light-theme');
+        var buttons = document.querySelectorAll('#themeButton1, #themeButton2');
+        for (var i = 0; i < buttons.length; i++) {
+            if (buttons[i]) buttons[i].textContent = '☀️ Light Mode';
+        }
+    }
 })();
 
 // ============================================================
 // NAVIGATION
 // ============================================================
 function openApplication() {
-  var s = getSession();
-  if (!s) return showLoginModal();
-  var landing = document.getElementById('landingPage');
-  var app = document.getElementById('applicationPage');
-  if (landing) landing.classList.add('hidden');
-  if (app) app.classList.remove('hidden');
-  refreshAppUI(); 
-  updateStats(); 
-  updateHeaderUser(); 
-  checkAllExpiredActivations();
+    console.log('🚀 openApplication() dipanggil');
+    
+    var s = getSession();
+    if (!s) {
+        showToast('⚠️ Silakan login terlebih dahulu!', 'warning');
+        showLoginModal();
+        return;
+    }
+    
+    var landing = document.getElementById('landingPage');
+    var app = document.getElementById('applicationPage');
+    if (landing) landing.classList.add('hidden');
+    if (app) app.classList.remove('hidden');
+    
+    if (typeof refreshAppUI === 'function') refreshAppUI();
+    if (typeof updateStats === 'function') updateStats();
+    if (typeof updateHeaderUser === 'function') updateHeaderUser();
+    if (typeof checkAllExpiredActivations === 'function') checkAllExpiredActivations();
+    
+    console.log('✅ Aplikasi dibuka untuk:', s.nama);
 }
 
 function goToLandingPage() {
-  var app = document.getElementById('applicationPage');
-  var landing = document.getElementById('landingPage');
-  if (app) app.classList.add('hidden');
-  if (landing) landing.classList.remove('hidden');
-  refreshPackageDisplay();
+    console.log('🏠 goToLandingPage() dipanggil');
+    
+    var app = document.getElementById('applicationPage');
+    var landing = document.getElementById('landingPage');
+    if (app) app.classList.add('hidden');
+    if (landing) landing.classList.remove('hidden');
+    
+    if (typeof refreshPackageDisplay === 'function') refreshPackageDisplay();
+    
+    console.log('✅ Kembali ke landing page');
 }
 
-function showLoginModal() { 
-  openModal('loginModal'); 
+function showLoginModal() {
+    console.log('🔐 showLoginModal() dipanggil');
+    openModal('loginModal');
 }
 
-function showRegisterModal() { 
-  openModal('registerModal'); 
+function showRegisterModal() {
+    console.log('📝 showRegisterModal() dipanggil');
+    openModal('registerModal');
 }
 
-function showProfileModal() { 
-  openModal('profileModal'); 
-  loadProfileData(); 
+function showProfileModal() {
+    console.log('👤 showProfileModal() dipanggil');
+    openModal('profileModal');
+    if (typeof loadProfileData === 'function') loadProfileData();
 }
 
-function showActivationModal() { 
-  if(!getSession()) return showLoginModal(); 
-  openModal('activationModal'); 
+function showActivationModal() {
+    console.log('🔑 showActivationModal() dipanggil');
+    if (!getSession()) {
+        showToast('⚠️ Login dulu!', 'error');
+        return;
+    }
+    openModal('activationModal');
 }
 
 // ============================================================
 // AUTH (DENGAN LOG KEAMANAN)
 // ============================================================
 function handleLogin() {
-  var u = document.getElementById('loginUsername');
-  var p = document.getElementById('loginPassword');
-  var err = document.getElementById('loginError');
-  if (!u || !p) return showToast('Form login tidak ditemukan.','error');
-  var username = u.value.trim();
-  var password = p.value;
-  if (err) err.classList.remove('show');
-  if(!username||!password){ 
-    if (err) { err.textContent='Isi semua field!'; err.classList.add('show'); }
-    return; 
-  }
-
-  // Super admin login
-  if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
-    saveSession(SUPER_ADMIN_DATA);
-    addSecurityLog('Super Admin login.');
-    closeModal('loginModal'); 
-    showToast('Login Super Admin berhasil!','success');
-    openApplication(); 
-    return;
-  }
-
-  var users = getAllUsers();
-  var user = null;
-  for (var i = 0; i < users.length; i++) {
-    if ((users[i].username === username || users[i].email === username) && password === decodePassword(users[i].password)) {
-      user = users[i]; 
-      break;
+    console.log('🔐 handleLogin() dipanggil');
+    
+    var u = document.getElementById('loginUsername');
+    var p = document.getElementById('loginPassword');
+    var err = document.getElementById('loginError');
+    
+    if (!u || !p) {
+        showToast('❌ Form login tidak lengkap!', 'error');
+        return;
     }
-  }
-  if (!user) { 
-    if (err) { err.textContent='Username/password salah!'; err.classList.add('show'); }
-    return; 
-  }
-  if (user.locked) { 
-    if (err) { err.textContent='Akun terkunci! Hubungi admin.'; err.classList.add('show'); }
-    return; 
-  }
-  saveSession(user);
-  addSecurityLog('User ' + user.username + ' login.');
-  closeModal('loginModal'); 
-  showToast('Login berhasil!','success');
-  openApplication();
+    
+    var username = u.value.trim();
+    var password = p.value;
+    
+    if (err) err.classList.remove('show');
+    
+    if (!username || !password) {
+        if (err) {
+            err.textContent = '⚠️ Isi semua field!';
+            err.classList.add('show');
+        }
+        return;
+    }
+
+    // Super admin login
+    if (username === SUPER_ADMIN_DATA.username && password === decodePassword(SUPER_ADMIN_DATA.password)) {
+        saveSession(SUPER_ADMIN_DATA);
+        if (typeof addSecurityLog === 'function') addSecurityLog('Super Admin login.');
+        closeModal('loginModal');
+        showToast('✅ Login Super Admin berhasil!', 'success');
+        openApplication();
+        return;
+    }
+
+    var users = getAllUsers();
+    var user = null;
+    for (var i = 0; i < users.length; i++) {
+        if ((users[i].username === username || users[i].email === username) && password === decodePassword(users[i].password)) {
+            user = users[i];
+            break;
+        }
+    }
+    
+    if (!user) {
+        if (err) {
+            err.textContent = '❌ Username/password salah!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    if (user.locked) {
+        if (err) {
+            err.textContent = '🔒 Akun terkunci! Hubungi admin.';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    saveSession(user);
+    if (typeof addSecurityLog === 'function') addSecurityLog('User ' + user.username + ' login.');
+    closeModal('loginModal');
+    showToast('✅ Login berhasil!', 'success');
+    openApplication();
 }
 
 function handleRegister() {
-  var n = document.getElementById('registerNama');
-  var e = document.getElementById('registerEmail');
-  var hp = document.getElementById('registerHp');
-  var un = document.getElementById('registerUsername');
-  var pw = document.getElementById('registerPassword');
-  var cp = document.getElementById('registerPasswordConfirm');
-  var err = document.getElementById('registerError'); 
-  var suc = document.getElementById('registerSuccess');
-  
-  if (!n || !e || !hp || !un || !pw || !cp) return showToast('Form tidak lengkap!','error');
-  
-  var nama = n.value.trim();
-  var email = e.value.trim();
-  var hpVal = hp.value.trim();
-  var username = un.value.trim();
-  var password = pw.value;
-  var confirm = cp.value;
-  
-  if (err) err.classList.remove('show'); 
-  if (suc) suc.classList.remove('show');
-  
-  if(!nama||!email||!hpVal||!username||!password||!confirm){ 
-    if (err) { err.textContent='Semua field wajib!'; err.classList.add('show'); }
-    return; 
-  }
-  if(password!==confirm){ 
-    if (err) { err.textContent='Password tidak cocok!'; err.classList.add('show'); }
-    return; 
-  }
-  if(password.length<6){ 
-    if (err) { err.textContent='Password minimal 6 karakter!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var users = getAllUsers();
-  if(users.find(function(x){return x.username===username;})){ 
-    if (err) { err.textContent='Username sudah dipakai!'; err.classList.add('show'); }
-    return; 
-  }
-  if(users.find(function(x){return x.email===email;})){ 
-    if (err) { err.textContent='Email sudah dipakai!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var newUser = { 
-    id: Date.now().toString(), 
-    nama: nama, 
-    email: email, 
-    hp: hpVal, 
-    username: username, 
-    password: encodePassword(password), 
-    role: 'user', 
-    premium: false, 
-    premiumExpiry: null, 
-    locked: false, 
-    createdAt: new Date().toISOString() 
-  };
-  
-  users.push(newUser); 
-  saveAllUsers(users);
-  
-  if (suc) {
-    suc.textContent='Pendaftaran berhasil! Silakan login.'; 
-    suc.classList.add('show');
-  }
-  
-  // Auto-create lacak data for new user
-  var all = getAllLacakData();
-  if (!all[newUser.id]) { 
-    all[newUser.id] = []; 
-    saveAllLacakData(all); 
-  }
-  
-  setTimeout(function(){ 
-    closeModal('registerModal'); 
-    showLoginModal(); 
-  }, 2000);
+    console.log('📝 handleRegister() dipanggil');
+    
+    var n = document.getElementById('registerNama');
+    var e = document.getElementById('registerEmail');
+    var hp = document.getElementById('registerHp');
+    var un = document.getElementById('registerUsername');
+    var pw = document.getElementById('registerPassword');
+    var cp = document.getElementById('registerPasswordConfirm');
+    var err = document.getElementById('registerError');
+    var suc = document.getElementById('registerSuccess');
+    
+    if (!n || !e || !hp || !un || !pw || !cp) {
+        showToast('❌ Form tidak lengkap!', 'error');
+        return;
+    }
+    
+    var nama = n.value.trim();
+    var email = e.value.trim();
+    var hpVal = hp.value.trim();
+    var username = un.value.trim();
+    var password = pw.value;
+    var confirm = cp.value;
+    
+    if (err) err.classList.remove('show');
+    if (suc) suc.classList.remove('show');
+    
+    if (!nama || !email || !hpVal || !username || !password || !confirm) {
+        if (err) {
+            err.textContent = '⚠️ Semua field wajib!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    if (password !== confirm) {
+        if (err) {
+            err.textContent = '❌ Password tidak cocok!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    if (password.length < 6) {
+        if (err) {
+            err.textContent = '❌ Password minimal 6 karakter!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    var users = getAllUsers();
+    
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].username === username) {
+            if (err) {
+                err.textContent = '❌ Username sudah dipakai!';
+                err.classList.add('show');
+            }
+            return;
+        }
+        if (users[i].email === email) {
+            if (err) {
+                err.textContent = '❌ Email sudah dipakai!';
+                err.classList.add('show');
+            }
+            return;
+        }
+    }
+    
+    var newUser = {
+        id: Date.now().toString(),
+        nama: nama,
+        email: email,
+        hp: hpVal,
+        username: username,
+        password: encodePassword(password),
+        role: 'user',
+        premium: false,
+        premiumExpiry: null,
+        locked: false,
+        createdAt: new Date().toISOString()
+    };
+    
+    users.push(newUser);
+    saveAllUsers(users);
+    
+    if (suc) {
+        suc.textContent = '✅ Pendaftaran berhasil! Silakan login.';
+        suc.classList.add('show');
+    }
+    
+    // Auto-create lacak data for new user
+    var all = getAllLacakData();
+    if (!all[newUser.id]) {
+        all[newUser.id] = [];
+        saveAllLacakData(all);
+    }
+    
+    console.log('✅ User baru terdaftar:', username);
+    
+    setTimeout(function() {
+        closeModal('registerModal');
+        showLoginModal();
+    }, 2000);
 }
 
 function handleLogout() {
-  var s = getSession();
-  if (s) { 
-    addSecurityLog('User ' + s.username + ' logout.'); 
-  }
-  clearSession(); 
-  goToLandingPage(); 
-  updateHeaderUser(); 
-  showToast('Logout berhasil.','info');
+    console.log('🚪 handleLogout() dipanggil');
+    
+    var s = getSession();
+    if (s) {
+        if (typeof addSecurityLog === 'function') addSecurityLog('User ' + s.username + ' logout.');
+    }
+    clearSession();
+    goToLandingPage();
+    if (typeof updateHeaderUser === 'function') updateHeaderUser();
+    showToast('✅ Logout berhasil.', 'info');
 }
 
 // ============================================================
 // PREMIUM ACTIVATION
 // ============================================================
 function activatePremiumFromModal() {
-  var code = document.getElementById('activationCodeInputMain');
-  if (!code) return;
-  activatePremium(code.value.trim(), 'activationModalError','activationModalSuccess');
+    console.log('🔑 activatePremiumFromModal() dipanggil');
+    
+    var code = document.getElementById('activationCodeInputMain');
+    if (!code) {
+        showToast('❌ Input kode tidak ditemukan!', 'error');
+        return;
+    }
+    activatePremium(code.value.trim(), 'activationModalError', 'activationModalSuccess');
 }
 
 function activatePremium(code, errId, sucId) {
-  var err = document.getElementById(errId); 
-  var suc = document.getElementById(sucId);
-  if (err) err.classList.remove('show'); 
-  if (suc) suc.classList.remove('show');
-  
-  if(!code){ 
-    if (err) { err.textContent='Masukkan kode aktivasi!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var session = getSession();
-  if(!session){ 
-    if (err) { err.textContent='Anda harus login!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var valid = getValidCodes();
-  var cd = valid[code];
-  if(!cd||cd.used){ 
-    if (err) { err.textContent='Kode tidak valid/sudah dipakai!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var users = getAllUsers();
-  var idx = users.findIndex(function(x){return x.id===session.id;});
-  if(idx===-1){ 
-    if (err) { err.textContent='User tidak ditemukan!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var pkgs = getPackages();
-  var pkg = pkgs.find(function(p){return p.id===cd.packageId;});
-  if(!pkg){ 
-    if (err) { err.textContent='Paket tidak valid!'; err.classList.add('show'); }
-    return; 
-  }
-  
-  var now = new Date();
-  var exp = new Date(now.getTime() + pkg.days*86400000);
-  users[idx].premium = true; 
-  users[idx].premiumExpiry = exp.toISOString(); 
-  saveAllUsers(users);
-  
-  cd.used = true; 
-  cd.usedBy = session.username; 
-  cd.usedAt = now.toISOString(); 
-  valid[code] = cd; 
-  saveValidCodes(valid);
-  
-  var newSess = Object.assign({}, users[idx]); 
-  saveSession(newSess);
-  
-  if (suc) {
-    suc.textContent = 'Aktivasi sukses! Premium hingga ' + exp.toLocaleDateString(); 
-    suc.classList.add('show');
-  }
-  
-  updateHeaderUser();
-  if (!document.getElementById('applicationPage').classList.contains('hidden')) { 
-    refreshAppUI(); 
-    updateStats(); 
-  }
-  
-  setTimeout(function(){ 
-    if(document.getElementById('activationModal') && document.getElementById('activationModal').classList.contains('show')) 
-      closeModal('activationModal'); 
-  }, 2000);
+    console.log('🔑 activatePremium() dipanggil untuk kode:', code);
+    
+    var err = document.getElementById(errId);
+    var suc = document.getElementById(sucId);
+    
+    if (err) err.classList.remove('show');
+    if (suc) suc.classList.remove('show');
+    
+    if (!code) {
+        if (err) {
+            err.textContent = '⚠️ Masukkan kode aktivasi!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    var session = getSession();
+    if (!session) {
+        if (err) {
+            err.textContent = '⚠️ Anda harus login!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    var valid = getValidCodes();
+    var cd = valid[code];
+    
+    if (!cd || cd.used) {
+        if (err) {
+            err.textContent = '❌ Kode tidak valid/sudah dipakai!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    var users = getAllUsers();
+    var idx = -1;
+    for (var i = 0; i < users.length; i++) {
+        if (users[i].id === session.id) {
+            idx = i;
+            break;
+        }
+    }
+    
+    if (idx === -1) {
+        if (err) {
+            err.textContent = '❌ User tidak ditemukan!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    var pkgs = getPackages();
+    var pkg = null;
+    for (var i = 0; i < pkgs.length; i++) {
+        if (pkgs[i].id === cd.packageId) {
+            pkg = pkgs[i];
+            break;
+        }
+    }
+    
+    if (!pkg) {
+        if (err) {
+            err.textContent = '❌ Paket tidak valid!';
+            err.classList.add('show');
+        }
+        return;
+    }
+    
+    var now = new Date();
+    var exp = new Date(now.getTime() + pkg.days * 86400000);
+    
+    users[idx].premium = true;
+    users[idx].premiumExpiry = exp.toISOString();
+    saveAllUsers(users);
+    
+    cd.used = true;
+    cd.usedBy = session.username;
+    cd.usedAt = now.toISOString();
+    valid[code] = cd;
+    saveValidCodes(valid);
+    
+    var newSess = Object.assign({}, users[idx]);
+    saveSession(newSess);
+    
+    if (suc) {
+        suc.textContent = '✅ Aktivasi sukses! Premium hingga ' + exp.toLocaleDateString();
+        suc.classList.add('show');
+    }
+    
+    if (typeof updateHeaderUser === 'function') updateHeaderUser();
+    if (!document.getElementById('applicationPage').classList.contains('hidden')) {
+        if (typeof refreshAppUI === 'function') refreshAppUI();
+        if (typeof updateStats === 'function') updateStats();
+    }
+    
+    setTimeout(function() {
+        if (document.getElementById('activationModal') && document.getElementById('activationModal').classList.contains('show')) {
+            closeModal('activationModal');
+        }
+    }, 2000);
+    
+    console.log('✅ Aktivasi premium berhasil untuk:', session.username);
 }
 
 // ============================================================
-// SECURITY LOGS
+// SECURITY LOGS (FALLBACK)
 // ============================================================
 function addSecurityLog(msg) {
-  var logs = getSecurityLogs(); 
-  logs.push({time:new Date().toISOString(), msg:msg}); 
-  saveSecurityLogs(logs);
+    var logs = getSecurityLogs();
+    logs.push({ time: new Date().toISOString(), msg: msg });
+    saveSecurityLogs(logs);
+    console.log('📝 Log ditambahkan:', msg);
 }
 
 // ============================================================
 // UPDATE HEADER USER - DIPERBAIKI
 // ============================================================
 function updateHeaderUser() {
-  var s = getSession();
-  var badge = document.getElementById('userBadge');
-  var prof = document.getElementById('profileButton');
-  var adm = document.getElementById('adminButton');
-  var logout = document.getElementById('logoutButton');
-  var act = document.getElementById('activationToolbarButton');
-  var chatAdminBtn = document.getElementById('chatButton');
-  var chatUserBtn = document.getElementById('chatUserButton');
+    console.log('👤 updateHeaderUser() dipanggil');
+    
+    var s = getSession();
+    var badge = document.getElementById('userBadge');
+    var prof = document.getElementById('profileButton');
+    var adm = document.getElementById('adminButton');
+    var logout = document.getElementById('logoutButton');
+    var act = document.getElementById('activationToolbarButton');
+    var chatAdminBtn = document.getElementById('chatButton');
+    var chatUserBtn = document.getElementById('chatUserButton');
 
-  if(s){
-    // Tampilkan badge user
-    if (badge) {
-      badge.style.display = 'flex'; 
-      var avatar = document.getElementById('userAvatar');
-      var nameDisplay = document.getElementById('userNameDisplay');
-      if (avatar) avatar.textContent = s.nama.charAt(0).toUpperCase();
-      if (nameDisplay) nameDisplay.textContent = s.nama;
-    }
-    
-    // Tampilkan profil dan logout
-    if (prof) prof.classList.remove('hidden');
-    if (logout) logout.classList.remove('hidden');
-    
-    // ============================================================
-    // ⭐ PERBAIKAN UTAMA: TAMPILKAN PANEL ADMIN JIKA SUPERADMIN
-    // ============================================================
-    if (adm) {
-      if (s.role === 'superadmin') {
-        adm.style.display = 'inline-flex'; // Tampilkan
-        adm.classList.remove('hidden');
-        console.log('✅ Panel Admin ditampilkan untuk Super Admin');
-      } else {
-        adm.style.display = 'none'; // Sembunyikan
-        adm.classList.add('hidden');
-      }
-    }
-    
-    // Tampilkan tombol premium jika user biasa belum premium
-    if (act) {
-      act.style.display = (s.role === 'user' && !s.premium) ? 'inline-flex' : 'none';
-    }
+    if (s) {
+        // Tampilkan badge user
+        if (badge) {
+            badge.style.display = 'flex';
+            var avatar = document.getElementById('userAvatar');
+            var nameDisplay = document.getElementById('userNameDisplay');
+            if (avatar) avatar.textContent = s.nama.charAt(0).toUpperCase();
+            if (nameDisplay) nameDisplay.textContent = s.nama;
+        }
+        
+        // Tampilkan profil dan logout
+        if (prof) {
+            prof.classList.remove('hidden');
+            prof.style.display = 'inline-flex';
+        }
+        if (logout) {
+            logout.classList.remove('hidden');
+            logout.style.display = 'inline-flex';
+        }
+        
+        // ============================================================
+        // ⭐ PERBAIKAN UTAMA: TAMPILKAN PANEL ADMIN JIKA SUPERADMIN
+        // ============================================================
+        if (adm) {
+            if (s.role === 'superadmin') {
+                adm.style.display = 'inline-flex';
+                adm.classList.remove('hidden');
+                console.log('✅ Panel Admin ditampilkan untuk Super Admin');
+            } else {
+                adm.style.display = 'none';
+                adm.classList.add('hidden');
+            }
+        }
+        
+        // Tampilkan tombol premium jika user biasa belum premium
+        if (act) {
+            act.style.display = (s.role === 'user' && !s.premium) ? 'inline-flex' : 'none';
+        }
 
-    // ============================================================
-    // ATUR TOMBOL CHAT
-    // ============================================================
-    if (s.role === 'superadmin') {
-      // Super Admin: sembunyikan Chat Admin, tampilkan Chat User
-      if (chatAdminBtn) {
-        chatAdminBtn.classList.add('hidden');
-        chatAdminBtn.style.display = 'none';
-      }
-      if (chatUserBtn) {
-        chatUserBtn.classList.remove('hidden');
-        chatUserBtn.style.display = 'inline-flex';
-      }
+        // ============================================================
+        // ATUR TOMBOL CHAT
+        // ============================================================
+        if (s.role === 'superadmin') {
+            // Super Admin: sembunyikan Chat Admin, tampilkan Chat User
+            if (chatAdminBtn) {
+                chatAdminBtn.classList.add('hidden');
+                chatAdminBtn.style.display = 'none';
+            }
+            if (chatUserBtn) {
+                chatUserBtn.classList.remove('hidden');
+                chatUserBtn.style.display = 'inline-flex';
+            }
+        } else {
+            // User biasa: tampilkan Chat Admin, sembunyikan Chat User
+            if (chatAdminBtn) {
+                chatAdminBtn.classList.remove('hidden');
+                chatAdminBtn.style.display = 'inline-flex';
+            }
+            if (chatUserBtn) {
+                chatUserBtn.classList.add('hidden');
+                chatUserBtn.style.display = 'none';
+            }
+        }
+        
+        console.log('✅ Header diupdate untuk:', s.nama);
+        
     } else {
-      // User biasa: tampilkan Chat Admin, sembunyikan Chat User
-      if (chatAdminBtn) {
-        chatAdminBtn.classList.remove('hidden');
-        chatAdminBtn.style.display = 'inline-flex';
-      }
-      if (chatUserBtn) {
-        chatUserBtn.classList.add('hidden');
-        chatUserBtn.style.display = 'none';
-      }
+        // Jika tidak login
+        if (badge) { badge.style.display = 'none'; }
+        if (prof) {
+            prof.classList.add('hidden');
+            prof.style.display = 'none';
+        }
+        if (adm) {
+            adm.classList.add('hidden');
+            adm.style.display = 'none';
+        }
+        if (logout) {
+            logout.classList.add('hidden');
+            logout.style.display = 'none';
+        }
+        if (act) { act.style.display = 'none'; }
+        if (chatAdminBtn) {
+            chatAdminBtn.classList.remove('hidden');
+            chatAdminBtn.style.display = 'inline-flex';
+        }
+        if (chatUserBtn) {
+            chatUserBtn.classList.add('hidden');
+            chatUserBtn.style.display = 'none';
+        }
+        console.log('✅ Header direset (tidak login)');
     }
-  } else {
-    // Jika tidak login
-    if (badge) { badge.style.display = 'none'; }
-    if (prof) { prof.classList.add('hidden'); prof.style.display = 'none'; }
-    if (adm) { adm.classList.add('hidden'); adm.style.display = 'none'; }
-    if (logout) { logout.classList.add('hidden'); logout.style.display = 'none'; }
-    if (act) { act.style.display = 'none'; }
-    if (chatAdminBtn) { 
-      chatAdminBtn.classList.remove('hidden'); 
-      chatAdminBtn.style.display = 'inline-flex'; 
-    }
-    if (chatUserBtn) { 
-      chatUserBtn.classList.add('hidden'); 
-      chatUserBtn.style.display = 'none'; 
-    }
-  }
 }
 
 // ============================================================
-// UPDATE STATS (akan ditimpa oleh Blok 9)
+// PLACEHOLDER FUNCTIONS (akan di-override oleh Blok 9, 10, 11, 12)
 // ============================================================
+console.log('📌 Mendaftarkan placeholder functions...');
+
+// Blok 9 akan meng-override
 function updateStats() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('updateStats() akan di-override oleh Blok 9');
+    console.log('⏳ updateStats() akan di-override oleh Blok 9/10');
 }
 
-// ============================================================
-// REFRESH APP UI (akan ditimpa oleh Blok 9)
-// ============================================================
 function refreshAppUI() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('refreshAppUI() akan di-override oleh Blok 9');
+    console.log('⏳ refreshAppUI() akan di-override oleh Blok 9/10');
 }
 
-// ============================================================
-// FORGOT PASSWORD (akan ditimpa oleh Blok 9)
-// ============================================================
 function handleForgotPassword() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('handleForgotPassword() akan di-override oleh Blok 9');
+    console.log('⏳ handleForgotPassword() akan di-override oleh Blok 9');
 }
 
-// ============================================================
-// LOAD PROFILE DATA (akan ditimpa oleh Blok 9)
-// ============================================================
 function loadProfileData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('loadProfileData() akan di-override oleh Blok 9');
+    console.log('⏳ loadProfileData() akan di-override oleh Blok 9');
 }
 
-// ============================================================
-// SAVE PROFILE (akan ditimpa oleh Blok 9)
-// ============================================================
 function saveProfile() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('saveProfile() akan di-override oleh Blok 9');
+    console.log('⏳ saveProfile() akan di-override oleh Blok 9');
 }
 
-// ============================================================
-// DELETE ACCOUNT (akan ditimpa oleh Blok 9)
-// ============================================================
 function deleteAccount() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('deleteAccount() akan di-override oleh Blok 9');
+    console.log('⏳ deleteAccount() akan di-override oleh Blok 9');
 }
 
-// ============================================================
-// CHECK EXPIRED ACTIVATIONS (akan ditimpa oleh Blok 9)
-// ============================================================
 function checkAllExpiredActivations() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('checkAllExpiredActivations() akan di-override oleh Blok 9');
+    console.log('⏳ checkAllExpiredActivations() akan di-override oleh Blok 9/10');
 }
 
-// ============================================================
-// REFRESH PACKAGE DISPLAY (akan ditimpa oleh Blok 11)
-// ============================================================
-function refreshPackageDisplay() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('refreshPackageDisplay() akan di-override oleh Blok 11');
+// Blok 11 akan meng-override
+function showSuperAdminPanel() {
+    console.log('⏳ showSuperAdminPanel() akan di-override oleh Blok 11');
 }
 
-// ============================================================
-// RENDER LANDING AD (akan ditimpa oleh Blok 11)
-// ============================================================
-function renderLandingAd() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('renderLandingAd() akan di-override oleh Blok 11');
+function switchAdminTab() {
+    console.log('⏳ switchAdminTab() akan di-override oleh Blok 11');
 }
 
-// ============================================================
-// HUBUNGI ADMIN LANDING (akan ditimpa oleh Blok 11)
-// ============================================================
-function hubungiAdminLanding() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('hubungiAdminLanding() akan di-override oleh Blok 11');
+function adminCreateActivationCode() {
+    console.log('⏳ adminCreateActivationCode() akan di-override oleh Blok 11');
 }
 
-// ============================================================
-// SHOW CHAT MODAL (akan ditimpa oleh Blok 11)
-// ============================================================
-function showChatModal() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('showChatModal() akan di-override oleh Blok 11');
+function renderAdminUserList() {
+    console.log('⏳ renderAdminUserList() akan di-override oleh Blok 11');
 }
 
-// ============================================================
-// SHOW USER CHAT MODAL (akan ditimpa oleh Blok 11)
-// ============================================================
-function showUserChatModal() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('showUserChatModal() akan di-override oleh Blok 11');
+function backupAllDataJSON() {
+    console.log('⏳ backupAllDataJSON() akan di-override oleh Blok 11');
 }
 
-// ============================================================
-// DOWNLOAD FOR OFFLINE (akan ditimpa oleh Blok 11)
-// ============================================================
-function downloadForOffline() {
-  // Fungsi ini akan ditimpa oleh Blok 11
-  console.log('downloadForOffline() akan di-override oleh Blok 11');
-}
-
-// ============================================================
-// BACKUP SEBELUM UPGRADE (akan ditimpa oleh Blok 9)
-// ============================================================
-function backupSebelumUpgrade() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('backupSebelumUpgrade() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SAVE TO GOOGLE DRIVE (akan ditimpa oleh Blok 10)
-// ============================================================
 function saveToGoogleDrive() {
-  // Fungsi ini akan ditimpa oleh Blok 10
-  console.log('saveToGoogleDrive() akan di-override oleh Blok 10');
+    console.log('⏳ saveToGoogleDrive() akan di-override oleh Blok 11');
+}
+
+// Blok 12 akan meng-override
+function refreshPackageDisplay() {
+    console.log('⏳ refreshPackageDisplay() akan di-override oleh Blok 12');
+}
+
+function renderLandingAd() {
+    console.log('⏳ renderLandingAd() akan di-override oleh Blok 12');
+}
+
+function showChatModal() {
+    console.log('⏳ showChatModal() akan di-override oleh Blok 12');
+}
+
+function showUserChatModal() {
+    console.log('⏳ showUserChatModal() akan di-override oleh Blok 12');
+}
+
+function downloadForOffline() {
+    console.log('⏳ downloadForOffline() akan di-override oleh Blok 12');
+}
+
+function hubungiAdminLanding() {
+    console.log('⏳ hubungiAdminLanding() akan di-override oleh Blok 12');
+}
+
+// Blok 10 akan meng-override
+function showLacakModal() {
+    console.log('⏳ showLacakModal() akan di-override oleh Blok 10');
+}
+
+function showLinkTrackerModal() {
+    console.log('⏳ showLinkTrackerModal() akan di-override oleh Blok 10');
+}
+
+function showTrackerClicks() {
+    console.log('⏳ showTrackerClicks() akan di-override oleh Blok 10');
+}
+
+function backupSebelumUpgrade() {
+    console.log('⏳ backupSebelumUpgrade() akan di-override oleh Blok 10');
+}
+
+function exportAllData() {
+    console.log('⏳ exportAllData() akan di-override oleh Blok 10');
+}
+
+function importAllData() {
+    console.log('⏳ importAllData() akan di-override oleh Blok 10');
+}
+
+function backupUserData() {
+    console.log('⏳ backupUserData() akan di-override oleh Blok 10');
+}
+
+function restoreUserData() {
+    console.log('⏳ restoreUserData() akan di-override oleh Blok 10');
+}
+
+function toggleSearch() {
+    console.log('⏳ toggleSearch() akan di-override oleh Blok 10');
+}
+
+function performSearch() {
+    console.log('⏳ performSearch() akan di-override oleh Blok 10');
+}
+
+function clearSearch() {
+    console.log('⏳ clearSearch() akan di-override oleh Blok 10');
+}
+
+function initUserApps() {
+    console.log('⏳ initUserApps() akan di-override oleh Blok 10');
+}
+
+function autoSaveData() {
+    console.log('⏳ autoSaveData() akan di-override oleh Blok 10');
+}
+
+console.log('✅ Blok 7 R2 – JS Core 1 TraceID siap digunakan.');
+console.log('📌 Fungsi-fungsi dasar sudah lengkap.');
+console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, 11, dan 12.');
+console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admin.');
+console.log('📌 Semua tombol di landing page seharusnya sudah berfungsi.');
+
+// ============================================================
+// AKHIR BLOK 7 R2
+// ============================================================
+</script>
+
+
+<!-- ===== TRACERID → BLOK 8 R2 – JS CORE 1 ===== -->
+<!-- ============================================================
+     BLOK 8 R2 – JS CORE 1 (LANJUTAN) - LENGKAP + DIPERBAIKI DARI AWAL
+     (Export/Import, Confirm, Backup/Restore User, Search, dll)
+     ============================================================
+     PENJELASAN:
+     - Berisi fungsi-fungsi lanjutan dari JS Core 1
+     - Confirm dialog, Export/Import data
+     - Backup/Restore user data
+     - Search functionality
+     - Fungsi-fungsi ini akan digunakan oleh blok lain
+     - DIPERBAIKI: Semua fungsi lengkap, error handling,
+       console log untuk debugging
+     ============================================================ -->
+
+<script>
+// ============================================================
+// CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
+// ============================================================
+console.log('🔍 Blok 8 R2 – Memuat fungsi lanjutan TraceID...');
+
+// ============================================================
+// CONFIRM DIALOG
+// ============================================================
+var confirmCb = null;
+
+function showConfirm(title, msg, cb) {
+    console.log('⚠️ showConfirm() dipanggil:', title);
+    
+    var titleEl = document.getElementById('confirmTitle');
+    var msgEl = document.getElementById('confirmMessage');
+    
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = msg;
+    
+    confirmCb = cb;
+    openModal('confirmModal');
+    console.log('✅ Confirm dialog ditampilkan:', title);
+}
+
+function executeConfirmAction() {
+    console.log('✅ executeConfirmAction() dipanggil');
+    
+    if (confirmCb) {
+        confirmCb();
+        confirmCb = null;
+    }
+    closeModal('confirmModal');
 }
 
 // ============================================================
-// EXPORT ALL DATA (akan ditimpa oleh Blok 9)
+// EXPORT / IMPORT DATA (FALLBACK)
 // ============================================================
 function exportAllData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('exportAllData() akan di-override oleh Blok 9');
+    console.log('📤 exportAllData() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+}
+
+function importAllData(input) {
+    console.log('📥 importAllData() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
 }
 
 // ============================================================
-// IMPORT ALL DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function importAllData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('importAllData() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// BACKUP USER DATA (akan ditimpa oleh Blok 9)
+// BACKUP / RESTORE USER (FALLBACK)
 // ============================================================
 function backupUserData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('backupUserData() akan di-override oleh Blok 9');
+    console.log('💾 backupUserData() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+}
+
+function restoreUserData(input) {
+    console.log('📤 restoreUserData() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
 }
 
 // ============================================================
-// RESTORE USER DATA (akan ditimpa oleh Blok 9)
-// ============================================================
-function restoreUserData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('restoreUserData() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SHOW LACAK MODAL (akan ditimpa oleh Blok 9)
-// ============================================================
-function showLacakModal() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('showLacakModal() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SHOW LINK TRACKER MODAL (akan ditimpa oleh Blok 9)
-// ============================================================
-function showLinkTrackerModal() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('showLinkTrackerModal() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// SHOW TRACKER CLICKS (akan ditimpa oleh Blok 9)
-// ============================================================
-function showTrackerClicks() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('showTrackerClicks() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// TOGGLE SEARCH (akan ditimpa oleh Blok 9)
+// SEARCH (FALLBACK)
 // ============================================================
 function toggleSearch() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('toggleSearch() akan di-override oleh Blok 9');
+    console.log('🔍 toggleSearch() dipanggil (fallback)');
+    
+    var bar = document.getElementById('searchBar');
+    if (bar) {
+        bar.classList.toggle('hidden');
+        if (!bar.classList.contains('hidden')) {
+            var input = document.getElementById('searchInput');
+            if (input) {
+                input.focus();
+                console.log('✅ Search bar ditampilkan');
+            }
+        } else {
+            console.log('✅ Search bar disembunyikan');
+        }
+    }
 }
 
-// ============================================================
-// PERFORM SEARCH (akan ditimpa oleh Blok 9)
-// ============================================================
 function performSearch() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('performSearch() akan di-override oleh Blok 9');
+    console.log('🔍 performSearch() dipanggil (fallback)');
+    // Akan di-override oleh Blok 10
 }
 
-// ============================================================
-// CLEAR SEARCH (akan ditimpa oleh Blok 9)
-// ============================================================
 function clearSearch() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('clearSearch() akan di-override oleh Blok 9');
+    console.log('✕ clearSearch() dipanggil (fallback)');
+    
+    var input = document.getElementById('searchInput');
+    if (input) {
+        input.value = '';
+        console.log('✅ Search dibersihkan');
+    }
+    if (typeof performSearch === 'function') performSearch();
 }
 
 // ============================================================
-// INIT USER APPS (akan ditimpa oleh Blok 9)
-// ============================================================
-function initUserApps() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('initUserApps() akan di-override oleh Blok 9');
-}
-
-// ============================================================
-// AUTO SAVE DATA (akan ditimpa oleh Blok 9)
+// AUTO SAVE (FALLBACK)
 // ============================================================
 function autoSaveData() {
-  // Fungsi ini akan ditimpa oleh Blok 9
-  console.log('autoSaveData() akan di-override oleh Blok 9');
+    console.log('💾 autoSaveData() dipanggil (fallback)');
+    // Akan di-override oleh Blok 10
 }
 
-console.log('✅ Blok 8 R3 – JS Core 1 TraceID siap digunakan.');
-console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, dan 11.');
-console.log('📌 Panel Admin akan muncul otomatis saat login sebagai Super Admin.');
+function validateAndLoadUserData() {
+    console.log('🔄 validateAndLoadUserData() dipanggil (fallback)');
+    // Akan di-override oleh Blok 10
+}
+
+function initUserApps() {
+    console.log('📁 initUserApps() dipanggil (fallback)');
+    // Akan di-override oleh Blok 10
+}
+
+// ============================================================
+// BACKUP SEBELUM UPGRADE (FALLBACK)
+// ============================================================
+function backupSebelumUpgrade() {
+    console.log('📦 backupSebelumUpgrade() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+}
+
+// ============================================================
+// SHOW LACAK MODAL (FALLBACK)
+// ============================================================
+function showLacakModal() {
+    console.log('🔍 showLacakModal() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+}
+
+// ============================================================
+// SHOW LINK TRACKER MODAL (FALLBACK)
+// ============================================================
+function showLinkTrackerModal() {
+    console.log('🔗 showLinkTrackerModal() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+}
+
+// ============================================================
+// SHOW TRACKER CLICKS (FALLBACK)
+// ============================================================
+function showTrackerClicks() {
+    console.log('📊 showTrackerClicks() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 10', 'info');
+}
+
+// ============================================================
+// SHOW SUPER ADMIN PANEL (FALLBACK)
+// ============================================================
+function showSuperAdminPanel() {
+    console.log('🛡 showSuperAdminPanel() dipanggil (fallback)');
+    
+    var session = getSession();
+    if (!session) {
+        showToast('⚠️ Anda belum login!', 'error');
+        return;
+    }
+    
+    if (session.role !== 'superadmin') {
+        showToast('⚠️ Anda bukan Super Admin!', 'error');
+        return;
+    }
+    
+    showToast('⏳ Panel Admin akan di-override oleh Blok 11', 'info');
+}
+
+// ============================================================
+// SAVE TO GOOGLE DRIVE (FALLBACK)
+// ============================================================
+function saveToGoogleDrive() {
+    console.log('☁️ saveToGoogleDrive() dipanggil (fallback)');
+    showToast('⏳ Fungsi akan di-override oleh Blok 11', 'info');
+}
+
+// ============================================================
+// DETECT FUNGSI YANG SUDAH DI-OVERRIDE
+// ============================================================
+console.log('🔍 Memeriksa fungsi-fungsi yang sudah di-override...');
+
+var fungsiYangHarusDiOverride = [
+    { nama: 'updateStats', blok: '9/10' },
+    { nama: 'refreshAppUI', blok: '9/10' },
+    { nama: 'handleForgotPassword', blok: '9' },
+    { nama: 'loadProfileData', blok: '9' },
+    { nama: 'saveProfile', blok: '9' },
+    { nama: 'deleteAccount', blok: '9' },
+    { nama: 'checkAllExpiredActivations', blok: '9/10' },
+    { nama: 'showSuperAdminPanel', blok: '11' },
+    { nama: 'switchAdminTab', blok: '11' },
+    { nama: 'adminCreateActivationCode', blok: '11' },
+    { nama: 'renderAdminUserList', blok: '11' },
+    { nama: 'backupAllDataJSON', blok: '11' },
+    { nama: 'saveToGoogleDrive', blok: '11' },
+    { nama: 'refreshPackageDisplay', blok: '12' },
+    { nama: 'renderLandingAd', blok: '12' },
+    { nama: 'showChatModal', blok: '12' },
+    { nama: 'showUserChatModal', blok: '12' },
+    { nama: 'downloadForOffline', blok: '12' },
+    { nama: 'hubungiAdminLanding', blok: '12' },
+    { nama: 'showLacakModal', blok: '10' },
+    { nama: 'showLinkTrackerModal', blok: '10' },
+    { nama: 'showTrackerClicks', blok: '10' },
+    { nama: 'backupSebelumUpgrade', blok: '10' },
+    { nama: 'exportAllData', blok: '10' },
+    { nama: 'importAllData', blok: '10' },
+    { nama: 'backupUserData', blok: '10' },
+    { nama: 'restoreUserData', blok: '10' },
+    { nama: 'toggleSearch', blok: '10' },
+    { nama: 'performSearch', blok: '10' },
+    { nama: 'clearSearch', blok: '10' },
+    { nama: 'initUserApps', blok: '10' },
+    { nama: 'autoSaveData', blok: '10' }
+];
+
+for (var i = 0; i < fungsiYangHarusDiOverride.length; i++) {
+    var f = fungsiYangHarusDiOverride[i];
+    var fn = window[f.nama];
+    if (typeof fn === 'function') {
+        // Cek apakah fungsi sudah di-override (bukan fungsi placeholder)
+        var fnStr = fn.toString();
+        if (fnStr.indexOf('akan di-override') !== -1 || fnStr.indexOf('fallback') !== -1) {
+            console.log('⏳ ' + f.nama + '() masih placeholder (akan di-override oleh Blok ' + f.blok + ')');
+        } else {
+            console.log('✅ ' + f.nama + '() sudah di-override oleh Blok ' + f.blok);
+        }
+    } else {
+        console.warn('⚠️ ' + f.nama + '() BELUM terdefinisi!');
+    }
+}
+
+console.log('✅ Blok 8 R2 – Fungsi lanjutan TraceID siap digunakan.');
+console.log('📌 Fungsi-fungsi akan di-override oleh Blok 9, 10, 11, dan 12.');
 </script>
 
 <!-- ============================================================
-     AKHIR BLOK 8 R3
-     Blok 9 akan melanjutkan: JS Core 2 (Lacak, Riwayat, Tracker, dll)
+     AKHIR BLOK 8 R2
      ============================================================ -->
 
 
@@ -3456,7 +3028,7 @@ console.log('📌 Lanjut ke Blok 10 untuk fungsi Lacak & Tracker');
      ============================================================ -->
 
 
-<!-- ===== TRACERID → Blok 10 ===== -->
+<!-- ===== TRACERID → BLOK 10 R1 – JS CORE 2 ===== -->
 <!-- ============================================================
      BLOK 10 R1 – JS CORE 2 (BAGIAN 2) - LACAK, TRACKER, GMAIL LOCATION, SOSMED LOCATION
      ============================================================
@@ -5135,9 +4707,9 @@ function saveToGoogleDrive() {
                 showToast
 
 
-<!-- ===== TRACERID → BLOK 12 R1 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT ===== -->
+<!-- ===== TRACERID → BLOK 12 R2 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT ===== -->
 <!-- ============================================================
-     BLOK 12 R1 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI)
+     BLOK 12 R2 – JS CHAT, LANDING DISPLAY, OFFLINE, INIT (LENGKAP + DIPERBAIKI DARI AWAL)
      (Chat User ke Admin, Chat User ke User, Landing Display, Offline, Init)
      ============================================================
      PENJELASAN:
@@ -5149,7 +4721,8 @@ function saveToGoogleDrive() {
      - Init: setup awal aplikasi
      - DIPERBAIKI: Semua fungsi lengkap, tidak ada error sintaks,
        escapeHTML() di awal, patch superadmin header sudah benar,
-       fungsi origUpdateHeader sudah lengkap
+       fungsi origUpdateHeader sudah lengkap,
+       semua tombol landing page berfungsi
      ============================================================ -->
 
 <script>
@@ -5172,7 +4745,7 @@ function escapeHTML(str) {
 // ============================================================
 // CEK FUNGSI - PASTIKAN SEMUA TERDEFINISI
 // ============================================================
-console.log('🔍 Blok 12 R1 – Memuat semua fungsi Chat, Landing, Init...');
+console.log('🔍 Blok 12 R2 – Memuat semua fungsi Chat, Landing, Init...');
 
 // ============================================================
 // HUBUNGI ADMIN (LANDING PAGE)
@@ -5571,6 +5144,88 @@ function patchSuperadminHeader() {
 }
 
 // ============================================================
+// FUNGSI TAMBAHAN - PASTIKAN SEMUA TOMBOL BERFUNGSI
+// ============================================================
+
+// Fungsi untuk showLoginModal (fallback jika belum ada)
+if (typeof showLoginModal !== 'function') {
+    window.showLoginModal = function() {
+        console.log('🔐 showLoginModal() dipanggil (fallback)');
+        openModal('loginModal');
+    };
+}
+
+// Fungsi untuk showRegisterModal (fallback jika belum ada)
+if (typeof showRegisterModal !== 'function') {
+    window.showRegisterModal = function() {
+        console.log('📝 showRegisterModal() dipanggil (fallback)');
+        openModal('registerModal');
+    };
+}
+
+// Fungsi untuk toggleTheme (fallback jika belum ada)
+if (typeof toggleTheme !== 'function') {
+    window.toggleTheme = function() {
+        console.log('🌙 toggleTheme() dipanggil (fallback)');
+        document.body.classList.toggle('light-theme');
+        var isLight = document.body.classList.contains('light-theme');
+        var label = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+        document.querySelectorAll('#themeButton1,#themeButton2').forEach(function(b) {
+            if (b) b.textContent = label;
+        });
+        localStorage.setItem('tr_theme', isLight ? 'light' : 'dark');
+    };
+}
+
+// Fungsi untuk openApplication (fallback jika belum ada)
+if (typeof openApplication !== 'function') {
+    window.openApplication = function() {
+        console.log('🚀 openApplication() dipanggil (fallback)');
+        var s = getSession();
+        if (!s) {
+            showToast('⚠️ Silakan login terlebih dahulu!', 'warning');
+            showLoginModal();
+            return;
+        }
+        var landing = document.getElementById('landingPage');
+        var app = document.getElementById('applicationPage');
+        if (landing) landing.classList.add('hidden');
+        if (app) app.classList.remove('hidden');
+        if (typeof refreshAppUI === 'function') refreshAppUI();
+        if (typeof updateStats === 'function') updateStats();
+        if (typeof updateHeaderUser === 'function') updateHeaderUser();
+        if (typeof checkAllExpiredActivations === 'function') checkAllExpiredActivations();
+    };
+}
+
+// Fungsi untuk goToLandingPage (fallback jika belum ada)
+if (typeof goToLandingPage !== 'function') {
+    window.goToLandingPage = function() {
+        console.log('🏠 goToLandingPage() dipanggil (fallback)');
+        var app = document.getElementById('applicationPage');
+        var landing = document.getElementById('landingPage');
+        if (app) app.classList.add('hidden');
+        if (landing) landing.classList.remove('hidden');
+        if (typeof refreshPackageDisplay === 'function') refreshPackageDisplay();
+    };
+}
+
+// Fungsi untuk handleLogout (fallback jika belum ada)
+if (typeof handleLogout !== 'function') {
+    window.handleLogout = function() {
+        console.log('🚪 handleLogout() dipanggil (fallback)');
+        var s = getSession();
+        if (s) {
+            if (typeof addSecurityLog === 'function') addSecurityLog('User ' + s.username + ' logout.');
+        }
+        clearSession();
+        goToLandingPage();
+        if (typeof updateHeaderUser === 'function') updateHeaderUser();
+        showToast('Logout berhasil.', 'info');
+    };
+}
+
+// ============================================================
 // INIT
 // ============================================================
 (function init() {
@@ -5599,14 +5254,18 @@ function patchSuperadminHeader() {
     updateOnlineStatus();
 
     // Update WhatsApp display
-    updateAllWaDisplays();
+    if (typeof updateAllWaDisplays === 'function') {
+        updateAllWaDisplays();
+    }
 
     // Refresh landing page
     refreshPackageDisplay();
     renderLandingAd();
 
     // Update header user
-    updateHeaderUser();
+    if (typeof updateHeaderUser === 'function') {
+        updateHeaderUser();
+    }
 
     // Patch superadmin header setelah load
     window.addEventListener('load', function() {
@@ -5630,13 +5289,14 @@ function patchSuperadminHeader() {
         console.warn('⚠️ updateHeaderUser() tidak ditemukan, patch tidak bisa diterapkan');
     }
 
-    console.log('✅ Blok 12 R1 – TraceID v1.0 siap digunakan.');
+    console.log('✅ Blok 12 R2 – TraceID v1.0 siap digunakan.');
     console.log('📌 Chat, Landing Display, Offline, Init berhasil dimuat.');
     console.log('📌 Login sebagai Super Admin untuk mengakses Panel Admin.');
+    console.log('📌 Semua tombol di halaman depan seharusnya sudah berfungsi.');
 })();
 
 // ============================================================
-// AKHIR BLOK 12 R1
+// AKHIR BLOK 12 R2
 // ============================================================
 </script>
 
@@ -5649,3 +5309,7 @@ function patchSuperadminHeader() {
         Simpan halaman ini sebagai file .html untuk offline.
     </p>
 </div>
+
+<!-- ============================================================
+     AKHIR BLOK 12 R2 - SELESAI
+     ============================================================ -->
